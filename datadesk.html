@@ -1,0 +1,2580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Data Desk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+/* ============================= TOKENS ============================= */
+:root{
+  --paper:        #F3F5F4;
+  --paper-sunk:   #E8EDEB;
+  --grid:         #D6DEDB;
+  --rule:         #C2CCC9;
+  --rule-strong:  #8A9A96;
+
+  --ink:          #16232E;
+  --ink-2:        #47585F;
+  --ink-3:        #7C8C90;
+
+  --signal:       #0F6E63;
+  --signal-lift:  #12897C;
+  --signal-wash:  #DCEBE8;
+  --crimson:      #B3123A;
+  --amber:        #C7860B;
+  --lilac:        #6E5AC8;
+  --strontium:    #D4453B;
+  --barium:       #4E9A2F;
+
+  --cat-alkali:        #F6D9D0; --cat-alkali-edge:      #C25A3E;
+  --cat-alkaline:      #F8E7C8; --cat-alkaline-edge:    #C08A22;
+  --cat-transition:    #DCE7EC; --cat-transition-edge:  #547A8E;
+  --cat-post-trans:    #E2E6DE; --cat-post-trans-edge:  #6E7B63;
+  --cat-metalloid:     #E5DFF2; --cat-metalloid-edge:   #6E5AC8;
+  --cat-nonmetal:      #D9EDDF; --cat-nonmetal-edge:    #35774A;
+  --cat-halogen:       #D6EAF0; --cat-halogen-edge:     #2C7C93;
+  --cat-noble:         #EDDDE8; --cat-noble-edge:       #8E4A78;
+  --cat-lanthanide:    #F1E3D5; --cat-lanthanide-edge:  #A9722F;
+  --cat-actinide:      #EEDCDC; --cat-actinide-edge:    #9C4444;
+  --cat-unknown:       #E4E7E8; --cat-unknown-edge:     #7C8C90;
+
+  --font-ui:   "Archivo", "Segoe UI Variable", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-read: "Source Serif 4", Georgia, "Times New Roman", serif;
+
+  --t-xs:  0.75rem;
+  --t-sm:  0.875rem;
+  --t-base:1rem;
+  --t-md:  1.25rem;
+  --t-lg:  1.563rem;
+  --t-xl:  1.953rem;
+  --t-2xl: 3.052rem;
+
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px; --s7:48px;
+  --radius-tile: 2px;
+  --radius-panel: 0;
+  --radius-control: 6px;
+
+  --shadow-card: 0 8px 28px rgba(22,35,46,.16);
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:      #10262A;
+    --paper-sunk: #0B1D21;
+    --grid:       #1C3A3F;
+    --rule:       #24474D;
+    --rule-strong:#3E6B71;
+    --ink:        #E4EFEC;
+    --ink-2:      #A3BAB6;
+    --ink-3:      #6E8A87;
+    --signal:     #4FC7B6;
+    --signal-lift:#6FDCCB;
+    --signal-wash:#123B3B;
+    --crimson:    #FF7A93;
+    --amber:      #F0B44A;
+    --lilac:      #A996F0;
+    --strontium:  #FF7A6B;
+    --barium:     #86D45F;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:      #10262A;
+  --paper-sunk: #0B1D21;
+  --grid:       #1C3A3F;
+  --rule:       #24474D;
+  --rule-strong:#3E6B71;
+  --ink:        #E4EFEC;
+  --ink-2:      #A3BAB6;
+  --ink-3:      #6E8A87;
+  --signal:     #4FC7B6;
+  --signal-lift:#6FDCCB;
+  --signal-wash:#123B3B;
+  --crimson:    #FF7A93;
+  --amber:      #F0B44A;
+  --lilac:      #A996F0;
+  --strontium:  #FF7A6B;
+  --barium:     #86D45F;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) .cat-tile{ --cat-fill-mix: 22%; }
+}
+:root[data-theme="dark"] .cat-tile{ --cat-fill-mix: 22%; }
+
+/* ============================= BASE ============================= */
+*,*::before,*::after{ box-sizing:border-box; }
+html,body{ height:100%; }
+body{
+  margin:0;
+  font-family:var(--font-ui);
+  font-size:var(--t-base);
+  color:var(--ink);
+  background:var(--paper);
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4,p,dl,dd{ margin:0; }
+button,input,select,textarea{ font:inherit; color:inherit; }
+button{ cursor:pointer; }
+a{ color:var(--signal); }
+::selection{ background:var(--signal-wash); color:var(--ink); }
+
+:focus-visible{
+  outline:2px solid var(--signal);
+  outline-offset:2px;
+  border-radius:2px;
+}
+:focus:not(:focus-visible){ outline:none; }
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{
+    animation-duration:0.001ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:0.001ms !important;
+  }
+}
+
+.tabular{ font-variant-numeric: tabular-nums lining-nums; }
+
+/* ============================= LAYOUT ============================= */
+.app{
+  display:grid;
+  grid-template-columns:64px minmax(0,1fr);
+  grid-template-rows:56px 1fr;
+  grid-template-areas:
+    "bar bar"
+    "rail main";
+  height:100vh;
+}
+
+/* graph-paper ground */
+#desk{
+  grid-area:main;
+  position:relative;
+  overflow-y:auto;
+  background-color:var(--paper);
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size:20px 20px;
+  background-position:-1px -1px;
+}
+:root:not([data-theme="light"]) #desk{
+  background-image:
+    linear-gradient(color-mix(in oklab, var(--grid) 55%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in oklab, var(--grid) 55%, transparent) 1px, transparent 1px);
+}
+
+.desk-inner{
+  max-width:1400px;
+  margin:0 auto;
+  padding:var(--s5) var(--s5) var(--s7);
+}
+
+/* command bar */
+.bar{
+  grid-area:bar;
+  display:flex;
+  align-items:center;
+  gap:var(--s4);
+  padding:0 var(--s4);
+  background:var(--paper);
+  border-bottom:2px solid var(--ink);
+  position:sticky;
+  top:0;
+  z-index:40;
+}
+.bar-brand{
+  font-weight:700;
+  font-size:var(--t-sm);
+  letter-spacing:0.02em;
+  white-space:nowrap;
+  color:var(--ink);
+}
+.bar-search{
+  flex:1;
+  min-width:0;
+  display:flex;
+  align-items:center;
+  gap:var(--s2);
+  background:var(--paper-sunk);
+  border:1px solid var(--rule);
+  border-radius:var(--radius-control);
+  padding:0 var(--s3);
+  height:36px;
+  max-width:560px;
+}
+.bar-search input{
+  flex:1;
+  min-width:0;
+  width:0;
+  background:none;
+  border:none;
+  color:var(--ink);
+  font-size:var(--t-sm);
+}
+@media (max-width:480px){
+  .bar-brand{ display:none; }
+  .bar-search kbd{ display:none; }
+}
+.bar-search input::placeholder{ color:var(--ink-3); }
+.bar-search kbd{
+  font-family:var(--font-ui);
+  font-size:var(--t-xs);
+  color:var(--ink-3);
+  border:1px solid var(--rule);
+  border-radius:4px;
+  padding:1px 5px;
+  background:var(--paper);
+}
+.bar-actions{ display:flex; align-items:center; gap:var(--s2); margin-left:auto; }
+.icon-btn{
+  width:36px; height:36px;
+  display:flex; align-items:center; justify-content:center;
+  background:none; border:1px solid transparent; border-radius:var(--radius-control);
+  color:var(--ink-2);
+}
+.icon-btn:hover{ background:var(--paper-sunk); color:var(--ink); }
+.icon-btn svg{ width:18px; height:18px; }
+
+/* rail */
+.rail{
+  grid-area:rail;
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+  background:var(--paper-sunk);
+  border-right:1px solid var(--rule);
+  padding:var(--s3) 0;
+}
+.rail-item{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:2px;
+  padding:var(--s3) 0;
+  background:none;
+  border:none;
+  border-left:3px solid transparent;
+  color:var(--ink-2);
+  position:relative;
+}
+.rail-item svg{ width:20px; height:20px; }
+.rail-item .rail-label{ font-size:10px; font-weight:600; letter-spacing:0.02em; }
+.rail-item:hover{ color:var(--ink); background:color-mix(in oklab, var(--paper) 50%, transparent); }
+.rail-item[aria-current="true"]{
+  color:var(--accent, var(--signal));
+  border-left-color:var(--accent, var(--signal));
+  background:var(--paper);
+}
+.rail-spacer{ flex:1; }
+
+/* panels */
+.panel{ display:none; }
+.panel[data-active="true"]{ display:block; }
+.panel-head{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:var(--s4);
+  flex-wrap:wrap;
+  padding-bottom:var(--s3);
+  border-bottom:1px solid var(--rule);
+  margin-bottom:var(--s4);
+}
+.panel-title{
+  font-size:var(--t-lg);
+  font-weight:600;
+  color:var(--ink);
+}
+.panel-title .accent-mark{ color:var(--accent, var(--signal)); }
+.panel-tools{ display:flex; gap:var(--s2); flex-wrap:wrap; align-items:center; }
+
+.sheet{
+  background:var(--paper);
+  border:1px solid var(--rule);
+}
+.sheet + .sheet{ margin-top:var(--s4); }
+.sheet-head{
+  padding:var(--s3) var(--s4);
+  border-bottom:1px solid var(--rule);
+  font-weight:600;
+  font-size:var(--t-sm);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:var(--s3);
+}
+.sheet-body{ padding:var(--s4); }
+
+/* segmented control (chem/phys/maths sub-nav) */
+.segmented{
+  display:flex;
+  flex-wrap:wrap;
+  gap:2px;
+  background:var(--paper-sunk);
+  border:1px solid var(--rule);
+  padding:2px;
+  margin-bottom:var(--s4);
+}
+.segmented button{
+  background:none;
+  border:none;
+  padding:var(--s2) var(--s3);
+  font-size:var(--t-sm);
+  font-weight:500;
+  color:var(--ink-2);
+  border-radius:2px;
+}
+.segmented button:hover{ color:var(--ink); }
+.segmented button[aria-selected="true"]{
+  background:var(--paper);
+  color:var(--accent, var(--signal));
+  box-shadow:inset 0 0 0 1px var(--rule);
+  font-weight:600;
+}
+
+/* form controls */
+.field{ display:flex; flex-direction:column; gap:4px; }
+.field label{ font-size:var(--t-xs); color:var(--ink-2); font-weight:500; }
+input[type="text"], input[type="number"], input[type="search"], select, textarea{
+  background:var(--paper);
+  border:1px solid var(--rule);
+  border-radius:var(--radius-control);
+  padding:var(--s2) var(--s3);
+  font-size:var(--t-sm);
+  color:var(--ink);
+}
+textarea{ font-family:var(--font-ui); resize:vertical; }
+input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible{ outline-offset:1px; }
+.btn{
+  background:var(--paper);
+  border:1px solid var(--rule-strong);
+  border-radius:var(--radius-control);
+  padding:var(--s2) var(--s4);
+  font-size:var(--t-sm);
+  font-weight:600;
+  color:var(--ink);
+  transition:background 120ms ease-out, color 120ms ease-out;
+}
+.btn:hover{ background:var(--paper-sunk); }
+.btn-primary{
+  background:var(--accent, var(--signal));
+  border-color:var(--accent, var(--signal));
+  color:var(--paper);
+}
+.btn-primary:hover{ background:var(--accent-lift, var(--signal-lift)); border-color:var(--accent-lift, var(--signal-lift)); }
+.btn-sm{ padding:4px var(--s3); font-size:var(--t-xs); }
+
+table{ width:100%; border-collapse:collapse; font-size:var(--t-sm); }
+th,td{ text-align:left; padding:var(--s2) var(--s3); border-bottom:1px solid var(--rule); }
+thead th{ font-size:var(--t-xs); color:var(--ink-2); font-weight:600; text-transform:none; border-bottom:1px solid var(--rule-strong); }
+tbody tr:nth-child(even){ background:var(--paper-sunk); }
+.table-wrap{ overflow-x:auto; }
+
+.prose{
+  font-family:var(--font-read);
+  font-size:var(--t-base);
+  line-height:1.6;
+  max-width:68ch;
+  color:var(--ink);
+}
+
+.hint{ font-size:var(--t-xs); color:var(--ink-2); }
+.err{ font-size:var(--t-xs); color:var(--crimson); font-weight:500; }
+.badge{
+  display:inline-flex; align-items:center;
+  font-size:var(--t-xs); font-weight:600;
+  padding:2px 8px; border-radius:100px;
+  background:var(--signal-wash); color:var(--signal);
+}
+
+.grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:var(--s4); }
+.grid-3{ display:grid; grid-template-columns:repeat(3,1fr); gap:var(--s4); }
+@media (max-width:800px){ .grid-2,.grid-3{ grid-template-columns:1fr; } }
+
+.empty-state{
+  padding:var(--s6);
+  text-align:center;
+  color:var(--ink-2);
+  font-size:var(--t-sm);
+}
+
+/* ============================= COMMAND PALETTE ============================= */
+.palette-overlay{
+  position:fixed; inset:0;
+  background:rgba(16,20,22,.35);
+  display:none;
+  align-items:flex-start;
+  justify-content:center;
+  padding-top:12vh;
+  z-index:100;
+}
+.palette-overlay[data-open="true"]{ display:flex; }
+.palette{
+  width:min(600px, 92vw);
+  background:var(--paper);
+  border:1px solid var(--rule-strong);
+  box-shadow:var(--shadow-card);
+  max-height:60vh;
+  display:flex;
+  flex-direction:column;
+}
+.palette-input{
+  padding:var(--s4);
+  border-bottom:1px solid var(--rule);
+  display:flex;
+  gap:var(--s2);
+  align-items:center;
+}
+.palette-input input{ flex:1; border:none; background:none; font-size:var(--t-md); }
+.palette-results{ overflow-y:auto; padding:var(--s2) 0; }
+.palette-group-label{ font-size:var(--t-xs); color:var(--ink-3); padding:var(--s2) var(--s4) 4px; font-weight:600; }
+.palette-item{
+  display:flex; align-items:center; gap:var(--s3);
+  padding:var(--s2) var(--s4);
+  border-left:3px solid var(--item-accent, transparent);
+  cursor:pointer;
+}
+.palette-item:hover, .palette-item[data-active="true"]{ background:var(--paper-sunk); }
+.palette-item-label{ font-weight:500; font-size:var(--t-sm); }
+.palette-item-meta{ font-size:var(--t-xs); color:var(--ink-3); margin-left:auto; }
+
+/* ============================= MODAL / SHORTCUT SHEET ============================= */
+.modal-overlay{
+  position:fixed; inset:0;
+  background:rgba(16,20,22,.35);
+  display:none;
+  align-items:center; justify-content:center;
+  z-index:100;
+  padding:var(--s4);
+}
+.modal-overlay[data-open="true"]{ display:flex; }
+.modal{
+  width:min(520px,92vw);
+  max-height:80vh;
+  overflow-y:auto;
+  background:var(--paper);
+  border:1px solid var(--rule-strong);
+  box-shadow:var(--shadow-card);
+  padding:var(--s5);
+}
+.modal h2{ font-size:var(--t-md); font-weight:600; margin-bottom:var(--s4); }
+.kbd-row{ display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid var(--rule); font-size:var(--t-sm); }
+.kbd-row kbd{ font-family:var(--font-ui); background:var(--paper-sunk); border:1px solid var(--rule); border-radius:4px; padding:1px 6px; }
+
+/* ============================= PRINT ============================= */
+@page{ size: A4 landscape; margin: 12mm; }
+@media print{
+  .bar, .rail, .panel-tools, .palette-overlay, .modal-overlay, .no-print{ display:none !important; }
+  #desk{ background-image:none; overflow:visible; height:auto; }
+  .app{ display:block; height:auto; }
+  .desk-inner{ max-width:none; padding:0; }
+  .panel{ display:none !important; }
+  .panel[data-printing="true"]{ display:block !important; }
+  body{ background:#fff; color:#000; }
+}
+
+/* ============================================================ PERIODIC TABLE ============================================================ */
+.pt-controls-row{ display:flex; align-items:flex-end; justify-content:space-between; gap:var(--s4); flex-wrap:wrap; margin-bottom:var(--s4); }
+.pt-controls-row input[type="range"]{ width:100%; accent-color:var(--signal); }
+.pt-grid-wrap{ overflow-x:auto; padding-bottom:var(--s3); }
+.periodic-grid{
+  display:grid;
+  grid-template-columns:repeat(18, minmax(48px, 1fr));
+  grid-auto-rows:minmax(48px, 1fr);
+  gap:3px;
+  min-width:1000px;
+}
+.element-tile{
+  position:relative;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  border:1px solid var(--cat-unknown-edge);
+  border-radius:var(--radius-tile);
+  padding:2px;
+  min-width:0;
+  transition:opacity 120ms ease-out, transform 120ms ease-out;
+  color:var(--ink);
+}
+.element-tile:hover{ transform:translateY(-1px); box-shadow:0 2px 6px rgba(22,35,46,.18); z-index:2; }
+.et-num{ position:absolute; top:2px; left:3px; font-size:9px; color:var(--ink-2); }
+.et-sym{ font-weight:600; font-size:var(--t-sm); line-height:1; }
+.et-name{ font-size:8px; color:var(--ink-2); max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.et-mass{ font-size:8px; color:var(--ink-3); }
+@media (max-width:900px){ .et-name{ display:none; } }
+@media (max-width:700px){ .et-mass{ display:none; } }
+
+.element-detail{ display:none; }
+.element-detail[data-open="true"]{
+  display:block;
+  position:fixed;
+  top:50%; left:50%; transform:translate(-50%,-50%);
+  width:min(480px, 92vw);
+  max-height:82vh;
+  overflow-y:auto;
+  z-index:60;
+  box-shadow:var(--shadow-card);
+  border:1px solid var(--rule-strong);
+}
+.detail-inner{ position:relative; padding:var(--s5); }
+.detail-top{ display:flex; gap:var(--s4); align-items:center; margin-bottom:var(--s4); }
+.detail-symbol{
+  font-size:var(--t-2xl); font-weight:700; line-height:1;
+  width:88px; height:88px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--paper); border:2px solid; border-radius:var(--radius-tile);
+}
+.detail-top h2{ font-size:var(--t-md); font-weight:600; }
+.detail-grid{ display:grid; grid-template-columns:1fr 1fr; gap:var(--s3) var(--s4); margin-bottom:var(--s4); }
+.detail-grid dt{ font-size:var(--t-xs); color:var(--ink-2); }
+.detail-grid dd{ font-size:var(--t-sm); font-weight:500; }
+.detail-shell{ display:flex; justify-content:center; margin-bottom:var(--s3); }
+
+/* ============================================================ CHEMISTRY ============================================================ */
+.sol-grid td{ text-align:center; font-size:var(--t-xs); cursor:default; }
+.sol-grid th{ font-size:var(--t-xs); }
+.sol-sol{ background:color-mix(in oklab, var(--barium) 18%, var(--paper)); }
+.sol-insol{ background:color-mix(in oklab, var(--crimson) 16%, var(--paper)); }
+.sol-slight{ background:color-mix(in oklab, var(--amber) 18%, var(--paper)); }
+
+/* ============================================================ MATHS ============================================================ */
+.uc-wrap{ display:flex; gap:var(--s5); flex-wrap:wrap; align-items:flex-start; }
+#ucSvg{ flex-shrink:0; background:var(--paper-sunk); border:1px solid var(--rule); }
+#ucHandle{ touch-action:none; }
+
+/* animations */
+@media (prefers-reduced-motion:no-preference){
+  .element-tile{ animation: tile-in 220ms ease-out backwards; }
+  @keyframes tile-in{ from{ opacity:0; transform:translateY(2px); } to{ opacity:1; transform:none; } }
+  .card-pop{ animation: card-in 160ms ease-out; }
+  @keyframes card-in{ from{ opacity:0; transform:scale(.98); } to{ opacity:1; transform:none; } }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header class="bar">
+    <div class="bar-brand">The Data Desk</div>
+    <div class="bar-search" id="openPaletteBtn" role="button" tabindex="0">
+      <svg viewBox="0 0 24 24" fill="none" width="16" height="16"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <input type="text" id="paletteTrigger" placeholder="Search anything — press /" readonly>
+      <kbd>/</kbd>
+    </div>
+    <div class="bar-actions">
+      <button class="icon-btn no-print" id="shortcutBtn" title="Keyboard shortcuts (?)" aria-label="Keyboard shortcuts">
+        <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="7" width="18" height="12" rx="2" stroke="currentColor" stroke-width="2"/><path d="M7 11h.01M11 11h.01M15 11h.01M17 11h.01M7 15h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+      <button class="icon-btn no-print" id="themeBtn" title="Toggle theme" aria-label="Toggle theme">
+        <svg viewBox="0 0 24 24" fill="none" id="themeIcon"><circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2"/><path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <nav class="rail" id="rail" aria-label="Tabs"></nav>
+
+  <main id="desk">
+    <div class="desk-inner" id="deskInner"></div>
+  </main>
+</div>
+
+<div class="palette-overlay" id="paletteOverlay">
+  <div class="palette" role="dialog" aria-modal="true" aria-label="Command palette">
+    <div class="palette-input">
+      <svg viewBox="0 0 24 24" fill="none" width="18" height="18"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <input type="text" id="paletteInput" placeholder="Jump to an element, formula, constant, tool…" autocomplete="off">
+    </div>
+    <div class="palette-results" id="paletteResults"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="shortcutOverlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Keyboard shortcuts">
+    <h2>Keyboard shortcuts</h2>
+    <div class="kbd-row"><span>Open search / command palette</span><kbd>/</kbd> or <kbd>Ctrl K</kbd></div>
+    <div class="kbd-row"><span>Switch tab</span><kbd>1</kbd>–<kbd>5</kbd></div>
+    <div class="kbd-row"><span>Toggle theme</span><kbd>T</kbd></div>
+    <div class="kbd-row"><span>Close dialog / detail card</span><kbd>Esc</kbd></div>
+    <div class="kbd-row"><span>Periodic table: move selection</span><kbd>↑ ↓ ← →</kbd></div>
+    <div class="kbd-row"><span>Periodic table: open element</span><kbd>Enter</kbd></div>
+    <div class="kbd-row"><span>Show this sheet</span><kbd>?</kbd></div>
+  </div>
+</div>
+
+<template id="tpl-element-card"></template>
+
+<script>
+"use strict";
+/* ============================================================
+   DATA — periodic table
+   ============================================================ */
+// [Z, symbol, name, standardAtomicWeight, category, group, period]
+const ELEMENTS = [
+[1,"H","Hydrogen",1.008,"nonmetal",1,1],
+[2,"He","Helium",4.003,"noble",18,1],
+[3,"Li","Lithium",6.94,"alkali",1,2],
+[4,"Be","Beryllium",9.012,"alkaline",2,2],
+[5,"B","Boron",10.81,"metalloid",13,2],
+[6,"C","Carbon",12.011,"nonmetal",14,2],
+[7,"N","Nitrogen",14.007,"nonmetal",15,2],
+[8,"O","Oxygen",15.999,"nonmetal",16,2],
+[9,"F","Fluorine",18.998,"halogen",17,2],
+[10,"Ne","Neon",20.180,"noble",18,2],
+[11,"Na","Sodium",22.990,"alkali",1,3],
+[12,"Mg","Magnesium",24.305,"alkaline",2,3],
+[13,"Al","Aluminium",26.982,"post-transition",13,3],
+[14,"Si","Silicon",28.085,"metalloid",14,3],
+[15,"P","Phosphorus",30.974,"nonmetal",15,3],
+[16,"S","Sulfur",32.06,"nonmetal",16,3],
+[17,"Cl","Chlorine",35.45,"halogen",17,3],
+[18,"Ar","Argon",39.95,"noble",18,3],
+[19,"K","Potassium",39.098,"alkali",1,4],
+[20,"Ca","Calcium",40.078,"alkaline",2,4],
+[21,"Sc","Scandium",44.956,"transition",3,4],
+[22,"Ti","Titanium",47.867,"transition",4,4],
+[23,"V","Vanadium",50.942,"transition",5,4],
+[24,"Cr","Chromium",51.996,"transition",6,4],
+[25,"Mn","Manganese",54.938,"transition",7,4],
+[26,"Fe","Iron",55.845,"transition",8,4],
+[27,"Co","Cobalt",58.933,"transition",9,4],
+[28,"Ni","Nickel",58.693,"transition",10,4],
+[29,"Cu","Copper",63.546,"transition",11,4],
+[30,"Zn","Zinc",65.38,"transition",12,4],
+[31,"Ga","Gallium",69.723,"post-transition",13,4],
+[32,"Ge","Germanium",72.630,"metalloid",14,4],
+[33,"As","Arsenic",74.922,"metalloid",15,4],
+[34,"Se","Selenium",78.971,"nonmetal",16,4],
+[35,"Br","Bromine",79.904,"halogen",17,4],
+[36,"Kr","Krypton",83.798,"noble",18,4],
+[37,"Rb","Rubidium",85.468,"alkali",1,5],
+[38,"Sr","Strontium",87.62,"alkaline",2,5],
+[39,"Y","Yttrium",88.906,"transition",3,5],
+[40,"Zr","Zirconium",91.224,"transition",4,5],
+[41,"Nb","Niobium",92.906,"transition",5,5],
+[42,"Mo","Molybdenum",95.95,"transition",6,5],
+[43,"Tc","Technetium","[98]","transition",7,5],
+[44,"Ru","Ruthenium",101.07,"transition",8,5],
+[45,"Rh","Rhodium",102.91,"transition",9,5],
+[46,"Pd","Palladium",106.42,"transition",10,5],
+[47,"Ag","Silver",107.87,"transition",11,5],
+[48,"Cd","Cadmium",112.41,"transition",12,5],
+[49,"In","Indium",114.82,"post-transition",13,5],
+[50,"Sn","Tin",118.71,"post-transition",14,5],
+[51,"Sb","Antimony",121.76,"metalloid",15,5],
+[52,"Te","Tellurium",127.60,"metalloid",16,5],
+[53,"I","Iodine",126.90,"halogen",17,5],
+[54,"Xe","Xenon",131.29,"noble",18,5],
+[55,"Cs","Caesium",132.91,"alkali",1,6],
+[56,"Ba","Barium",137.33,"alkaline",2,6],
+[57,"La","Lanthanum",138.91,"lanthanide",3,6],
+[58,"Ce","Cerium",140.12,"lanthanide",null,6],
+[59,"Pr","Praseodymium",140.91,"lanthanide",null,6],
+[60,"Nd","Neodymium",144.24,"lanthanide",null,6],
+[61,"Pm","Promethium","[145]","lanthanide",null,6],
+[62,"Sm","Samarium",150.36,"lanthanide",null,6],
+[63,"Eu","Europium",151.96,"lanthanide",null,6],
+[64,"Gd","Gadolinium",157.25,"lanthanide",null,6],
+[65,"Tb","Terbium",158.93,"lanthanide",null,6],
+[66,"Dy","Dysprosium",162.50,"lanthanide",null,6],
+[67,"Ho","Holmium",164.93,"lanthanide",null,6],
+[68,"Er","Erbium",167.26,"lanthanide",null,6],
+[69,"Tm","Thulium",168.93,"lanthanide",null,6],
+[70,"Yb","Ytterbium",173.05,"lanthanide",null,6],
+[71,"Lu","Lutetium",174.97,"lanthanide",null,6],
+[72,"Hf","Hafnium",178.49,"transition",4,6],
+[73,"Ta","Tantalum",180.95,"transition",5,6],
+[74,"W","Tungsten",183.84,"transition",6,6],
+[75,"Re","Rhenium",186.21,"transition",7,6],
+[76,"Os","Osmium",190.23,"transition",8,6],
+[77,"Ir","Iridium",192.22,"transition",9,6],
+[78,"Pt","Platinum",195.08,"transition",10,6],
+[79,"Au","Gold",196.97,"transition",11,6],
+[80,"Hg","Mercury",200.59,"transition",12,6],
+[81,"Tl","Thallium",204.38,"post-transition",13,6],
+[82,"Pb","Lead",207.2,"post-transition",14,6],
+[83,"Bi","Bismuth",208.98,"post-transition",15,6],
+[84,"Po","Polonium","[209]","post-transition",16,6],
+[85,"At","Astatine","[210]","halogen",17,6],
+[86,"Rn","Radon","[222]","noble",18,6],
+[87,"Fr","Francium","[223]","alkali",1,7],
+[88,"Ra","Radium","[226]","alkaline",2,7],
+[89,"Ac","Actinium","[227]","actinide",3,7],
+[90,"Th","Thorium",232.04,"actinide",null,7],
+[91,"Pa","Protactinium",231.04,"actinide",null,7],
+[92,"U","Uranium",238.03,"actinide",null,7],
+[93,"Np","Neptunium","[237]","actinide",null,7],
+[94,"Pu","Plutonium","[244]","actinide",null,7],
+[95,"Am","Americium","[243]","actinide",null,7],
+[96,"Cm","Curium","[247]","actinide",null,7],
+[97,"Bk","Berkelium","[247]","actinide",null,7],
+[98,"Cf","Californium","[251]","actinide",null,7],
+[99,"Es","Einsteinium","[252]","actinide",null,7],
+[100,"Fm","Fermium","[257]","actinide",null,7],
+[101,"Md","Mendelevium","[258]","actinide",null,7],
+[102,"No","Nobelium","[259]","actinide",null,7],
+[103,"Lr","Lawrencium","[266]","actinide",null,7],
+[104,"Rf","Rutherfordium","[267]","transition",4,7],
+[105,"Db","Dubnium","[268]","transition",5,7],
+[106,"Sg","Seaborgium","[269]","transition",6,7],
+[107,"Bh","Bohrium","[270]","transition",7,7],
+[108,"Hs","Hassium","[269]","transition",8,7],
+[109,"Mt","Meitnerium","[278]","transition",9,7],
+[110,"Ds","Darmstadtium","[281]","transition",10,7],
+[111,"Rg","Roentgenium","[282]","transition",11,7],
+[112,"Cn","Copernicium","[285]","transition",12,7],
+[113,"Nh","Nihonium","[286]","post-transition",13,7],
+[114,"Fl","Flerovium","[289]","post-transition",14,7],
+[115,"Mc","Moscovium","[290]","post-transition",15,7],
+[116,"Lv","Livermorium","[293]","post-transition",16,7],
+[117,"Ts","Tennessine","[294]","halogen",17,7],
+[118,"Og","Oganesson","[294]","noble",18,7]
+];
+
+// Extended per-element data. Fields left null when not confidently known
+// (mostly synthetic/superheavy elements with unmeasured bulk properties).
+const EXT = {
+H:{ox:[1,-1],en:2.20,radius:53,ie1:1312.0,mp:14,bp:20,density:0.00008988,phase:"gas",discovered:1766,by:"Henry Cavendish",use:"Ammonia synthesis, hydrogenation, fuel cells."},
+He:{ox:[0],en:null,radius:31,ie1:2372.3,mp:1,bp:4,density:0.0001785,phase:"gas",discovered:1868,by:"Janssen & Lockyer (Norman Lockyer named it)",use:"Cryogenics, balloons, inert shielding gas for welding."},
+Li:{ox:[1],en:0.98,radius:167,ie1:520.2,mp:454,bp:1615,density:0.534,phase:"solid",discovered:1817,by:"Johan August Arfwedson",use:"Rechargeable batteries, mood-stabilising medication."},
+Be:{ox:[2],en:1.57,radius:112,ie1:899.5,mp:1560,bp:2742,density:1.85,phase:"solid",discovered:1798,by:"Louis-Nicolas Vauquelin",use:"Lightweight aerospace alloys, X-ray windows."},
+B:{ox:[3],en:2.04,radius:87,ie1:800.6,mp:2349,bp:4200,density:2.34,phase:"solid",discovered:1808,by:"Gay-Lussac & Thénard",use:"Borosilicate glass, semiconductors, detergents."},
+C:{ox:[4,2,-4],en:2.55,radius:67,ie1:1086.5,mp:3823,bp:4098,density:2.267,phase:"solid",discovered:-3750,by:"Known since antiquity (charcoal, soot)",use:"Organic chemistry backbone, steel, graphite, diamond."},
+N:{ox:[-3,3,5],en:3.04,radius:56,ie1:1402.3,mp:63,bp:77,density:0.0012506,phase:"gas",discovered:1772,by:"Daniel Rutherford",use:"Fertilisers, inert atmosphere, liquid nitrogen cooling."},
+O:{ox:[-2,-1],en:3.44,radius:48,ie1:1313.9,mp:54,bp:90,density:0.001429,phase:"gas",discovered:1774,by:"Carl Wilhelm Scheele & Joseph Priestley",use:"Respiration, combustion, steelmaking."},
+F:{ox:[-1],en:3.98,radius:42,ie1:1681.0,mp:53,bp:85,density:0.001696,phase:"gas",discovered:1886,by:"Henri Moissan",use:"Teflon, toothpaste (fluoride), refrigerants."},
+Ne:{ox:[0],en:null,radius:38,ie1:2080.7,mp:24,bp:27,density:0.0008999,phase:"gas",discovered:1898,by:"William Ramsay & Morris Travers",use:"Neon signage, cryogenic refrigerant."},
+Na:{ox:[1],en:0.93,radius:190,ie1:495.8,mp:371,bp:1156,density:0.971,phase:"solid",discovered:1807,by:"Humphry Davy",use:"Table salt, street lighting, heat-transfer fluid."},
+Mg:{ox:[2],en:1.31,radius:145,ie1:737.7,mp:923,bp:1363,density:1.738,phase:"solid",discovered:1755,by:"Joseph Black",use:"Lightweight alloys, chlorophyll, fireworks."},
+Al:{ox:[3],en:1.61,radius:118,ie1:577.5,mp:933,bp:2792,density:2.70,phase:"solid",discovered:1825,by:"Hans Christian Ørsted",use:"Aircraft, cans, foil, construction."},
+Si:{ox:[4,-4],en:1.90,radius:111,ie1:786.5,mp:1687,bp:3538,density:2.3296,phase:"solid",discovered:1824,by:"Jöns Jacob Berzelius",use:"Semiconductors, glass, silicone."},
+P:{ox:[-3,3,5],en:2.19,radius:98,ie1:1011.8,mp:317,bp:550,density:1.823,phase:"solid",discovered:1669,by:"Hennig Brand",use:"Fertilisers, matches, DNA backbone."},
+S:{ox:[-2,4,6],en:2.58,radius:88,ie1:999.6,mp:388,bp:718,density:2.07,phase:"solid",discovered:-2000,by:"Known since antiquity",use:"Sulfuric acid, vulcanised rubber, fungicides."},
+Cl:{ox:[-1,1,3,5,7],en:3.16,radius:79,ie1:1251.2,mp:172,bp:239,density:0.003214,phase:"gas",discovered:1774,by:"Carl Wilhelm Scheele",use:"Water disinfection, PVC, bleach."},
+Ar:{ox:[0],en:null,radius:71,ie1:1520.6,mp:84,bp:87,density:0.0017837,phase:"gas",discovered:1894,by:"Lord Rayleigh & William Ramsay",use:"Inert shielding gas for welding, incandescent bulbs."},
+K:{ox:[1],en:0.82,radius:243,ie1:418.8,mp:337,bp:1032,density:0.862,phase:"solid",discovered:1807,by:"Humphry Davy",use:"Fertilisers, flame test standard, biological electrolyte."},
+Ca:{ox:[2],en:1.00,radius:194,ie1:589.8,mp:1115,bp:1757,density:1.55,phase:"solid",discovered:1808,by:"Humphry Davy",use:"Bones and teeth, cement, limestone."},
+Sc:{ox:[3],en:1.36,radius:184,ie1:633.1,mp:1814,bp:3109,density:2.985,phase:"solid",discovered:1879,by:"Lars Fredrik Nilson",use:"Aerospace alloys, stadium lighting."},
+Ti:{ox:[4,3],en:1.54,radius:176,ie1:658.8,mp:1941,bp:3560,density:4.506,phase:"solid",discovered:1791,by:"William Gregor",use:"Aircraft frames, hip implants, white pigment."},
+V:{ox:[5,4,3,2],en:1.63,radius:171,ie1:650.9,mp:2183,bp:3680,density:6.0,phase:"solid",discovered:1801,by:"Andrés Manuel del Río",use:"Steel alloys, catalysts, redox-flow batteries."},
+Cr:{ox:[3,6,2],en:1.66,radius:166,ie1:652.9,mp:2180,bp:2944,density:7.15,phase:"solid",discovered:1797,by:"Louis Nicolas Vauquelin",use:"Stainless steel, chrome plating, pigments."},
+Mn:{ox:[2,4,7],en:1.55,radius:161,ie1:717.3,mp:1519,bp:2334,density:7.21,phase:"solid",discovered:1774,by:"Johan Gottlieb Gahn",use:"Steel hardening, batteries, glass decolouriser."},
+Fe:{ox:[2,3],en:1.83,radius:156,ie1:762.5,mp:1811,bp:3134,density:7.874,phase:"solid",discovered:-3000,by:"Known since antiquity",use:"Structural steel, haemoglobin."},
+Co:{ox:[2,3],en:1.88,radius:152,ie1:760.4,mp:1768,bp:3200,density:8.90,phase:"solid",discovered:1735,by:"Georg Brandt",use:"Rechargeable battery cathodes, blue pigment, alloys."},
+Ni:{ox:[2,3],en:1.91,radius:149,ie1:737.1,mp:1728,bp:3186,density:8.908,phase:"solid",discovered:1751,by:"Axel Fredrik Cronstedt",use:"Stainless steel, coinage, battery electrodes."},
+Cu:{ox:[2,1],en:1.90,radius:145,ie1:745.5,mp:1358,bp:2835,density:8.96,phase:"solid",discovered:-9000,by:"Known since antiquity",use:"Electrical wiring, plumbing, alloys (brass, bronze)."},
+Zn:{ox:[2],en:1.65,radius:142,ie1:906.4,mp:693,bp:1180,density:7.14,phase:"solid",discovered:1746,by:"Andreas Sigismund Marggraf",use:"Galvanising steel, batteries, brass."},
+Ga:{ox:[3],en:1.81,radius:136,ie1:578.8,mp:303,bp:2477,density:5.91,phase:"solid",discovered:1875,by:"Paul-Émile Lecoq de Boisbaudran",use:"LEDs, semiconductors (GaAs), low-melting alloys."},
+Ge:{ox:[4],en:2.01,radius:125,ie1:762.2,mp:1211,bp:3106,density:5.323,phase:"solid",discovered:1886,by:"Clemens Winkler",use:"Fibre-optic and infrared optics, semiconductors."},
+As:{ox:[-3,3,5],en:2.18,radius:114,ie1:947.0,mp:1090,bp:887,density:5.727,phase:"solid",discovered:1250,by:"Albertus Magnus",use:"Semiconductor doping, historically pesticides (toxic)."},
+Se:{ox:[-2,4,6],en:2.55,radius:103,ie1:941.0,mp:494,bp:958,density:4.81,phase:"solid",discovered:1817,by:"Jöns Jacob Berzelius",use:"Photocopier drums, glass decolouriser, dietary trace mineral."},
+Br:{ox:[-1,1,5],en:2.96,radius:94,ie1:1139.9,mp:266,bp:332,density:3.10,phase:"liquid",discovered:1826,by:"Antoine Balard",use:"Flame retardants, photographic film."},
+Kr:{ox:[0,2],en:3.00,radius:88,ie1:1350.8,mp:116,bp:120,density:0.003733,phase:"gas",discovered:1898,by:"William Ramsay & Morris Travers",use:"High-performance camera flashes, lasers."},
+Rb:{ox:[1],en:0.82,radius:265,ie1:403.0,mp:312,bp:961,density:1.532,phase:"solid",discovered:1861,by:"Robert Bunsen & Gustav Kirchhoff",use:"Atomic clocks, research reagent."},
+Sr:{ox:[2],en:0.95,radius:219,ie1:549.5,mp:1050,bp:1655,density:2.64,phase:"solid",discovered:1790,by:"Adair Crawford",use:"Fireworks (red flame), ferrite magnets."},
+Y:{ox:[3],en:1.22,radius:212,ie1:600.0,mp:1799,bp:3609,density:4.47,phase:"solid",discovered:1794,by:"Johan Gadolin",use:"LED phosphors, camera lenses, superconductors."},
+Zr:{ox:[4],en:1.33,radius:206,ie1:640.1,mp:2128,bp:4682,density:6.52,phase:"solid",discovered:1789,by:"Martin Heinrich Klaproth",use:"Nuclear reactor cladding, ceramics."},
+Nb:{ox:[5,3],en:1.6,radius:198,ie1:652.1,mp:2750,bp:5017,density:8.57,phase:"solid",discovered:1801,by:"Charles Hatchett",use:"Superconducting magnets, steel alloys."},
+Mo:{ox:[6,4,3],en:2.16,radius:190,ie1:684.3,mp:2896,bp:4912,density:10.28,phase:"solid",discovered:1781,by:"Carl Wilhelm Scheele",use:"High-strength steel alloys, filaments."},
+Tc:{ox:[7,4],en:1.9,radius:183,ie1:702.0,mp:2430,bp:4538,density:11.0,phase:"solid",discovered:1937,by:"Carlo Perrier & Emilio Segrè",use:"Medical radioisotope imaging (⁹⁹ᵐTc)."},
+Ru:{ox:[3,4],en:2.2,radius:178,ie1:710.2,mp:2607,bp:4423,density:12.45,phase:"solid",discovered:1844,by:"Karl Ernst Claus",use:"Electrical contacts, catalysts, hard alloy plating."},
+Rh:{ox:[3],en:2.28,radius:173,ie1:719.7,mp:2237,bp:3968,density:12.41,phase:"solid",discovered:1803,by:"William Hyde Wollaston",use:"Catalytic converters, jewellery plating."},
+Pd:{ox:[2,4],en:2.20,radius:169,ie1:804.4,mp:1828,bp:3236,density:12.02,phase:"solid",discovered:1803,by:"William Hyde Wollaston",use:"Catalytic converters, hydrogen storage, jewellery."},
+Ag:{ox:[1],en:1.93,radius:165,ie1:731.0,mp:1235,bp:2435,density:10.49,phase:"solid",discovered:-3000,by:"Known since antiquity",use:"Jewellery, electrical contacts, photography, antimicrobial coatings."},
+Cd:{ox:[2],en:1.69,radius:161,ie1:867.8,mp:594,bp:1040,density:8.65,phase:"solid",discovered:1817,by:"Karl Samuel Leberecht Hermann & Friedrich Stromeyer",use:"Rechargeable NiCd batteries, pigments."},
+In:{ox:[3],en:1.78,radius:156,ie1:558.3,mp:430,bp:2345,density:7.31,phase:"solid",discovered:1863,by:"Ferdinand Reich & Hieronymous Richter",use:"Touchscreen electrodes (ITO), solder."},
+Sn:{ox:[2,4],en:1.96,radius:145,ie1:708.6,mp:505,bp:2875,density:7.265,phase:"solid",discovered:-3500,by:"Known since antiquity",use:"Solder, tin plating, bronze alloys."},
+Sb:{ox:[-3,3,5],en:2.05,radius:133,ie1:833.7,mp:904,bp:1860,density:6.697,phase:"solid",discovered:1450,by:"Known since antiquity",use:"Flame retardants, lead-acid battery alloys."},
+Te:{ox:[-2,4,6],en:2.1,radius:123,ie1:869.3,mp:723,bp:1261,density:6.24,phase:"solid",discovered:1782,by:"Franz-Joseph Müller von Reichenstein",use:"Solar panel alloys, steel and copper alloys."},
+I:{ox:[-1,1,5,7],en:2.66,radius:115,ie1:1008.4,mp:387,bp:457,density:4.933,phase:"solid",discovered:1811,by:"Bernard Courtois",use:"Antiseptics, thyroid hormone, contrast media."},
+Xe:{ox:[0,2,4,6],en:2.60,radius:108,ie1:1170.4,mp:161,bp:165,density:0.005887,phase:"gas",discovered:1898,by:"William Ramsay & Morris Travers",use:"Ion propulsion, high-intensity lamps."},
+Cs:{ox:[1],en:0.79,radius:298,ie1:375.7,mp:302,bp:944,density:1.93,phase:"solid",discovered:1860,by:"Robert Bunsen & Gustav Kirchhoff",use:"Atomic clocks (defines the second), drilling fluids."},
+Ba:{ox:[2],en:0.89,radius:253,ie1:502.9,mp:1000,bp:2170,density:3.51,phase:"solid",discovered:1808,by:"Humphry Davy",use:"Fireworks (green flame), medical imaging (barium meal)."},
+La:{ox:[3],en:1.10,radius:226,ie1:538.1,mp:1193,bp:3737,density:6.15,phase:"solid",discovered:1839,by:"Carl Gustaf Mosander",use:"Camera lenses, catalytic cracking catalysts."},
+Ce:{ox:[3,4],en:1.12,radius:210,ie1:534.4,mp:1068,bp:3716,density:6.77,phase:"solid",discovered:1803,by:"Jöns Jacob Berzelius & Wilhelm Hisinger",use:"Catalytic converters, self-cleaning ovens, lighter flints."},
+Pr:{ox:[3],en:1.13,radius:247,ie1:527.0,mp:1208,bp:3403,density:6.77,phase:"solid",discovered:1885,by:"Carl Auer von Welsbach",use:"Magnets, welding-goggle glass."},
+Nd:{ox:[3],en:1.14,radius:206,ie1:533.1,mp:1297,bp:3347,density:7.01,phase:"solid",discovered:1885,by:"Carl Auer von Welsbach",use:"Powerful permanent magnets (NdFeB)."},
+Pm:{ox:[3],en:null,radius:205,ie1:540.0,mp:1315,bp:3273,density:7.26,phase:"solid",discovered:1945,by:"Marinsky, Glendenin & Coryell",use:"Nuclear-powered pacemaker batteries (historic), luminous paint."},
+Sm:{ox:[3,2],en:1.17,radius:238,ie1:544.5,mp:1345,bp:2067,density:7.52,phase:"solid",discovered:1879,by:"Paul-Émile Lecoq de Boisbaudran",use:"SmCo permanent magnets, control rods."},
+Eu:{ox:[3,2],en:null,radius:231,ie1:547.1,mp:1099,bp:1802,density:5.24,phase:"solid",discovered:1901,by:"Eugène-Anatole Demarçay",use:"Red and blue phosphors in displays."},
+Gd:{ox:[3],en:1.20,radius:233,ie1:593.4,mp:1585,bp:3273,density:7.90,phase:"solid",discovered:1880,by:"Jean Charles Galissard de Marignac",use:"MRI contrast agents, neutron shielding."},
+Tb:{ox:[3],en:null,radius:225,ie1:565.8,mp:1629,bp:3396,density:8.23,phase:"solid",discovered:1843,by:"Carl Gustaf Mosander",use:"Green phosphors, magnetostrictive alloys."},
+Dy:{ox:[3],en:1.22,radius:228,ie1:573.0,mp:1680,bp:2840,density:8.54,phase:"solid",discovered:1886,by:"Paul-Émile Lecoq de Boisbaudran",use:"High-strength magnets in EV motors."},
+Ho:{ox:[3],en:1.23,radius:226,ie1:581.0,mp:1734,bp:2873,density:8.79,phase:"solid",discovered:1878,by:"Delafontaine & Soret",use:"Medical and dental lasers, magnets."},
+Er:{ox:[3],en:1.24,radius:226,ie1:589.3,mp:1802,bp:3141,density:9.07,phase:"solid",discovered:1843,by:"Carl Gustaf Mosander",use:"Fibre-optic amplifiers, pink glass/glaze colourant."},
+Tm:{ox:[3],en:1.25,radius:222,ie1:596.7,mp:1818,bp:2223,density:9.32,phase:"solid",discovered:1879,by:"Per Teodor Cleve",use:"Portable X-ray sources."},
+Yb:{ox:[3,2],en:null,radius:222,ie1:603.4,mp:1097,bp:1469,density:6.90,phase:"solid",discovered:1878,by:"Jean Charles Galissard de Marignac",use:"Stress gauges, atomic clock research."},
+Lu:{ox:[3],en:1.27,radius:217,ie1:523.5,mp:1925,bp:3675,density:9.84,phase:"solid",discovered:1907,by:"Georges Urbain",use:"PET scan detector crystals."},
+Hf:{ox:[4],en:1.3,radius:208,ie1:658.5,mp:2506,bp:4876,density:13.31,phase:"solid",discovered:1923,by:"Dirk Coster & George de Hevesy",use:"Nuclear control rods, high-k transistor gates."},
+Ta:{ox:[5],en:1.5,radius:200,ie1:761.0,mp:3290,bp:5731,density:16.69,phase:"solid",discovered:1802,by:"Anders Gustaf Ekeberg",use:"Capacitors in phones and laptops, surgical implants."},
+W:{ox:[6,4],en:2.36,radius:193,ie1:770.0,mp:3695,bp:5828,density:19.25,phase:"solid",discovered:1783,by:"Juan José and Fausto Elhuyar",use:"Light bulb filaments, drill bits, radiation shielding."},
+Re:{ox:[7,4],en:1.9,radius:188,ie1:760.0,mp:3459,bp:5869,density:21.02,phase:"solid",discovered:1925,by:"Noddack, Tacke & Berg",use:"Jet engine superalloys, thermocouples."},
+Os:{ox:[4,3],en:2.2,radius:185,ie1:840.0,mp:3306,bp:5285,density:22.59,phase:"solid",discovered:1803,by:"Smithson Tennant",use:"Fountain pen nibs, electrical contacts (densest natural element)."},
+Ir:{ox:[3,4],en:2.20,radius:180,ie1:880.0,mp:2719,bp:4403,density:22.56,phase:"solid",discovered:1803,by:"Smithson Tennant",use:"Spark plugs, crucibles, the Paris kilogram standard alloy."},
+Pt:{ox:[2,4],en:2.28,radius:177,ie1:870.0,mp:2041,bp:4098,density:21.45,phase:"solid",discovered:1735,by:"Antonio de Ulloa",use:"Catalytic converters, jewellery, cancer drugs (cisplatin)."},
+Au:{ox:[1,3],en:2.54,radius:174,ie1:890.1,mp:1337,bp:3129,density:19.30,phase:"solid",discovered:-2600,by:"Known since antiquity",use:"Jewellery, electronics contacts, currency reserve."},
+Hg:{ox:[2,1],en:2.00,radius:171,ie1:1007.1,mp:234,bp:630,density:13.53,phase:"liquid",discovered:-1500,by:"Known since antiquity",use:"Thermometers (historic), fluorescent lamps, dental amalgam."},
+Tl:{ox:[1,3],en:1.62,radius:156,ie1:589.4,mp:577,bp:1746,density:11.85,phase:"solid",discovered:1861,by:"William Crookes",use:"Historically rodenticide (toxic, now restricted), infrared optics."},
+Pb:{ox:[2,4],en:2.33,radius:154,ie1:715.6,mp:601,bp:2022,density:11.34,phase:"solid",discovered:-7000,by:"Known since antiquity",use:"Lead-acid batteries, radiation shielding."},
+Bi:{ox:[3,5],en:2.02,radius:143,ie1:703.0,mp:544,bp:1837,density:9.78,phase:"solid",discovered:1400,by:"Known since antiquity (isolated by Claude François Geoffroy, 1753)",use:"Low-toxicity solder, cosmetics, stomach-ailment medication."},
+Po:{ox:[2,4],en:2.0,radius:135,ie1:812.1,mp:527,bp:1235,density:9.20,phase:"solid",discovered:1898,by:"Marie & Pierre Curie",use:"Anti-static devices, historic heat sources for spacecraft."},
+At:{ox:[-1,1],en:2.2,radius:127,ie1:null,mp:575,bp:610,density:null,phase:"solid",discovered:1940,by:"Corson, MacKenzie & Segrè",use:"Experimental targeted alpha-particle cancer therapy."},
+Rn:{ox:[0,2],en:2.2,radius:120,ie1:1037.0,mp:202,bp:211,density:0.00973,phase:"gas",discovered:1900,by:"Friedrich Ernst Dorn",use:"Historic radiotherapy source; now mainly a soil-gas hazard indicator."},
+Fr:{ox:[1],en:0.7,radius:null,ie1:380.0,mp:300,bp:950,density:null,phase:"solid",discovered:1939,by:"Marguerite Perey",use:"No commercial use — studied only in trace nuclear-physics samples."},
+Ra:{ox:[2],en:0.9,radius:null,ie1:509.3,mp:973,bp:2010,density:5.5,phase:"solid",discovered:1898,by:"Marie & Pierre Curie",use:"Historic luminous paint (discontinued, radioactive hazard)."},
+Ac:{ox:[3],en:1.1,radius:null,ie1:499.0,mp:1500,bp:3200,density:10.07,phase:"solid",discovered:1899,by:"André-Louis Debierne",use:"Neutron source in research; no large-scale use (rare, intensely radioactive)."},
+Th:{ox:[4],en:1.3,radius:null,ie1:587.0,mp:2023,bp:5061,density:11.72,phase:"solid",discovered:1829,by:"Jöns Jacob Berzelius",use:"Gas mantle historic use; proposed thorium-cycle nuclear fuel."},
+Pa:{ox:[5,4],en:1.5,radius:null,ie1:568.0,mp:1841,bp:4300,density:15.37,phase:"solid",discovered:1913,by:"Kasimir Fajans & Oswald Helmuth Göhring",use:"No practical use — research only."},
+U:{ox:[6,4],en:1.38,radius:null,ie1:597.6,mp:1405,bp:4404,density:19.1,phase:"solid",discovered:1789,by:"Martin Heinrich Klaproth",use:"Nuclear fuel and weapons, historic glass colourant."},
+Np:{ox:[5,4,6],en:1.36,radius:null,ie1:604.5,mp:917,bp:4273,density:20.2,phase:"solid",discovered:1940,by:"Edwin McMillan & Philip H. Abelson",use:"Neutron detectors; byproduct of nuclear reactors."},
+Pu:{ox:[4,3,6],en:1.28,radius:null,ie1:584.7,mp:913,bp:3501,density:19.85,phase:"solid",discovered:1940,by:"Glenn T. Seaborg and team",use:"Nuclear weapons and reactor fuel, spacecraft power (RTGs)."},
+Am:{ox:[3],en:1.3,radius:null,ie1:578.0,mp:1449,bp:2880,density:12.0,phase:"solid",discovered:1944,by:"Glenn T. Seaborg and team",use:"Smoke detector ionisation chambers."},
+Cm:{ox:[3],en:1.3,radius:null,ie1:581.0,mp:1613,bp:3383,density:13.51,phase:"solid",discovered:1944,by:"Glenn T. Seaborg and team",use:"Spacecraft alpha-particle X-ray spectrometers (e.g. Mars rovers)."},
+Bk:{ox:[3,4],en:1.3,radius:null,ie1:601.0,mp:1259,bp:2900,density:14.78,phase:"solid",discovered:1949,by:"Glenn T. Seaborg and team",use:"No practical use — produced in milligram quantities for research."},
+Cf:{ox:[3],en:1.3,radius:null,ie1:608.0,mp:1173,bp:1743,density:15.1,phase:"solid",discovered:1950,by:"Glenn T. Seaborg and team",use:"Portable neutron source for well-logging and reactor start-up."},
+Es:{ox:[3],en:1.3,radius:null,ie1:619.0,mp:1133,bp:null,density:null,phase:"solid",discovered:1952,by:"Argonne, Los Alamos & Berkeley teams",use:"No practical use — synthesised in atom-at-a-time quantities."},
+Fm:{ox:[3],en:1.3,radius:null,ie1:627.0,mp:1800,bp:null,density:null,phase:"solid",discovered:1952,by:"Argonne, Los Alamos & Berkeley teams",use:"No practical use — research only."},
+Md:{ox:[3,2],en:1.3,radius:null,ie1:635.0,mp:1100,bp:null,density:null,phase:"solid",discovered:1955,by:"Glenn T. Seaborg and team",use:"No practical use — research only."},
+No:{ox:[2,3],en:1.3,radius:null,ie1:642.0,mp:1100,bp:null,density:null,phase:"solid",discovered:1958,by:"Joint Institute for Nuclear Research, Dubna",use:"No practical use — research only."},
+Lr:{ox:[3],en:null,radius:null,ie1:470.0,mp:1900,bp:null,density:null,phase:"solid",discovered:1961,by:"Lawrence Berkeley Laboratory",use:"No practical use — research only."},
+Rf:{ox:[4],en:null,radius:null,ie1:null,mp:null,bp:null,density:null,phase:"solid",discovered:1964,by:"Dubna / Berkeley (disputed priority)",use:"No practical use — a few atoms at a time."},
+Db:{ox:[5],en:null,radius:null,ie1:null,mp:null,bp:null,density:null,phase:"solid",discovered:1970,by:"Berkeley / Dubna (disputed priority)",use:"No practical use — a few atoms at a time."},
+Sg:{ox:[6],en:null,radius:null,ie1:null,mp:null,bp:null,density:null,phase:"solid",discovered:1974,by:"Berkeley / Dubna (disputed priority)",use:"No practical use — a few atoms at a time."},
+Bh:{ox:[7],en:null,radius:null,ie1:null,mp:null,bp:null,density:null,phase:"solid",discovered:1981,by:"GSI Darmstadt",use:"No practical use — a few atoms at a time."},
+Hs:{ox:[8],en:null,radius:null,ie1:null,mp:null,bp:null,density:null,phase:"solid",discovered:1984,by:"GSI Darmstadt",use:"No practical use — a few atoms at a time."},
+Mt:{ox:[null],en:null,radius:null,ie1:null,mp:null,bp:null,density:null,phase:"solid",discovered:1982,by:"GSI Darmstadt",use:"No practical use — only a handful of atoms ever produced."},
+Ds:{ox:[null],en:null,radius:null,ie1:null,mp:null,bp:null,density:null,phase:"solid",discovered:1994,by:"GSI Darmstadt",use:"No practical use — only a handful of atoms ever produced."},
+Rg:{ox:[null],en:null,radius:null,ie1:null,mp:null,bp:null,density:null,phase:"solid",discovered:1994,by:"GSI Darmstadt",use:"No practical use — only a handful of atoms ever produced."},
+Cn:{ox:[2],en:null,radius:null,ie1:null,mp:null,bp:null,density:null,phase:"gas",discovered:1996,by:"GSI Darmstadt",use:"No practical use — predicted to be a volatile liquid or gas at room temperature."},
+Nh:{ox:[null],en:null,radius:null,ie1:null,mp:null,bp:null,density:null,phase:"solid",discovered:2004,by:"RIKEN, Japan",use:"No practical use — only a few atoms ever produced."},
+Fl:{ox:[null],en:null,radius:null,ie1:null,mp:null,bp:null,density:null,phase:"solid",discovered:1998,by:"Joint Institute for Nuclear Research, Dubna",use:"No practical use — predicted to be volatile; only a few atoms ever produced."},
+Mc:{ox:[null],en:null,radius:null,ie1:null,mp:null,bp:null,density:null,phase:"solid",discovered:2003,by:"Joint Institute for Nuclear Research, Dubna",use:"No practical use — only a few atoms ever produced."},
+Lv:{ox:[null],en:null,radius:null,ie1:null,mp:null,bp:null,density:null,phase:"solid",discovered:2000,by:"Joint Institute for Nuclear Research, Dubna",use:"No practical use — only a few atoms ever produced."},
+Ts:{ox:[null],en:null,radius:null,ie1:null,mp:null,bp:null,density:null,phase:"solid",discovered:2010,by:"Dubna & Oak Ridge",use:"No practical use — only a few atoms ever produced."},
+Og:{ox:[null],en:null,radius:null,ie1:null,mp:null,bp:null,density:null,phase:"solid",discovered:2002,by:"Joint Institute for Nuclear Research, Dubna",use:"No practical use — a handful of atoms ever produced, each lasting under a millisecond."}
+};
+
+/* ============================================================
+   Electron configuration generator (aufbau order + known ground-state
+   exceptions), rendered in conventional shell-grouped order.
+   ============================================================ */
+const AUFBAU_ORDER = ["1s","2s","2p","3s","3p","4s","3d","4p","5s","4d","5p","6s","4f","5d","6p","7s","5f","6d","7p"];
+const SUB_CAP = { s:2, p:6, d:10, f:14 };
+const CONFIG_EXCEPTIONS = {
+  24:"1s2 2s2 2p6 3s2 3p6 3d5 4s1", 29:"1s2 2s2 2p6 3s2 3p6 3d10 4s1",
+  41:"1s2 2s2 2p6 3s2 3p6 3d10 4s2 4p6 4d4 5s1", 42:"1s2 2s2 2p6 3s2 3p6 3d10 4s2 4p6 4d5 5s1",
+  44:"1s2 2s2 2p6 3s2 3p6 3d10 4s2 4p6 4d7 5s1", 45:"1s2 2s2 2p6 3s2 3p6 3d10 4s2 4p6 4d8 5s1",
+  46:"1s2 2s2 2p6 3s2 3p6 3d10 4s2 4p6 4d10", 47:"1s2 2s2 2p6 3s2 3p6 3d10 4s2 4p6 4d10 5s1",
+  57:"1s2 2s2 2p6 3s2 3p6 3d10 4s2 4p6 4d10 5s2 5p6 5d1 6s2",
+  58:"1s2 2s2 2p6 3s2 3p6 3d10 4s2 4p6 4d10 5s2 5p6 4f1 5d1 6s2",
+  64:"1s2 2s2 2p6 3s2 3p6 3d10 4s2 4p6 4d10 5s2 5p6 4f7 5d1 6s2",
+  78:"1s2 2s2 2p6 3s2 3p6 3d10 4s2 4p6 4d10 4f14 5s2 5p6 5d9 6s1",
+  79:"1s2 2s2 2p6 3s2 3p6 3d10 4s2 4p6 4d10 4f14 5s2 5p6 5d10 6s1",
+  89:"1s2 2s2 2p6 3s2 3p6 3d10 4s2 4p6 4d10 4f14 5s2 5p6 5d10 6s2 6p6 6d1 7s2",
+  90:"1s2 2s2 2p6 3s2 3p6 3d10 4s2 4p6 4d10 4f14 5s2 5p6 5d10 6s2 6p6 6d2 7s2",
+  91:"1s2 2s2 2p6 3s2 3p6 3d10 4s2 4p6 4d10 4f14 5s2 5p6 5d10 6s2 6p6 5f2 6d1 7s2",
+  92:"1s2 2s2 2p6 3s2 3p6 3d10 4s2 4p6 4d10 4f14 5s2 5p6 5d10 6s2 6p6 5f3 6d1 7s2",
+  93:"1s2 2s2 2p6 3s2 3p6 3d10 4s2 4p6 4d10 4f14 5s2 5p6 5d10 6s2 6p6 5f4 6d1 7s2",
+  96:"1s2 2s2 2p6 3s2 3p6 3d10 4s2 4p6 4d10 4f14 5s2 5p6 5d10 6s2 6p6 5f7 6d1 7s2",
+  103:"1s2 2s2 2p6 3s2 3p6 3d10 4s2 4p6 4d10 4f14 5s2 5p6 5d10 6s2 6p6 5f14 7s2 7p1"
+};
+const L_ORDER = { s:0, p:1, d:2, f:3 };
+function configDisplayOrder(str){
+  const parts = str.split(" ").map(p=>{
+    const n = parseInt(p,10);
+    const l = p.match(/[a-z]/)[0];
+    return { n, l, str:p };
+  });
+  parts.sort((a,b)=> a.n-b.n || L_ORDER[a.l]-L_ORDER[b.l]);
+  return parts.map(p=>p.str).join(" ");
+}
+function buildElectronConfig(Z){
+  if (CONFIG_EXCEPTIONS[Z]) return configDisplayOrder(CONFIG_EXCEPTIONS[Z]);
+  let remaining = Z;
+  const parts = [];
+  for (const sub of AUFBAU_ORDER){
+    const l = sub[sub.length-1];
+    const take = Math.min(SUB_CAP[l], remaining);
+    if (take > 0) parts.push(sub+take);
+    remaining -= take;
+    if (remaining <= 0) break;
+  }
+  return configDisplayOrder(parts.join(" "));
+}
+const NOBLE_Z = [2,10,18,36,54,86,118];
+const NOBLE_SYM = {2:"He",10:"Ne",18:"Ar",36:"Kr",54:"Xe",86:"Rn",118:"Og"};
+function toNobleShorthand(Z, fullConfig){
+  let coreZ = 0;
+  for (const n of NOBLE_Z){ if (n < Z) coreZ = n; else break; }
+  if (coreZ === 0) return fullConfig;
+  const coreParts = new Set(buildElectronConfig(coreZ).split(" "));
+  const remaining = fullConfig.split(" ").filter(p => !coreParts.has(p));
+  return "["+NOBLE_SYM[coreZ]+"] "+remaining.join(" ");
+}
+function toShellCounts(fullConfig){
+  const shells = {};
+  for (const part of fullConfig.split(" ")){
+    const n = parseInt(part[0],10);
+    const count = parseInt(part.slice(2),10);
+    shells[n] = (shells[n]||0) + count;
+  }
+  const maxN = Math.max(...Object.keys(shells).map(Number));
+  const arr = [];
+  for (let n=1; n<=maxN; n++) arr.push(shells[n]||0);
+  return arr;
+}
+
+/* ============================================================
+   DATA — chemistry, physics, biology, maths reference (Cambridge Y7)
+   ============================================================ */
+const STATES_INFO = {
+  changes: [
+    {name:"Melting", from:"Solid", to:"Liquid", note:"Particles gain enough energy to break out of fixed positions."},
+    {name:"Freezing", from:"Liquid", to:"Solid", note:"Particles lose energy and lock into fixed positions."},
+    {name:"Boiling / evaporating", from:"Liquid", to:"Gas", note:"Particles gain enough energy to escape and spread out."},
+    {name:"Condensing", from:"Gas", to:"Liquid", note:"Particles lose energy and move closer together."},
+    {name:"Subliming", from:"Solid", to:"Gas", note:"Particles jump straight from fixed positions to spreading out (e.g. dry ice)."}
+  ],
+  particleModel: [
+    {state:"Solid", arrangement:"Regular, tightly packed", movement:"Vibrate on the spot", energy:"Lowest"},
+    {state:"Liquid", arrangement:"Close together but random", movement:"Slide past each other", energy:"Medium"},
+    {state:"Gas", arrangement:"Far apart, random", movement:"Move fast in all directions", energy:"Highest"}
+  ],
+  substances: [
+    {name:"Water", mp:0, bp:100},
+    {name:"Ethanol", mp:-114, bp:78},
+    {name:"Oxygen", mp:-218, bp:-183},
+    {name:"Iron", mp:1538, bp:2862},
+    {name:"Table salt (sodium chloride)", mp:801, bp:1465},
+    {name:"Carbon dioxide", mp:-78, bp:-78, note:"sublimes directly from solid to gas at normal pressure"},
+    {name:"Candle wax (paraffin)", mp:55, bp:370},
+    {name:"Nitrogen", mp:-210, bp:-196},
+    {name:"Copper", mp:1085, bp:2562},
+    {name:"Mercury", mp:-39, bp:357}
+  ]
+};
+
+const MIXTURES = {
+  definitions: [
+    {term:"Element", def:"A substance made of only one type of atom — cannot be broken down further by chemical means.", example:"Oxygen (O₂), Iron (Fe), Carbon (C)"},
+    {term:"Compound", def:"Two or more elements chemically joined together in fixed proportions — properties differ from the elements it's made from.", example:"Water (H₂O), Carbon dioxide (CO₂), Salt (NaCl)"},
+    {term:"Mixture", def:"Two or more substances mixed together but not chemically joined — can be separated by physical methods, and keeps the properties of the original substances.", example:"Air, salt water, soil, sand and iron filings"}
+  ],
+  separating: [
+    {method:"Filtration", use:"Separating an insoluble solid from a liquid", how:"Pour through filter paper — the solid stays behind, the liquid passes through", example:"Sand from water"},
+    {method:"Evaporation", use:"Getting a dissolved solid back from a solution", how:"Heat the solution so the liquid evaporates, leaving the solid behind", example:"Salt from salt water"},
+    {method:"Distillation", use:"Separating a liquid from a solution (and keeping the liquid)", how:"Heat to evaporate, then cool the vapour so it condenses back into a pure liquid", example:"Pure water from salt water"},
+    {method:"Chromatography", use:"Separating substances dissolved in a mixture (e.g. dyes)", how:"Solvent carries substances up paper at different speeds depending on solubility", example:"Separating the colours in ink"},
+    {method:"Magnetism", use:"Separating a magnetic material from a mixture", how:"A magnet pulls out the magnetic component", example:"Iron filings from sand"},
+    {method:"Sieving", use:"Separating solids of different particle sizes", how:"Pass the mixture through a mesh — small particles fall through, large ones stay", example:"Separating pasta from sauce, stones from soil"}
+  ]
+};
+
+const ACIDS_ALKALIS = {
+  phScale: [
+    {ph:"0–2", label:"Strong acid", colour:"red", examples:"Battery acid, hydrochloric acid"},
+    {ph:"3–5", label:"Weak acid", colour:"orange/yellow", examples:"Vinegar, lemon juice, rain"},
+    {ph:"6", label:"Slightly acidic", colour:"yellow-green", examples:"Milk"},
+    {ph:"7", label:"Neutral", colour:"green", examples:"Pure water"},
+    {ph:"8–9", label:"Slightly alkaline", colour:"blue-green", examples:"Sea water, baking soda solution"},
+    {ph:"10–12", label:"Weak/medium alkali", colour:"blue", examples:"Soap, ammonia solution"},
+    {ph:"13–14", label:"Strong alkali", colour:"purple/violet", examples:"Oven cleaner, sodium hydroxide"}
+  ],
+  indicators: [
+    {name:"Litmus paper", acid:"Turns red", alkali:"Turns blue"},
+    {name:"Universal indicator", acid:"Red/orange/yellow", alkali:"Blue/purple", note:"Also gives an approximate pH number via the colour chart"},
+    {name:"Phenolphthalein", acid:"Colourless", alkali:"Pink"}
+  ],
+  neutralisation: "Acid + Alkali → Salt + Water. The H⁺ ions from the acid and OH⁻ ions from the alkali combine to form neutral water, leaving a salt dissolved in solution.",
+  safety: ["Always add acid to water, not water to acid.", "Wear eye protection with anything below pH 3 or above pH 11.", "Rinse spills immediately with plenty of water."]
+};
+
+const METALS_NONMETALS = [
+  {property:"Appearance", metal:"Shiny (lustrous) when polished", nonmetal:"Dull"},
+  {property:"State at room temperature", metal:"Usually solid (except mercury)", nonmetal:"Solid, liquid or gas"},
+  {property:"Conducts electricity", metal:"Yes, good conductor", nonmetal:"No (except graphite)"},
+  {property:"Conducts heat", metal:"Yes, good conductor", nonmetal:"No, good insulator"},
+  {property:"Malleable / ductile", metal:"Yes — can be bent, hammered into sheets, or drawn into wires", nonmetal:"No — brittle if solid"},
+  {property:"Density", metal:"Usually high", nonmetal:"Usually low"},
+  {property:"Sound", metal:"Sonorous (rings when struck)", nonmetal:"Not sonorous"},
+  {property:"Melting/boiling point", metal:"Usually high", nonmetal:"Usually low"}
+];
+
+const REACTIONS = [
+  {name:"Combustion (burning)", equation:"Fuel + Oxygen → Carbon dioxide + Water (+ energy)", example:"Methane burning: CH₄ + 2O₂ → CO₂ + 2H₂O", note:"Releases heat and light — an exothermic reaction."},
+  {name:"Rusting", equation:"Iron + Oxygen + Water → Hydrated iron oxide (rust)", example:"4Fe + 3O₂ + xH₂O → 2Fe₂O₃·xH₂O", note:"Needs both water and oxygen — won't rust in dry air alone."},
+  {name:"Acid + Metal", equation:"Acid + Metal → Salt + Hydrogen", example:"2HCl + Mg → MgCl₂ + H₂", note:"Bubbles of hydrogen gas form — test with a lit splint (squeaky pop)."},
+  {name:"Acid + Carbonate", equation:"Acid + Carbonate → Salt + Water + Carbon dioxide", example:"2HCl + CaCO₃ → CaCl₂ + H₂O + CO₂", note:"Fizzing — test the gas with limewater (turns cloudy)."},
+  {name:"Acid + Alkali (neutralisation)", equation:"Acid + Alkali → Salt + Water", example:"HCl + NaOH → NaCl + H₂O", note:"No visible fizzing — track progress with an indicator."},
+  {name:"Thermal decomposition", equation:"Compound --(heat)--> two or more simpler substances", example:"CaCO₃ --heat--> CaO + CO₂", note:"Needs continuous heating; only one reactant."}
+];
+
+const GAS_TESTS = [
+  {gas:"Oxygen", test:"Glowing splint", result:"Relights the splint"},
+  {gas:"Hydrogen", test:"Lit splint", result:"Squeaky pop"},
+  {gas:"Carbon dioxide", test:"Limewater", result:"Turns milky/cloudy"},
+  {gas:"Chlorine", test:"Damp litmus paper", result:"Bleaches it white"}
+];
+
+const FORCES = {
+  contact: [
+    {name:"Friction", desc:"Opposes movement between two touching surfaces."},
+    {name:"Air resistance", desc:"Friction from air pushing against a moving object."},
+    {name:"Water resistance (drag)", desc:"Friction from water pushing against a moving object."},
+    {name:"Normal (support) force", desc:"Surface pushing back on an object resting on it."},
+    {name:"Tension", desc:"Pulling force transmitted through a stretched string, rope or cable."},
+    {name:"Upthrust", desc:"Upward push from a fluid on an object placed in it — why things float."}
+  ],
+  nonContact: [
+    {name:"Gravity", desc:"Attracts any two masses towards each other — on Earth, pulls everything towards the ground."},
+    {name:"Magnetic force", desc:"Attracts or repels magnetic materials, without touching."},
+    {name:"Electrostatic force", desc:"Attracts or repels charged objects, without touching."}
+  ],
+  effects: [
+    "Balanced forces (equal and opposite) — no change in motion; the object stays still or keeps moving at a steady speed.",
+    "Unbalanced forces — the object speeds up, slows down, or changes direction.",
+    "Forces can also change an object's shape (stretch, squash, bend, twist)."
+  ],
+  massWeight: [
+    {term:"Mass", def:"The amount of matter in an object. Measured in kilograms (kg). Same everywhere in the universe."},
+    {term:"Weight", def:"The force of gravity pulling on an object's mass. Measured in newtons (N). Changes with gravity — an astronaut has the same mass on the Moon but weighs less."}
+  ]
+};
+
+const ENERGY = {
+  stores: [
+    {name:"Chemical", example:"Food, batteries, fuel"},
+    {name:"Kinetic", example:"Anything moving — a rolling ball, a running person"},
+    {name:"Gravitational potential", example:"Anything raised up — a book on a shelf"},
+    {name:"Elastic (strain)", example:"A stretched rubber band, a compressed spring"},
+    {name:"Thermal", example:"Anything warm — hot water, a flame"},
+    {name:"Electrical", example:"Charge flowing through a circuit"},
+    {name:"Light", example:"Sunlight, a torch beam"},
+    {name:"Sound", example:"A speaker, a shout"}
+  ],
+  transfers: [
+    {device:"Torch", from:"Chemical (battery)", to:"Electrical → Light"},
+    {device:"Kettle", from:"Electrical", to:"Thermal"},
+    {device:"Falling ball", from:"Gravitational potential", to:"Kinetic"},
+    {device:"Car engine", from:"Chemical (fuel)", to:"Kinetic + Thermal"},
+    {device:"Solar panel", from:"Light", to:"Electrical"},
+    {device:"Wind-up toy", from:"Elastic (wound spring)", to:"Kinetic"}
+  ],
+  conservation: "Energy cannot be created or destroyed — only transferred from one store to another, or dissipated (usually as heat and sound that spreads out and becomes harder to use)."
+};
+
+const ELECTRICITY = {
+  symbols: [
+    {name:"Cell", desc:"Single power source"},
+    {name:"Battery", desc:"Two or more cells joined"},
+    {name:"Switch", desc:"Opens/closes the circuit"},
+    {name:"Bulb / lamp", desc:"Lights up when current flows"},
+    {name:"Resistor", desc:"Reduces current flow"},
+    {name:"Ammeter", desc:"Measures current, connected in series"},
+    {name:"Voltmeter", desc:"Measures potential difference, connected in parallel"},
+    {name:"Buzzer", desc:"Makes a sound when current flows"}
+  ],
+  seriesParallel: [
+    {type:"Series circuit", desc:"One loop — same current everywhere. Adding more bulbs makes each one dimmer. If one bulb breaks, the whole circuit stops."},
+    {type:"Parallel circuit", desc:"Multiple loops (branches) — each branch gets full voltage. Bulbs stay the same brightness as you add more branches. If one bulb breaks, the others keep working."}
+  ],
+  conductInsulate: [
+    {group:"Conductors", desc:"Let electricity flow through easily", examples:"Copper, iron, other metals, graphite"},
+    {group:"Insulators", desc:"Do not let electricity flow through", examples:"Plastic, rubber, wood, glass, air"}
+  ]
+};
+
+const LIGHT = {
+  facts: [
+    "Light travels in straight lines (rays) and very fast — about 300,000 km per second.",
+    "We see objects when light from them (or reflected off them) enters our eyes.",
+    "Luminous objects make their own light (the Sun, a lamp). Non-luminous objects reflect light made elsewhere (the Moon, this page)."
+  ],
+  reflection: "Law of reflection: the angle of incidence equals the angle of reflection (both measured from the normal — an imaginary line at 90° to the mirror).",
+  materials: [
+    {term:"Transparent", def:"Lets almost all light through — you can see clearly through it", example:"Clear glass, clean water"},
+    {term:"Translucent", def:"Lets some light through but scatters it — you can't see a clear image through it", example:"Frosted glass, tracing paper"},
+    {term:"Opaque", def:"Blocks all light — forms a shadow", example:"Wood, metal, a brick wall"}
+  ],
+  shadows: "A shadow forms where an opaque object blocks light from a light source. Shadows are sharper and smaller with a small, close light source; bigger and fuzzier with a large or distant one."
+};
+
+const SOUND = {
+  facts: [
+    "Sound is caused by vibrations, which travel as a wave through a medium (solid, liquid or gas).",
+    "Sound cannot travel through a vacuum (empty space) — it needs particles to pass the vibration on.",
+    "Sound travels fastest through solids, slower through liquids, slowest through gases."
+  ],
+  pitchVolume: [
+    {term:"Pitch", depends:"Frequency of vibration (Hz)", high:"Fast vibration → high pitch", low:"Slow vibration → low pitch"},
+    {term:"Volume (loudness)", depends:"Amplitude of vibration", high:"Large amplitude → loud", low:"Small amplitude → quiet"}
+  ],
+  speed: "Speed of sound in air ≈ 340 m/s — much slower than light, which is why you see lightning before you hear thunder."
+};
+
+const EARTH_SPACE = {
+  facts: [
+    {topic:"Day and night", desc:"Caused by Earth rotating on its axis once every 24 hours — the side facing the Sun has day, the other has night."},
+    {topic:"The seasons", desc:"Caused by Earth's tilted axis (23.5°) as it orbits the Sun over a year — different hemispheres tilt towards or away from the Sun."},
+    {topic:"Phases of the Moon", desc:"Caused by how much of the Moon's sunlit side we can see as it orbits Earth every ~27–29 days — new, crescent, quarter, gibbous, full, and back again."},
+    {topic:"Why the Moon doesn't make its own light", desc:"It's non-luminous — moonlight is sunlight reflected off its surface."}
+  ],
+  solarSystem: [
+    {n:1, name:"Mercury", fact:"Smallest planet, closest to the Sun"},
+    {n:2, name:"Venus", fact:"Hottest planet — thick, cloudy atmosphere traps heat"},
+    {n:3, name:"Earth", fact:"Only known planet with life"},
+    {n:4, name:"Mars", fact:"The \"Red Planet\" — iron oxide (rust) dust"},
+    {n:5, name:"Jupiter", fact:"Largest planet — a gas giant with a Great Red Spot storm"},
+    {n:6, name:"Saturn", fact:"Famous for its wide, icy rings"},
+    {n:7, name:"Uranus", fact:"Spins on its side; a pale blue-green ice giant"},
+    {n:8, name:"Neptune", fact:"Furthest planet, strongest winds in the solar system"}
+  ]
+};
+
+const CELLS = {
+  parts: [
+    {name:"Nucleus", role:"Controls the cell's activities; contains genetic material (DNA)", inPlant:true, inAnimal:true},
+    {name:"Cell membrane", role:"Controls what enters and leaves the cell", inPlant:true, inAnimal:true},
+    {name:"Cytoplasm", role:"Jelly-like substance where chemical reactions happen", inPlant:true, inAnimal:true},
+    {name:"Mitochondria", role:"Releases energy from respiration", inPlant:true, inAnimal:true},
+    {name:"Cell wall", role:"Rigid layer that supports and protects the cell", inPlant:true, inAnimal:false},
+    {name:"Chloroplast", role:"Contains chlorophyll; site of photosynthesis", inPlant:true, inAnimal:false},
+    {name:"Permanent vacuole", role:"Large sap-filled sac that keeps the cell rigid", inPlant:true, inAnimal:false}
+  ],
+  specialised: [
+    {cell:"Red blood cell", feature:"No nucleus, disc-shaped, packed with haemoglobin", job:"Carries oxygen"},
+    {cell:"Nerve cell", feature:"Long, with branching connections", job:"Carries electrical signals"},
+    {cell:"Root hair cell", feature:"Long thin extension, large surface area", job:"Absorbs water and minerals"},
+    {cell:"Sperm cell", feature:"Tail for swimming, streamlined head", job:"Fertilises an egg cell"}
+  ]
+};
+
+const BODY_SYSTEMS = [
+  {system:"Digestive system", organs:"Mouth, oesophagus, stomach, small intestine, large intestine", job:"Breaks down food and absorbs nutrients into the blood"},
+  {system:"Circulatory system", organs:"Heart, blood vessels (arteries, veins, capillaries), blood", job:"Pumps blood around the body, carrying oxygen and nutrients"},
+  {system:"Respiratory system", organs:"Nose, trachea, lungs, diaphragm", job:"Exchanges oxygen and carbon dioxide between air and blood"},
+  {system:"Skeletal & muscular system", organs:"Bones, joints, muscles", job:"Supports the body, protects organs, and allows movement"}
+];
+
+const PLANT_REPRO = {
+  flowerParts: [
+    {part:"Petal", role:"Often brightly coloured to attract pollinators"},
+    {part:"Stamen (anther + filament)", role:"Male part — produces pollen"},
+    {part:"Carpel (stigma, style, ovary)", role:"Female part — receives pollen, contains ovules"},
+    {part:"Sepal", role:"Protects the flower bud before it opens"}
+  ],
+  pollination: [
+    {type:"Insect pollination", desc:"Bright petals, scent and nectar attract insects, which carry pollen between flowers", pollen:"Sticky, larger grains"},
+    {type:"Wind pollination", desc:"Small, dull flowers release large amounts of light pollen into the air", pollen:"Light, smooth, produced in huge numbers"}
+  ],
+  seedDispersal: [
+    {method:"Wind", example:"Dandelion, sycamore (\"helicopter\" seeds)"},
+    {method:"Animal (eaten)", example:"Berries — seeds pass through the gut unharmed"},
+    {method:"Animal (attached)", example:"Burrs with hooks that stick to fur"},
+    {method:"Water", example:"Coconut — floats to new locations"},
+    {method:"Explosive", example:"Pea pods that dry out and burst open"}
+  ]
+};
+
+const CLASSIFICATION = {
+  vertebrateGroups: [
+    {group:"Mammals", features:"Fur/hair, warm-blooded, live young, feed milk to young"},
+    {group:"Birds", features:"Feathers, warm-blooded, lay hard-shelled eggs, beak"},
+    {group:"Fish", features:"Scales, cold-blooded, gills, live in water"},
+    {group:"Amphibians", features:"Moist skin, cold-blooded, live in water and on land, lay soft eggs in water"},
+    {group:"Reptiles", features:"Dry scaly skin, cold-blooded, lay soft/leathery eggs on land"}
+  ],
+  variation: [
+    {type:"Inherited variation", desc:"Caused by genes passed from parents", example:"Eye colour, blood group, natural hair colour"},
+    {type:"Environmental variation", desc:"Caused by surroundings and lifestyle, not genes", example:"A scar, a suntan, a language you speak"},
+    {type:"Both", desc:"Many characteristics are affected by genes AND environment", example:"Height, weight, skin tone"}
+  ]
+};
+
+const HABITATS = {
+  terms: [
+    {term:"Habitat", def:"The place where an organism lives"},
+    {term:"Adaptation", def:"A feature that helps an organism survive in its habitat"},
+    {term:"Population", def:"All the organisms of one species living in a habitat"},
+    {term:"Community", def:"All the different populations living together in a habitat"},
+    {term:"Ecosystem", def:"A community plus its physical environment"}
+  ],
+  adaptationTypes: [
+    {type:"Structural", desc:"A physical feature of the body", example:"A polar bear's thick fur and fat for insulation in the Arctic"},
+    {type:"Behavioural", desc:"The way an organism acts", example:"Birds migrating to find food or warmer weather"},
+    {type:"Functional", desc:"How the body works internally", example:"Camels storing fat (not water) in their hump"}
+  ],
+  foodChains: [
+    "Grass → Rabbit → Fox (producer → primary consumer → secondary consumer)",
+    "Algae → Small fish → Big fish → Shark",
+    "Oak leaves → Caterpillar → Blue tit → Sparrowhawk"
+  ]
+};
+
+const ALGEBRA_VOCAB = [
+  {term:"Variable", def:"A letter that represents an unknown or changing number", example:"x, y, n"},
+  {term:"Constant", def:"A fixed number with no letter attached", example:"5, −3, 12"},
+  {term:"Term", def:"A single number, variable, or product of numbers and variables", example:"3x, −7, 2ab"},
+  {term:"Coefficient", def:"The number multiplying a variable", example:"In 5x, the coefficient is 5"},
+  {term:"Expression", def:"A combination of terms with no equals sign", example:"3x + 2y − 5"},
+  {term:"Equation", def:"Two expressions joined by an equals sign", example:"3x + 2 = 11"},
+  {term:"Like terms", def:"Terms with exactly the same variable(s)", example:"3x and 7x are like terms; 3x and 7y are not"}
+];
+const SIMPLIFY_EXAMPLES = [
+  "3x + 5x = 8x  (add the coefficients of like terms)",
+  "7a − 2a = 5a",
+  "4a + 3b − a + b = 3a + 4b  (collect each letter separately)",
+  "2(x + 3) = 2x + 6  (expand — multiply everything inside the bracket)",
+  "5(2y − 1) = 10y − 5"
+];
+
+const ANGLE_RULES = [
+  {name:"Acute angle", desc:"Less than 90°"},
+  {name:"Right angle", desc:"Exactly 90°"},
+  {name:"Obtuse angle", desc:"Between 90° and 180°"},
+  {name:"Straight angle", desc:"Exactly 180°"},
+  {name:"Reflex angle", desc:"Between 180° and 360°"},
+  {name:"Angles on a straight line", desc:"Add up to 180°"},
+  {name:"Angles around a point", desc:"Add up to 360°"},
+  {name:"Angles in a triangle", desc:"Add up to 180°"},
+  {name:"Angles in a quadrilateral", desc:"Add up to 360°"},
+  {name:"Vertically opposite angles", desc:"Are equal"}
+];
+
+const SHAPES_2D = [
+  {name:"Triangle", sides:3, angleSum:"180°", note:"Equilateral (all sides equal), isosceles (2 sides equal), scalene (no sides equal)"},
+  {name:"Square", sides:4, angleSum:"360°", note:"4 equal sides, 4 right angles"},
+  {name:"Rectangle", sides:4, angleSum:"360°", note:"Opposite sides equal, 4 right angles"},
+  {name:"Parallelogram", sides:4, angleSum:"360°", note:"Opposite sides parallel and equal"},
+  {name:"Rhombus", sides:4, angleSum:"360°", note:"4 equal sides, opposite angles equal"},
+  {name:"Trapezium", sides:4, angleSum:"360°", note:"One pair of parallel sides"},
+  {name:"Pentagon", sides:5, angleSum:"540°", note:"5 sides"},
+  {name:"Hexagon", sides:6, angleSum:"720°", note:"6 sides"}
+];
+
+const SHAPES_3D = [
+  {name:"Cube", faces:6, edges:12, vertices:8},
+  {name:"Cuboid", faces:6, edges:12, vertices:8},
+  {name:"Triangular prism", faces:5, edges:9, vertices:6},
+  {name:"Square-based pyramid", faces:5, edges:8, vertices:5},
+  {name:"Cylinder", faces:3, edges:2, vertices:0},
+  {name:"Cone", faces:2, edges:1, vertices:1},
+  {name:"Sphere", faces:1, edges:0, vertices:0}
+];
+
+const PROBABILITY_NOTES = [
+  "Probability = number of favourable outcomes ÷ total number of possible outcomes.",
+  "Probability is always between 0 (impossible) and 1 (certain) — or 0% to 100%.",
+  "Example: rolling a 4 on a fair six-sided die → P = 1/6 ≈ 0.167 ≈ 16.7%."
+];
+
+/* ============================================================
+   STORE — localStorage wrapper, versioned schema
+   ============================================================ */
+const SCHEMA_VERSION = 1;
+const store = {
+  _ok: (() => { try { const k="dd:__test__"; localStorage.setItem(k,"1"); localStorage.removeItem(k); return true; } catch(e){ return false; } })(),
+  get(key, fallback){
+    if (!this._ok) return fallback;
+    try {
+      const raw = localStorage.getItem("dd:"+key);
+      return raw === null ? fallback : JSON.parse(raw);
+    } catch(e){ return fallback; }
+  },
+  set(key, value){
+    if (!this._ok) return;
+    try { localStorage.setItem("dd:"+key, JSON.stringify(value)); } catch(e){}
+  },
+  init(){
+    const v = this.get("v", null);
+    if (v === null) {
+      this.set("v", SCHEMA_VERSION);
+      this.set("theme", "system");
+      this.set("recent", []);
+      this.set("pinned", []);
+      this.set("notes", "");
+    }
+    // future schema migrations go here, keyed on stored version number
+  },
+  pushRecent(item){
+    const recent = this.get("recent", []).filter(r => r.route !== item.route);
+    recent.unshift({ ...item, at: Date.now() });
+    this.set("recent", recent.slice(0, 12));
+  }
+};
+store.init();
+
+/* ============================================================
+   THEME
+   ============================================================ */
+const themeCtl = {
+  apply(mode){
+    const root = document.documentElement;
+    if (mode === "light" || mode === "dark") root.setAttribute("data-theme", mode);
+    else root.removeAttribute("data-theme");
+    store.set("theme", mode);
+    this.updateIcon(mode);
+  },
+  current(){ return store.get("theme", "system"); },
+  toggle(){
+    const order = ["system","light","dark"];
+    const next = order[(order.indexOf(this.current())+1) % order.length];
+    this.apply(next);
+  },
+  updateIcon(mode){
+    const icon = document.getElementById("themeIcon");
+    if (!icon) return;
+    icon.innerHTML = mode === "dark"
+      ? '<path d="M21 12.8A9 9 0 1111.2 3 7 7 0 0021 12.8z" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/>'
+      : '<circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2"/><path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
+  }
+};
+themeCtl.apply(themeCtl.current());
+
+/* ============================================================
+   ROUTER — hash based, "#tab/sub/detail"
+   ============================================================ */
+const router = {
+  listeners: [],
+  on(fn){ this.listeners.push(fn); },
+  parse(hash){
+    const clean = (hash || "").replace(/^#/, "");
+    const [tab, ...rest] = clean.split("/");
+    return { tab: tab || null, rest, full: clean };
+  },
+  go(route){ window.location.hash = route.startsWith("#") ? route : "#"+route; },
+  current(){ return this.parse(window.location.hash); },
+  fire(){ const r = this.current(); this.listeners.forEach(fn => fn(r)); }
+};
+window.addEventListener("hashchange", () => router.fire());
+
+/* ============================================================
+   TABS registry + rail
+   ============================================================ */
+const TABS = [];
+function registerTab(def){ TABS.push(def); }
+
+function renderRail(){
+  const rail = document.getElementById("rail");
+  rail.innerHTML = "";
+  TABS.forEach((tab, idx) => {
+    const btn = document.createElement("button");
+    btn.className = "rail-item";
+    btn.style.setProperty("--accent", `var(${tab.accent})`);
+    btn.dataset.tab = tab.id;
+    btn.setAttribute("aria-label", tab.label);
+    btn.innerHTML = tab.icon + `<span class="rail-label">${tab.short}</span>`;
+    btn.addEventListener("click", () => router.go("#"+tab.id));
+    rail.appendChild(btn);
+  });
+}
+
+function activateTab(tabId, rest){
+  const tab = TABS.find(t => t.id === tabId) || TABS[0];
+  document.querySelectorAll(".rail-item").forEach(b => {
+    b.setAttribute("aria-current", b.dataset.tab === tab.id ? "true" : "false");
+  });
+  document.querySelectorAll(".panel").forEach(p => {
+    p.dataset.active = (p.dataset.tab === tab.id) ? "true" : "false";
+  });
+  if (!tab._initDone) { tab.init(); tab._initDone = true; }
+  if (tab.onRoute) tab.onRoute(rest);
+  store.set("lastTab", "#"+tab.id+(rest && rest.length ? "/"+rest.join("/") : ""));
+  document.title = tab.label + " — The Data Desk";
+}
+
+function buildPanelShells(){
+  const inner = document.getElementById("deskInner");
+  TABS.forEach(tab => {
+    const section = document.createElement("section");
+    section.className = "panel";
+    section.dataset.tab = tab.id;
+    section.style.setProperty("--accent", `var(${tab.accent})`);
+    section.style.setProperty("--accent-lift", `var(${tab.accentLift || tab.accent})`);
+    section.innerHTML = `
+      <div class="panel-head">
+        <h1 class="panel-title"><span class="accent-mark">${tab.icon}</span> ${tab.label}</h1>
+        <div class="panel-tools" id="tools-${tab.id}"></div>
+      </div>
+      <div id="body-${tab.id}"></div>
+    `;
+    inner.appendChild(section);
+  });
+}
+
+router.on(({ tab, rest }) => activateTab(tab, rest));
+
+/* ============================================================
+   SEARCH INDEX / COMMAND PALETTE
+   ============================================================ */
+let SEARCH_INDEX = [];
+function buildSearchIndex(){
+  const idx = [];
+  ELEMENTS.forEach(([Z,sym,name]) => {
+    idx.push({ label: `${name} (${sym})`, keywords: `${name} ${sym} ${Z} element`.toLowerCase(), tab:"periodic", route:`#periodic/${sym}`, group:"Periodic table", accent:"--signal" });
+  });
+  TABS.forEach(tab => {
+    idx.push({ label: tab.label, keywords: tab.label.toLowerCase(), tab: tab.id, route:"#"+tab.id, group:"Tabs", accent: tab.accent });
+    (tab.searchEntries || []).forEach(e => idx.push({ ...e, tab: tab.id, accent: tab.accent }));
+  });
+  SEARCH_INDEX = idx;
+}
+
+const palette = {
+  overlay: null, input: null, results: null, activeIndex: 0, items: [],
+  init(){
+    this.overlay = document.getElementById("paletteOverlay");
+    this.input = document.getElementById("paletteInput");
+    this.results = document.getElementById("paletteResults");
+    document.getElementById("openPaletteBtn").addEventListener("click", () => this.open());
+    this.overlay.addEventListener("click", (e) => { if (e.target === this.overlay) this.close(); });
+    this.input.addEventListener("input", () => this.filter());
+    this.input.addEventListener("keydown", (e) => this.onKey(e));
+  },
+  open(){
+    this.overlay.dataset.open = "true";
+    this.input.value = "";
+    this.filter();
+    setTimeout(() => this.input.focus(), 0);
+  },
+  close(){ this.overlay.dataset.open = "false"; },
+  isOpen(){ return this.overlay.dataset.open === "true"; },
+  filter(){
+    const q = this.input.value.trim().toLowerCase();
+    let list;
+    if (!q) {
+      const recent = store.get("recent", []);
+      list = recent.map(r => ({ label:r.label, keywords:"", tab:r.tab, route:r.route, group:"Recent", accent:r.accent||"--signal" }));
+      if (!list.length) list = SEARCH_INDEX.slice(0, 8);
+    } else {
+      list = SEARCH_INDEX.filter(e => e.keywords.includes(q) || e.label.toLowerCase().includes(q))
+        .sort((a,b) => a.keywords.indexOf(q) - b.keywords.indexOf(q))
+        .slice(0, 40);
+    }
+    this.items = list;
+    this.activeIndex = 0;
+    this.renderResults();
+  },
+  renderResults(){
+    if (!this.items.length){
+      this.results.innerHTML = `<div class="empty-state">No matches. Try an element symbol, a formula, or a tool name.</div>`;
+      return;
+    }
+    let lastGroup = null;
+    let html = "";
+    this.items.forEach((item, i) => {
+      if (item.group !== lastGroup){
+        html += `<div class="palette-group-label">${item.group}</div>`;
+        lastGroup = item.group;
+      }
+      html += `<div class="palette-item" data-idx="${i}" style="--item-accent:var(${item.accent})" aria-selected="${i===this.activeIndex}">
+        <span class="palette-item-label">${item.label}</span>
+        <span class="palette-item-meta">${item.tab}</span>
+      </div>`;
+    });
+    this.results.innerHTML = html;
+    this.results.querySelectorAll(".palette-item").forEach(el => {
+      el.addEventListener("click", () => this.select(parseInt(el.dataset.idx,10)));
+    });
+    this.highlight();
+  },
+  highlight(){
+    this.results.querySelectorAll(".palette-item").forEach((el,i) => {
+      el.dataset.active = (i === this.activeIndex) ? "true" : "false";
+    });
+    const activeEl = this.results.querySelector(`[data-idx="${this.activeIndex}"]`);
+    if (activeEl) activeEl.scrollIntoView({ block:"nearest" });
+  },
+  select(i){
+    const item = this.items[i];
+    if (!item) return;
+    store.pushRecent({ label:item.label, tab:item.tab, route:item.route, accent:item.accent });
+    router.go(item.route);
+    this.close();
+  },
+  onKey(e){
+    if (e.key === "ArrowDown"){ e.preventDefault(); this.activeIndex = Math.min(this.activeIndex+1, this.items.length-1); this.highlight(); }
+    else if (e.key === "ArrowUp"){ e.preventDefault(); this.activeIndex = Math.max(this.activeIndex-1, 0); this.highlight(); }
+    else if (e.key === "Enter"){ e.preventDefault(); this.select(this.activeIndex); }
+    else if (e.key === "Escape"){ e.preventDefault(); this.close(); }
+  }
+};
+
+/* ============================================================
+   KEYBOARD SHORTCUTS + MODAL
+   ============================================================ */
+function isTypingTarget(el){
+  return el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.isContentEditable);
+}
+const shortcutModal = {
+  overlay: null,
+  init(){
+    this.overlay = document.getElementById("shortcutOverlay");
+    document.getElementById("shortcutBtn").addEventListener("click", () => this.open());
+    this.overlay.addEventListener("click", (e) => { if (e.target === this.overlay) this.close(); });
+  },
+  open(){ this.overlay.dataset.open = "true"; },
+  close(){ this.overlay.dataset.open = "false"; },
+  isOpen(){ return this.overlay.dataset.open === "true"; }
+};
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape"){
+    if (palette.isOpen()) return palette.close();
+    if (shortcutModal.isOpen()) return shortcutModal.close();
+    const active = TABS.find(t => t._initDone) ;
+    document.dispatchEvent(new CustomEvent("dd:escape"));
+    return;
+  }
+  if (palette.isOpen() || isTypingTarget(e.target)) return;
+  if (e.key === "/" ){ e.preventDefault(); palette.open(); return; }
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k"){ e.preventDefault(); palette.open(); return; }
+  if (e.key === "?"){ e.preventDefault(); shortcutModal.open(); return; }
+  if (e.key === "t" || e.key === "T"){ e.preventDefault(); themeCtl.toggle(); return; }
+  if (/^[1-5]$/.test(e.key)){
+    const tab = TABS[parseInt(e.key,10)-1];
+    if (tab) router.go("#"+tab.id);
+  }
+});
+document.getElementById("themeBtn").addEventListener("click", () => themeCtl.toggle());
+
+/* ============================================================
+   TAB: Periodic table
+   ============================================================ */
+(function(){
+  const CATEGORY_LABEL = {
+    alkali:"Alkali metal", alkaline:"Alkaline earth metal", transition:"Transition metal",
+    "post-transition":"Post-transition metal", metalloid:"Metalloid", nonmetal:"Nonmetal",
+    halogen:"Halogen", noble:"Noble gas", lanthanide:"Lanthanide", actinide:"Actinide", unknown:"Unknown"
+  };
+  function getBlock(cat, group, period){
+    if (cat === "lanthanide" || cat === "actinide") return "f";
+    if (group === 1 || group === 2) return "s";
+    if (period === 1 && group === 18) return "s"; // helium
+    if (group >= 13 && group <= 18) return "p";
+    return "d";
+  }
+  let els = [];
+  let selected = null; // {Z}
+  let gridEl, detailCard;
+
+  function buildElements(){
+    els = ELEMENTS.map(([Z,sym,name,mass,category,group,period]) => {
+      const ext = EXT[sym] || {};
+      const cfg = buildElectronConfig(Z);
+      return {
+        Z, sym, name, mass, category, group, period,
+        block: getBlock(category, group, period),
+        config: cfg, shorthand: toNobleShorthand(Z, cfg), shells: toShellCounts(cfg),
+        ext
+      };
+    });
+  }
+
+  function tileEl(e){
+    const btn = document.createElement("button");
+    btn.className = "element-tile cat-tile";
+    btn.type = "button";
+    btn.tabIndex = 0;
+    btn.dataset.z = e.Z;
+    btn.dataset.group = e.group || "";
+    btn.dataset.period = e.period;
+    btn.setAttribute("aria-label", `${e.name}, atomic number ${e.Z}`);
+    btn.style.gridColumn = e.group ? e.group : (3 + (e.category==="lanthanide" ? e.Z-58 : e.Z-90));
+    btn.style.gridRow = e.group ? e.period : (e.category==="lanthanide" ? 9 : 10);
+    btn.style.animationDelay = (e.Z * 2) + "ms";
+    btn.style.background = `color-mix(in oklab, var(--cat-${e.category}) var(--cat-fill-mix, 100%), var(--paper))`;
+    btn.style.borderColor = `var(--cat-${e.category}-edge)`;
+    btn.innerHTML = `
+      <span class="et-num tabular">${e.Z}</span>
+      <span class="et-sym">${e.sym}</span>
+      <span class="et-name">${e.name}</span>
+      <span class="et-mass tabular">${typeof e.mass === "string" ? e.mass : e.mass.toFixed(3)}</span>
+    `;
+    btn.addEventListener("click", () => router.go(`#periodic/${e.sym}`));
+    btn.addEventListener("keydown", (ev) => handleTileKey(ev, e));
+    return btn;
+  }
+
+  function handleTileKey(ev, e){
+    const deltas = { ArrowRight:[1,0], ArrowLeft:[-1,0], ArrowDown:[0,1], ArrowUp:[0,-1] };
+    if (ev.key === "Enter"){ ev.preventDefault(); router.go(`#periodic/${e.sym}`); return; }
+    const d = deltas[ev.key];
+    if (!d) return;
+    ev.preventDefault();
+    let g = (e.group || (3 + (e.category==="lanthanide"?e.Z-58:e.Z-90))) + d[0];
+    let p = (e.group ? e.period : (e.category==="lanthanide"?9:10)) + d[1];
+    const target = Array.from(gridEl.children).find(t => parseInt(t.style.gridColumn,10)===g && parseInt(t.style.gridRow,10)===p);
+    if (target) target.focus();
+  }
+
+  function renderGrid(){
+    gridEl.innerHTML = "";
+    els.forEach(e => gridEl.appendChild(tileEl(e)));
+    applyColourMode();
+  }
+
+  function applySearch(q){
+    const query = q.trim().toLowerCase();
+    gridEl.querySelectorAll(".element-tile").forEach(t => {
+      const e = els.find(x => x.Z === parseInt(t.dataset.z,10));
+      const match = !query || e.name.toLowerCase().includes(query) || e.sym.toLowerCase().includes(query) || String(e.Z) === query;
+      t.style.opacity = match ? "1" : "0.15";
+    });
+  }
+
+  let colourMode = "category";
+  function applyColourMode(){
+    gridEl.querySelectorAll(".element-tile").forEach(t => {
+      const e = els.find(x => x.Z === parseInt(t.dataset.z,10));
+      t.title = "";
+      if (colourMode === "category"){
+        t.style.background = `color-mix(in oklab, var(--cat-${e.category}) var(--cat-fill-mix, 100%), var(--paper))`; t.style.borderColor = `var(--cat-${e.category}-edge)`;
+      } else if (colourMode === "state"){
+        const phase = e.ext.phase || "unknown";
+        const map = { solid:"--rule-strong", liquid:"--signal", gas:"--lilac", unknown:"--rule" };
+        t.style.background = "var(--paper-sunk)"; t.style.borderColor = `var(${map[phase]||"--rule"})`;
+      } else if (colourMode === "metal"){
+        const metal = !["nonmetal","halogen","noble","metalloid"].includes(e.category);
+        const map = metal ? "--rule-strong" : (e.category==="metalloid" ? "--lilac" : "--signal");
+        t.style.background = "var(--paper-sunk)"; t.style.borderColor = `var(${map})`;
+      }
+    });
+  }
+
+  function applyTemperature(K){
+    gridEl.querySelectorAll(".element-tile").forEach(t => {
+      const e = els.find(x => x.Z === parseInt(t.dataset.z,10));
+      const { mp, bp } = e.ext;
+      if (mp == null || bp == null){ t.style.opacity = "0.35"; return; }
+      t.style.opacity = "1";
+      let state = K < mp ? "solid" : (K < bp ? "liquid" : "gas");
+      const map = { solid:"--rule-strong", liquid:"--signal", gas:"--lilac" };
+      t.style.borderColor = `var(${map[state]})`;
+      t.style.borderWidth = "2px";
+      t.title = `${e.name}: ${state} at ${K} K`;
+    });
+  }
+
+  function shellSVG(shells){
+    const cx=60, cy=60;
+    let svg = `<svg viewBox="0 0 120 120" width="120" height="120" role="img" aria-label="Electron shell diagram">`;
+    svg += `<circle cx="${cx}" cy="${cy}" r="4" fill="var(--ink)"/>`;
+    shells.forEach((count, i) => {
+      const r = 12 + i*13;
+      svg += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--rule-strong)" stroke-width="1"/>`;
+      for (let k=0;k<count;k++){
+        const ang = (k / count) * Math.PI*2 - Math.PI/2;
+        const x = cx + r*Math.cos(ang), y = cy + r*Math.sin(ang);
+        svg += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.6" fill="var(--signal)"/>`;
+      }
+    });
+    svg += `</svg>`;
+    return svg;
+  }
+
+  function kToC(k){ return k==null ? null : Math.round((k - 273.15)*10)/10; }
+
+  function openDetail(sym){
+    const e = els.find(x => x.sym === sym);
+    if (!e) return;
+    selected = e;
+    const x = e.ext;
+    detailCard.innerHTML = `
+      <div class="detail-inner card-pop cat-tile" style="background:color-mix(in oklab, var(--cat-${e.category}) var(--cat-fill-mix, 100%), var(--paper));">
+        <button class="icon-btn detail-close" aria-label="Close" style="position:absolute;top:8px;right:8px;">✕</button>
+        <div class="detail-top">
+          <div class="detail-symbol" style="border-color:var(--cat-${e.category}-edge)">${e.sym}</div>
+          <div>
+            <h2>${e.name}</h2>
+            <div class="hint">Z = ${e.Z} · ${typeof e.mass==="string"?e.mass:e.mass.toFixed(3)} · ${CATEGORY_LABEL[e.category]||e.category}</div>
+            <div class="hint">Group ${e.group||"—"} · Period ${e.period}</div>
+          </div>
+        </div>
+        <dl class="detail-grid">
+          <div><dt>Electrons per shell</dt><dd class="tabular">${e.shells.join(", ")}</dd></div>
+          <div><dt>State at room temperature</dt><dd>${x.phase||"—"}</dd></div>
+          <div><dt>Melting point</dt><dd>${x.mp!=null? `${kToC(x.mp)} °C`:"—"}</dd></div>
+          <div><dt>Boiling point</dt><dd>${x.bp!=null? `${kToC(x.bp)} °C`:"—"}</dd></div>
+          <div><dt>Density</dt><dd>${x.density!=null? x.density+" g/cm³":"—"}</dd></div>
+          <div><dt>Discovered</dt><dd>${x.discovered!=null? (x.discovered<0? Math.abs(x.discovered)+" BCE":x.discovered):"—"} · ${x.by||"—"}</dd></div>
+        </dl>
+        <div class="detail-shell">${shellSVG(e.shells)}</div>
+        <p class="prose" style="font-size:var(--t-sm);">${x.use||""}</p>
+        <button class="btn btn-sm" id="copyElData">Copy data</button>
+      </div>
+    `;
+    detailCard.dataset.open = "true";
+    detailCard.querySelector(".detail-close").addEventListener("click", () => router.go("#periodic"));
+    detailCard.querySelector("#copyElData").addEventListener("click", () => {
+      const row = [e.sym,e.name,e.Z,e.mass,e.category,e.group,e.period,e.shells.join("-"),x.mp,x.bp,x.density,x.phase,x.discovered,x.by,x.use].join("\t");
+      navigator.clipboard && navigator.clipboard.writeText(row).catch(()=>{});
+    });
+    store.pushRecent({ label:`${e.name} (${e.sym})`, tab:"periodic", route:`#periodic/${e.sym}`, accent:"--signal" });
+  }
+  function closeDetail(){
+    detailCard.dataset.open = "false";
+    selected = null;
+  }
+
+  registerTab({
+    id: "periodic", label: "Periodic table", short: "Pe", accent: "--signal",
+    icon: `<svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="6" height="6" rx="1" stroke="currentColor" stroke-width="2"/><rect x="10.5" y="3" width="6" height="6" rx="1" stroke="currentColor" stroke-width="2"/><rect x="18" y="3" width="3" height="6" rx="1" stroke="currentColor" stroke-width="2"/><rect x="3" y="10.5" width="6" height="6" rx="1" stroke="currentColor" stroke-width="2"/><rect x="10.5" y="10.5" width="6" height="6" rx="1" stroke="currentColor" stroke-width="2"/></svg>`,
+    searchEntries: [],
+    init(){
+      buildElements();
+      const tools = document.getElementById("tools-periodic");
+      tools.innerHTML = `
+        <input type="search" id="ptSearch" placeholder="Filter by name, symbol, number…" style="width:220px;">
+        <select id="ptColour">
+          <option value="category">Colour: Category</option>
+          <option value="state">Colour: State at 25 °C</option>
+          <option value="metal">Colour: Metal–nonmetal</option>
+        </select>
+        <button class="btn btn-sm no-print" id="ptPrint">Print table</button>
+      `;
+      const body = document.getElementById("body-periodic");
+      body.innerHTML = `
+        <div class="pt-controls-row">
+          <label class="field" style="max-width:340px;">
+            <span>Temperature — recolours tiles by predicted state</span>
+            <input type="range" id="ptTemp" min="0" max="6000" value="298" step="10">
+            <span class="hint tabular" id="ptTempLabel">298 K (25 °C)</span>
+          </label>
+          <div class="hint" id="ptLegend"></div>
+        </div>
+        <div class="pt-grid-wrap"><div class="periodic-grid" id="ptGrid"></div></div>
+      `;
+      gridEl = document.getElementById("ptGrid");
+      detailCard = document.createElement("div");
+      detailCard.className = "element-detail";
+      detailCard.dataset.open = "false";
+      body.appendChild(detailCard);
+
+      renderGrid();
+
+      document.getElementById("ptSearch").addEventListener("input", (e) => applySearch(e.target.value));
+      document.getElementById("ptColour").addEventListener("change", (e) => { colourMode = e.target.value; applyColourMode(); });
+      const tempInput = document.getElementById("ptTemp");
+      tempInput.addEventListener("input", (e) => {
+        const K = parseInt(e.target.value,10);
+        document.getElementById("ptTempLabel").textContent = `${K} K (${Math.round(K-273.15)} °C)`;
+        applyTemperature(K);
+      });
+      document.getElementById("ptPrint").addEventListener("click", () => {
+        const panel = document.querySelector('.panel[data-tab="periodic"]');
+        panel.dataset.printing = "true";
+        window.print();
+        setTimeout(() => panel.dataset.printing = "false", 500);
+      });
+      document.addEventListener("click", (e) => {
+        if (detailCard.dataset.open === "true" && !detailCard.contains(e.target) && !e.target.closest(".element-tile")){
+          router.go("#periodic");
+        }
+      });
+      document.addEventListener("dd:escape", () => { if (detailCard.dataset.open === "true") router.go("#periodic"); });
+    },
+    onRoute(rest){
+      if (rest && rest[0]) openDetail(rest[0]);
+      else closeDetail();
+    }
+  });
+})();
+
+/* ============================================================
+   TAB: Chemistry
+   ============================================================ */
+(function(){
+  const SECTIONS = [
+    { id:"particles", label:"Particles & states" },
+    { id:"mixtures", label:"Mixtures & separating" },
+    { id:"acids", label:"Acids & alkalis" },
+    { id:"metals", label:"Metals & non-metals" },
+    { id:"reactions", label:"Reactions" }
+  ];
+  let activeSection = "particles";
+
+  function renderSegmented(){
+    return `<div class="segmented" id="chemSeg">${SECTIONS.map(s=>`<button data-id="${s.id}" aria-selected="${s.id===activeSection}">${s.label}</button>`).join("")}</div>`;
+  }
+
+  /* ---- Particles & states ---- */
+  function renderParticles(){
+    return `
+      <div class="grid-2">
+        <div class="sheet"><div class="sheet-head">The particle model</div><div class="sheet-body table-wrap">
+          <table><thead><tr><th>State</th><th>Arrangement</th><th>Movement</th><th>Energy</th></tr></thead>
+          <tbody>${STATES_INFO.particleModel.map(p=>`<tr><td>${p.state}</td><td>${p.arrangement}</td><td>${p.movement}</td><td>${p.energy}</td></tr>`).join("")}</tbody></table>
+        </div></div>
+        <div class="sheet"><div class="sheet-head">Changes of state</div><div class="sheet-body table-wrap">
+          <table><thead><tr><th>Change</th><th>From → to</th><th>What's happening</th></tr></thead>
+          <tbody>${STATES_INFO.changes.map(c=>`<tr><td>${c.name}</td><td class="tabular">${c.from} → ${c.to}</td><td>${c.note}</td></tr>`).join("")}</tbody></table>
+        </div></div>
+      </div>
+      <div class="sheet">
+        <div class="sheet-head">What state is it? — pick a substance and a temperature</div>
+        <div class="sheet-body">
+          <div class="grid-3">
+            <div class="field"><label for="stSub">Substance</label>
+              <select id="stSub">${STATES_INFO.substances.map((s,i)=>`<option value="${i}">${s.name}</option>`).join("")}</select>
+            </div>
+            <div class="field"><label for="stTemp">Temperature (°C)</label><input type="number" id="stTemp" value="20"></div>
+          </div>
+          <p id="stOut" class="prose" style="margin-top:var(--s3);font-size:var(--t-sm);"></p>
+        </div>
+      </div>
+    `;
+  }
+  function wireParticles(){
+    const sub = document.getElementById("stSub"), temp = document.getElementById("stTemp"), out = document.getElementById("stOut");
+    function update(){
+      const s = STATES_INFO.substances[parseInt(sub.value,10)];
+      const t = parseFloat(temp.value);
+      if (!isFinite(t)){ out.textContent = ""; return; }
+      let state = t < s.mp ? "a solid" : (t < s.bp ? "a liquid" : "a gas");
+      out.innerHTML = `At ${t} °C, <strong>${s.name}</strong> is <strong>${state}</strong>. (Melts at ${s.mp} °C, boils at ${s.bp} °C.)${s.note ? " — " + s.note : ""}`;
+    }
+    sub.addEventListener("change", update);
+    temp.addEventListener("input", update);
+    update();
+  }
+
+  /* ---- Mixtures & separating ---- */
+  function renderMixtures(){
+    return `
+      <div class="sheet"><div class="sheet-head">Elements, compounds &amp; mixtures</div><div class="sheet-body table-wrap">
+        <table><thead><tr><th>Term</th><th>Definition</th><th>Examples</th></tr></thead>
+        <tbody>${MIXTURES.definitions.map(d=>`<tr><td style="font-weight:600;">${d.term}</td><td>${d.def}</td><td class="tabular">${d.example}</td></tr>`).join("")}</tbody></table>
+      </div></div>
+      <div class="sheet"><div class="sheet-head">Separating techniques</div><div class="sheet-body table-wrap">
+        <table><thead><tr><th>Method</th><th>Used for</th><th>How it works</th><th>Example</th></tr></thead>
+        <tbody>${MIXTURES.separating.map(m=>`<tr><td style="font-weight:600;">${m.method}</td><td>${m.use}</td><td>${m.how}</td><td>${m.example}</td></tr>`).join("")}</tbody></table>
+      </div></div>
+    `;
+  }
+
+  /* ---- Acids & alkalis ---- */
+  function renderAcids(){
+    const phColour = ph => {
+      if (ph <= 2) return "var(--crimson)";
+      if (ph <= 5) return "var(--amber)";
+      if (ph === 6) return "color-mix(in oklab, var(--amber) 40%, var(--barium))";
+      if (ph === 7) return "var(--barium)";
+      if (ph <= 9) return "color-mix(in oklab, var(--barium) 40%, var(--signal))";
+      if (ph <= 12) return "var(--signal)";
+      return "var(--lilac)";
+    };
+    return `
+      <div class="sheet">
+        <div class="sheet-head">The pH scale</div>
+        <div class="sheet-body">
+          <div style="display:flex;border-radius:var(--radius-control);overflow:hidden;margin-bottom:var(--s3);">
+            ${Array.from({length:15},(_,ph)=>`<div style="flex:1;height:28px;background:${phColour(ph)};" title="pH ${ph}"></div>`).join("")}
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:var(--t-xs);color:var(--ink-2);margin-bottom:var(--s4);">
+            <span>0 (strong acid)</span><span>7 (neutral)</span><span>14 (strong alkali)</span>
+          </div>
+          <div class="table-wrap"><table><thead><tr><th>pH</th><th>Label</th><th>Universal indicator colour</th><th>Examples</th></tr></thead>
+            <tbody>${ACIDS_ALKALIS.phScale.map(r=>`<tr><td class="tabular">${r.ph}</td><td>${r.label}</td><td>${r.colour}</td><td>${r.examples}</td></tr>`).join("")}</tbody></table>
+          </div>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="sheet"><div class="sheet-head">Indicators</div><div class="sheet-body table-wrap">
+          <table><thead><tr><th>Indicator</th><th>In acid</th><th>In alkali</th></tr></thead>
+          <tbody>${ACIDS_ALKALIS.indicators.map(i=>`<tr><td>${i.name}</td><td>${i.acid}</td><td>${i.alkali}</td></tr>`).join("")}</tbody></table>
+        </div></div>
+        <div class="sheet"><div class="sheet-head">Neutralisation &amp; safety</div><div class="sheet-body prose" style="font-size:var(--t-sm);">
+          <p>${ACIDS_ALKALIS.neutralisation}</p>
+          <ul style="padding-left:1.2em;margin-top:var(--s2);">${ACIDS_ALKALIS.safety.map(s=>`<li>${s}</li>`).join("")}</ul>
+        </div></div>
+      </div>
+    `;
+  }
+
+  /* ---- Metals & non-metals ---- */
+  function renderMetals(){
+    return `
+      <div class="sheet"><div class="sheet-head">Metals vs non-metals</div><div class="sheet-body table-wrap">
+        <table><thead><tr><th>Property</th><th>Metals</th><th>Non-metals</th></tr></thead>
+        <tbody>${METALS_NONMETALS.map(p=>`<tr><td style="font-weight:600;">${p.property}</td><td>${p.metal}</td><td>${p.nonmetal}</td></tr>`).join("")}</tbody></table>
+      </div></div>
+      <div class="sheet"><div class="sheet-head">Where they sit on the periodic table</div><div class="sheet-body prose" style="font-size:var(--t-sm);">
+        <p>Most elements are metals — they sit on the left and middle of the periodic table. Non-metals sit on the right, and a thin diagonal strip of <strong>metalloids</strong> (like silicon and germanium) in between share some properties of both.</p>
+      </div></div>
+    `;
+  }
+
+  /* ---- Reactions ---- */
+  function renderReactions(){
+    return `
+      <div class="sheet"><div class="sheet-head">Common reaction types</div><div class="sheet-body table-wrap">
+        <table><thead><tr><th>Reaction</th><th>Word/symbol equation</th><th>Example</th><th>Notes</th></tr></thead>
+        <tbody>${REACTIONS.map(r=>`<tr><td style="font-weight:600;">${r.name}</td><td>${r.equation}</td><td class="tabular">${r.example}</td><td>${r.note}</td></tr>`).join("")}</tbody></table>
+      </div></div>
+      <div class="sheet"><div class="sheet-head">Testing for gases</div><div class="sheet-body table-wrap">
+        <table><thead><tr><th>Gas</th><th>Test</th><th>Positive result</th></tr></thead>
+        <tbody>${GAS_TESTS.map(g=>`<tr><td>${g.gas}</td><td>${g.test}</td><td>${g.result}</td></tr>`).join("")}</tbody></table>
+      </div></div>
+    `;
+  }
+
+  function renderSection(id){
+    const body = document.getElementById("body-chem");
+    if (id === "particles"){ body.innerHTML = renderParticles(); wireParticles(); }
+    else if (id === "mixtures"){ body.innerHTML = renderMixtures(); }
+    else if (id === "acids"){ body.innerHTML = renderAcids(); }
+    else if (id === "metals"){ body.innerHTML = renderMetals(); }
+    else if (id === "reactions"){ body.innerHTML = renderReactions(); }
+  }
+
+  registerTab({
+    id: "chem", label: "Chemistry", short: "Ch", accent: "--crimson",
+    icon: `<svg viewBox="0 0 24 24" fill="none"><path d="M9 3h6M10 3v6l-5 9a2 2 0 001.7 3h10.6a2 2 0 001.7-3l-5-9V3" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>`,
+    searchEntries: SECTIONS.map(s => ({ label: s.label, keywords: s.label.toLowerCase(), route:`#chem/${s.id}`, group:"Chemistry" })),
+    init(){
+      const wrap = document.createElement("div");
+      wrap.innerHTML = renderSegmented();
+      document.getElementById("body-chem").before(wrap.firstElementChild);
+      document.getElementById("chemSeg").addEventListener("click", (e) => {
+        const btn = e.target.closest("button[data-id]");
+        if (btn) router.go(`#chem/${btn.dataset.id}`);
+      });
+      renderSection(activeSection);
+    },
+    onRoute(rest){
+      const id = (rest && rest[0]) || "particles";
+      activeSection = SECTIONS.some(s=>s.id===id) ? id : "particles";
+      document.querySelectorAll("#chemSeg button").forEach(b => b.setAttribute("aria-selected", b.dataset.id===activeSection));
+      renderSection(activeSection);
+    }
+  });
+})();
+
+/* ============================================================
+   TAB: Physics
+   ============================================================ */
+(function(){
+  const FORMULAS = [
+    { id:"speed", label:"Speed = Distance ÷ Time", vars:[["speed","Speed","m/s"],["distance","Distance","m"],["time","Time","s"]],
+      solve:(k,m)=>{ if(m==="speed") return k.distance/k.time; if(m==="distance") return k.speed*k.time; return k.distance/k.speed; },
+      rearranged:{speed:"speed = distance ÷ time", distance:"distance = speed × time", time:"time = distance ÷ speed"} }
+  ];
+
+  const SECTIONS = [
+    { id:"forces", label:"Forces" },
+    { id:"energy", label:"Energy" },
+    { id:"electricity", label:"Electricity" },
+    { id:"light", label:"Light" },
+    { id:"sound", label:"Sound" },
+    { id:"earthspace", label:"Earth & space" }
+  ];
+  let activeSection = "forces";
+
+  function renderSegmented(){
+    return `<div class="segmented" id="physSeg">${SECTIONS.map(s=>`<button data-id="${s.id}" aria-selected="${s.id===activeSection}">${s.label}</button>`).join("")}</div>`;
+  }
+
+  function renderSolver(){
+    return `
+      <div class="sheet"><div class="sheet-head">Calculate — speed</div><div class="sheet-body">
+        <div class="field" style="max-width:360px;margin-bottom:var(--s4);">
+          <label for="solverPick">Formula</label>
+          <select id="solverPick">${FORMULAS.map(f=>`<option value="${f.id}">${f.label}</option>`).join("")}</select>
+        </div>
+        <div id="solverFields"></div>
+        <div id="solverOut" style="margin-top:var(--s4);"></div>
+      </div></div>
+    `;
+  }
+  function wireSolver(){
+    const pick = document.getElementById("solverPick");
+    const fields = document.getElementById("solverFields");
+    const out = document.getElementById("solverOut");
+    function build(){
+      const f = FORMULAS.find(x=>x.id===pick.value);
+      fields.innerHTML = `<div class="grid-3">${f.vars.map(([key,label,unit])=>`
+        <div class="field"><label>${label} (${unit})</label><input type="number" step="any" data-key="${key}" value=""></div>
+      `).join("")}</div><p class="hint" style="margin-top:var(--s2);">Leave exactly one field blank — that's the one it solves for.</p>`;
+      fields.querySelectorAll("input").forEach(inp => inp.addEventListener("input", () => compute(f)));
+      compute(f);
+    }
+    function compute(f){
+      const inputs = Array.from(fields.querySelectorAll("input"));
+      const blanks = inputs.filter(i => i.value.trim()==="");
+      if (blanks.length !== 1){ out.innerHTML = `<p class="hint">${blanks.length===0?"All fields filled — clear one to solve for it.":"Leave exactly one field blank."}</p>`; return; }
+      const missing = blanks[0].dataset.key;
+      const known = {};
+      inputs.forEach(i => { if (i.dataset.key !== missing) known[i.dataset.key] = parseFloat(i.value); });
+      const result = f.solve(known, missing);
+      if (!isFinite(result)){ out.innerHTML = `<p class="err">No real solution for these values.</p>`; return; }
+      out.innerHTML = `<p class="prose" style="font-size:var(--t-sm);">Rearranged: <strong class="tabular">${f.rearranged[missing]}</strong></p>
+        <p style="font-size:var(--t-md);font-weight:600;">${missing} = <span class="tabular">${Number(result.toPrecision(6))}</span></p>`;
+    }
+    pick.addEventListener("change", build);
+    build();
+  }
+
+  function renderForces(){
+    return `
+      <div class="grid-2">
+        <div class="sheet"><div class="sheet-head">Contact forces</div><div class="sheet-body table-wrap">
+          <table>${FORCES.contact.map(f=>`<tr><td style="font-weight:600;white-space:nowrap;">${f.name}</td><td>${f.desc}</td></tr>`).join("")}</table>
+        </div></div>
+        <div class="sheet"><div class="sheet-head">Non-contact forces</div><div class="sheet-body table-wrap">
+          <table>${FORCES.nonContact.map(f=>`<tr><td style="font-weight:600;white-space:nowrap;">${f.name}</td><td>${f.desc}</td></tr>`).join("")}</table>
+        </div></div>
+      </div>
+      <div class="sheet"><div class="sheet-head">Balanced &amp; unbalanced forces</div><div class="sheet-body prose" style="font-size:var(--t-sm);">
+        <ul style="padding-left:1.2em;">${FORCES.effects.map(e=>`<li>${e}</li>`).join("")}</ul>
+      </div></div>
+      <div class="sheet"><div class="sheet-head">Mass vs weight</div><div class="sheet-body table-wrap">
+        <table>${FORCES.massWeight.map(m=>`<tr><td style="font-weight:600;">${m.term}</td><td>${m.def}</td></tr>`).join("")}</table>
+      </div></div>
+      ${renderSolver()}
+    `;
+  }
+
+  function renderEnergy(){
+    return `
+      <div class="sheet"><div class="sheet-head">Energy stores</div><div class="sheet-body table-wrap">
+        <table><thead><tr><th>Store</th><th>Example</th></tr></thead>
+        <tbody>${ENERGY.stores.map(s=>`<tr><td style="font-weight:600;">${s.name}</td><td>${s.example}</td></tr>`).join("")}</tbody></table>
+      </div></div>
+      <div class="sheet"><div class="sheet-head">Energy transfers</div><div class="sheet-body table-wrap">
+        <table><thead><tr><th>Device</th><th>From</th><th>To</th></tr></thead>
+        <tbody>${ENERGY.transfers.map(t=>`<tr><td style="font-weight:600;">${t.device}</td><td>${t.from}</td><td>${t.to}</td></tr>`).join("")}</tbody></table>
+      </div></div>
+      <div class="sheet"><div class="sheet-head">Conservation of energy</div><div class="sheet-body prose" style="font-size:var(--t-sm);"><p>${ENERGY.conservation}</p></div></div>
+    `;
+  }
+
+  function renderElectricity(){
+    return `
+      <div class="sheet"><div class="sheet-head">Circuit symbols</div><div class="sheet-body table-wrap">
+        <table>${ELECTRICITY.symbols.map(s=>`<tr><td style="font-weight:600;white-space:nowrap;">${s.name}</td><td>${s.desc}</td></tr>`).join("")}</table>
+      </div></div>
+      <div class="sheet"><div class="sheet-head">Series vs parallel</div><div class="sheet-body table-wrap">
+        <table>${ELECTRICITY.seriesParallel.map(s=>`<tr><td style="font-weight:600;white-space:nowrap;">${s.type}</td><td>${s.desc}</td></tr>`).join("")}</table>
+      </div></div>
+      <div class="sheet"><div class="sheet-head">Conductors &amp; insulators</div><div class="sheet-body table-wrap">
+        <table><thead><tr><th>Group</th><th>Behaviour</th><th>Examples</th></tr></thead>
+        <tbody>${ELECTRICITY.conductInsulate.map(c=>`<tr><td style="font-weight:600;">${c.group}</td><td>${c.desc}</td><td>${c.examples}</td></tr>`).join("")}</tbody></table>
+      </div></div>
+    `;
+  }
+
+  function renderLight(){
+    return `
+      <div class="sheet"><div class="sheet-head">How we see</div><div class="sheet-body prose" style="font-size:var(--t-sm);">
+        <ul style="padding-left:1.2em;">${LIGHT.facts.map(f=>`<li>${f}</li>`).join("")}</ul>
+        <p style="margin-top:var(--s3);"><strong>Reflection:</strong> ${LIGHT.reflection}</p>
+        <p style="margin-top:var(--s3);"><strong>Shadows:</strong> ${LIGHT.shadows}</p>
+      </div></div>
+      <div class="sheet"><div class="sheet-head">Transparent, translucent, opaque</div><div class="sheet-body table-wrap">
+        <table><thead><tr><th>Term</th><th>Meaning</th><th>Example</th></tr></thead>
+        <tbody>${LIGHT.materials.map(m=>`<tr><td style="font-weight:600;">${m.term}</td><td>${m.def}</td><td>${m.example}</td></tr>`).join("")}</tbody></table>
+      </div></div>
+    `;
+  }
+
+  function renderSound(){
+    return `
+      <div class="sheet"><div class="sheet-head">Sound facts</div><div class="sheet-body prose" style="font-size:var(--t-sm);">
+        <ul style="padding-left:1.2em;">${SOUND.facts.map(f=>`<li>${f}</li>`).join("")}</ul>
+        <p style="margin-top:var(--s3);">${SOUND.speed}</p>
+      </div></div>
+      <div class="sheet"><div class="sheet-head">Pitch &amp; volume</div><div class="sheet-body table-wrap">
+        <table><thead><tr><th>Property</th><th>Depends on</th><th>High</th><th>Low</th></tr></thead>
+        <tbody>${SOUND.pitchVolume.map(p=>`<tr><td style="font-weight:600;">${p.term}</td><td>${p.depends}</td><td>${p.high}</td><td>${p.low}</td></tr>`).join("")}</tbody></table>
+      </div></div>
+    `;
+  }
+
+  function renderEarthSpace(){
+    return `
+      <div class="sheet"><div class="sheet-head">Earth &amp; the Moon</div><div class="sheet-body table-wrap">
+        <table>${EARTH_SPACE.facts.map(f=>`<tr><td style="font-weight:600;white-space:nowrap;">${f.topic}</td><td>${f.desc}</td></tr>`).join("")}</table>
+      </div></div>
+      <div class="sheet"><div class="sheet-head">The solar system</div><div class="sheet-body table-wrap">
+        <table><thead><tr><th>#</th><th>Planet</th><th>Fact</th></tr></thead>
+        <tbody>${EARTH_SPACE.solarSystem.map(p=>`<tr><td class="tabular">${p.n}</td><td style="font-weight:600;">${p.name}</td><td>${p.fact}</td></tr>`).join("")}</tbody></table>
+      </div></div>
+    `;
+  }
+
+  function renderSection(id){
+    const body = document.getElementById("body-phys");
+    if (id==="forces"){ body.innerHTML = renderForces(); wireSolver(); }
+    else if (id==="energy"){ body.innerHTML = renderEnergy(); }
+    else if (id==="electricity"){ body.innerHTML = renderElectricity(); }
+    else if (id==="light"){ body.innerHTML = renderLight(); }
+    else if (id==="sound"){ body.innerHTML = renderSound(); }
+    else if (id==="earthspace"){ body.innerHTML = renderEarthSpace(); }
+  }
+
+  registerTab({
+    id: "phys", label: "Physics", short: "Ph", accent: "--amber",
+    icon: `<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="2.5" fill="currentColor"/><ellipse cx="12" cy="12" rx="9" ry="4" stroke="currentColor" stroke-width="1.6"/><ellipse cx="12" cy="12" rx="9" ry="4" stroke="currentColor" stroke-width="1.6" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="9" ry="4" stroke="currentColor" stroke-width="1.6" transform="rotate(120 12 12)"/></svg>`,
+    searchEntries: SECTIONS.map(s => ({ label: s.label, keywords: s.label.toLowerCase(), route:`#phys/${s.id}`, group:"Physics" })),
+    init(){
+      const wrap = document.createElement("div");
+      wrap.innerHTML = renderSegmented();
+      document.getElementById("body-phys").before(wrap.firstElementChild);
+      document.getElementById("physSeg").addEventListener("click", (e) => {
+        const btn = e.target.closest("button[data-id]");
+        if (btn) router.go(`#phys/${btn.dataset.id}`);
+      });
+      renderSection(activeSection);
+    },
+    onRoute(rest){
+      const id = (rest && rest[0]) || "forces";
+      activeSection = SECTIONS.some(s=>s.id===id) ? id : "forces";
+      document.querySelectorAll("#physSeg button").forEach(b => b.setAttribute("aria-selected", b.dataset.id===activeSection));
+      renderSection(activeSection);
+    }
+  });
+})();
+
+
+/* ============================================================
+   TAB: Biology
+   ============================================================ */
+(function(){
+  const SECTIONS = [
+    { id:"cells", label:"Cells" },
+    { id:"body", label:"Body systems" },
+    { id:"reproduction", label:"Plant reproduction" },
+    { id:"variation", label:"Variation & classification" },
+    { id:"habitats", label:"Habitats & adaptation" }
+  ];
+  let activeSection = "cells";
+
+  function renderSegmented(){
+    return `<div class="segmented" id="bioSeg">${SECTIONS.map(s=>`<button data-id="${s.id}" aria-selected="${s.id===activeSection}">${s.label}</button>`).join("")}</div>`;
+  }
+
+  function renderCells(){
+    return `
+      <div class="grid-2">
+        <div class="sheet"><div class="sheet-head">Plant &amp; animal cell parts</div><div class="sheet-body table-wrap">
+          <table><thead><tr><th>Part</th><th>Role</th><th>Plant</th><th>Animal</th></tr></thead>
+          <tbody>${CELLS.parts.map(p=>`<tr><td style="font-weight:600;">${p.name}</td><td>${p.role}</td><td>${p.inPlant?"✓":"—"}</td><td>${p.inAnimal?"✓":"—"}</td></tr>`).join("")}</tbody></table>
+        </div></div>
+        <div class="sheet"><div class="sheet-head">Specialised cells</div><div class="sheet-body table-wrap">
+          <table><thead><tr><th>Cell</th><th>Special feature</th><th>Job</th></tr></thead>
+          <tbody>${CELLS.specialised.map(c=>`<tr><td style="font-weight:600;">${c.cell}</td><td>${c.feature}</td><td>${c.job}</td></tr>`).join("")}</tbody></table>
+        </div></div>
+      </div>
+    `;
+  }
+
+  function renderBody(){
+    return `
+      <div class="sheet"><div class="sheet-head">Human body systems</div><div class="sheet-body table-wrap">
+        <table><thead><tr><th>System</th><th>Main organs</th><th>Job</th></tr></thead>
+        <tbody>${BODY_SYSTEMS.map(s=>`<tr><td style="font-weight:600;">${s.system}</td><td>${s.organs}</td><td>${s.job}</td></tr>`).join("")}</tbody></table>
+      </div></div>
+    `;
+  }
+
+  function renderReproduction(){
+    return `
+      <div class="grid-2">
+        <div class="sheet"><div class="sheet-head">Flower parts</div><div class="sheet-body table-wrap">
+          <table>${PLANT_REPRO.flowerParts.map(p=>`<tr><td style="font-weight:600;white-space:nowrap;">${p.part}</td><td>${p.role}</td></tr>`).join("")}</table>
+        </div></div>
+        <div class="sheet"><div class="sheet-head">Pollination</div><div class="sheet-body table-wrap">
+          <table><thead><tr><th>Type</th><th>How it works</th><th>Pollen</th></tr></thead>
+          <tbody>${PLANT_REPRO.pollination.map(p=>`<tr><td style="font-weight:600;">${p.type}</td><td>${p.desc}</td><td>${p.pollen}</td></tr>`).join("")}</tbody></table>
+        </div></div>
+      </div>
+      <div class="sheet"><div class="sheet-head">Seed dispersal</div><div class="sheet-body table-wrap">
+        <table><thead><tr><th>Method</th><th>Example</th></tr></thead>
+        <tbody>${PLANT_REPRO.seedDispersal.map(s=>`<tr><td style="font-weight:600;">${s.method}</td><td>${s.example}</td></tr>`).join("")}</tbody></table>
+      </div></div>
+    `;
+  }
+
+  function renderVariation(){
+    return `
+      <div class="grid-2">
+        <div class="sheet"><div class="sheet-head">Vertebrate groups</div><div class="sheet-body table-wrap">
+          <table><thead><tr><th>Group</th><th>Key features</th></tr></thead>
+          <tbody>${CLASSIFICATION.vertebrateGroups.map(g=>`<tr><td style="font-weight:600;">${g.group}</td><td>${g.features}</td></tr>`).join("")}</tbody></table>
+        </div></div>
+        <div class="sheet"><div class="sheet-head">Variation</div><div class="sheet-body table-wrap">
+          <table><thead><tr><th>Type</th><th>Cause</th><th>Example</th></tr></thead>
+          <tbody>${CLASSIFICATION.variation.map(v=>`<tr><td style="font-weight:600;">${v.type}</td><td>${v.desc}</td><td>${v.example}</td></tr>`).join("")}</tbody></table>
+        </div></div>
+      </div>
+    `;
+  }
+
+  function renderHabitats(){
+    return `
+      <div class="grid-2">
+        <div class="sheet"><div class="sheet-head">Key terms</div><div class="sheet-body table-wrap">
+          <table>${HABITATS.terms.map(t=>`<tr><td style="font-weight:600;white-space:nowrap;">${t.term}</td><td>${t.def}</td></tr>`).join("")}</table>
+        </div></div>
+        <div class="sheet"><div class="sheet-head">Adaptations</div><div class="sheet-body table-wrap">
+          <table><thead><tr><th>Type</th><th>Meaning</th><th>Example</th></tr></thead>
+          <tbody>${HABITATS.adaptationTypes.map(a=>`<tr><td style="font-weight:600;">${a.type}</td><td>${a.desc}</td><td>${a.example}</td></tr>`).join("")}</tbody></table>
+        </div></div>
+      </div>
+      <div class="sheet"><div class="sheet-head">Food chains</div><div class="sheet-body prose" style="font-size:var(--t-sm);">
+        <ul style="padding-left:1.2em;">${HABITATS.foodChains.map(f=>`<li>${f}</li>`).join("")}</ul>
+      </div></div>
+    `;
+  }
+
+  function renderSection(id){
+    const body = document.getElementById("body-bio");
+    if (id === "cells"){ body.innerHTML = renderCells(); }
+    else if (id === "body"){ body.innerHTML = renderBody(); }
+    else if (id === "reproduction"){ body.innerHTML = renderReproduction(); }
+    else if (id === "variation"){ body.innerHTML = renderVariation(); }
+    else if (id === "habitats"){ body.innerHTML = renderHabitats(); }
+  }
+
+  registerTab({
+    id: "bio", label: "Biology", short: "Bi", accent: "--barium",
+    icon: `<svg viewBox="0 0 24 24" fill="none"><path d="M4 20c0-9 5-14 14-14 1 8-4 14-14 14z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M6 18c3-5 6-8 11-10" stroke="currentColor" stroke-width="1.4"/></svg>`,
+    searchEntries: SECTIONS.map(s => ({ label: s.label, keywords: s.label.toLowerCase(), route:`#bio/${s.id}`, group:"Biology" })),
+    init(){
+      const wrap = document.createElement("div");
+      wrap.innerHTML = renderSegmented();
+      document.getElementById("body-bio").before(wrap.firstElementChild);
+      document.getElementById("bioSeg").addEventListener("click", (e) => {
+        const btn = e.target.closest("button[data-id]");
+        if (btn) router.go(`#bio/${btn.dataset.id}`);
+      });
+      renderSection(activeSection);
+    },
+    onRoute(rest){
+      const id = (rest && rest[0]) || "cells";
+      activeSection = SECTIONS.some(s=>s.id===id) ? id : "cells";
+      document.querySelectorAll("#bioSeg button").forEach(b => b.setAttribute("aria-selected", b.dataset.id===activeSection));
+      renderSection(activeSection);
+    }
+  });
+})();
+/* ============================================================
+   TAB: Maths
+   ============================================================ */
+(function(){
+  const AREA_FORMULAS = [
+    { id:"rectangle", label:"Rectangle area = Length × Width", vars:[["area","Area","units²"],["length","Length","units"],["width","Width","units"]],
+      solve:(k,m)=>{ if(m==="area") return k.length*k.width; if(m==="length") return k.area/k.width; return k.area/k.length; },
+      rearranged:{area:"area = length × width", length:"length = area ÷ width", width:"width = area ÷ length"} },
+    { id:"triangle", label:"Triangle area = ½ × Base × Height", vars:[["area","Area","units²"],["base","Base","units"],["height","Height","units"]],
+      solve:(k,m)=>{ if(m==="area") return 0.5*k.base*k.height; if(m==="base") return 2*k.area/k.height; return 2*k.area/k.base; },
+      rearranged:{area:"area = ½ × base × height", base:"base = 2 × area ÷ height", height:"height = 2 × area ÷ base"} },
+    { id:"parallelogram", label:"Parallelogram area = Base × Height", vars:[["area","Area","units²"],["base","Base","units"],["height","Height","units"]],
+      solve:(k,m)=>{ if(m==="area") return k.base*k.height; if(m==="base") return k.area/k.height; return k.area/k.base; },
+      rearranged:{area:"area = base × height", base:"base = area ÷ height", height:"height = area ÷ base"} },
+    { id:"circleArea", label:"Circle area = π × r²", vars:[["area","Area","units²"],["r","Radius","units"]],
+      solve:(k,m)=>{ if(m==="area") return Math.PI*k.r*k.r; return Math.sqrt(k.area/Math.PI); },
+      rearranged:{area:"area = πr²", r:"r = √(area ÷ π)"} },
+    { id:"circleCirc", label:"Circle circumference = 2 × π × r", vars:[["c","Circumference","units"],["r","Radius","units"]],
+      solve:(k,m)=>{ if(m==="c") return 2*Math.PI*k.r; return k.c/(2*Math.PI); },
+      rearranged:{c:"c = 2πr", r:"r = c ÷ 2π"} }
+  ];
+
+  const SECTIONS = [
+    { id:"number", label:"Number" },
+    { id:"algebra", label:"Algebra" },
+    { id:"geometry", label:"Geometry" },
+    { id:"statistics", label:"Statistics" }
+  ];
+  let activeSection = "number";
+
+  function renderSegmented(){
+    return `<div class="segmented" id="mathSeg">${SECTIONS.map(s=>`<button data-id="${s.id}" aria-selected="${s.id===activeSection}">${s.label}</button>`).join("")}</div>`;
+  }
+
+  /* ---- Number ---- */
+  function renderNumber(){
+    return `
+      <div class="grid-2">
+        <div class="sheet"><div class="sheet-head">Place value &amp; negative numbers</div><div class="sheet-body prose" style="font-size:var(--t-sm);">
+          <p>Each digit's position gives it a value — e.g. in 4,706 the 4 is worth 4,000, the 7 is worth 700.</p>
+          <p style="margin-top:var(--s2);">Negative numbers are less than zero. On a number line, the further left, the smaller the number: −5 &lt; −1 &lt; 0 &lt; 3.</p>
+          <p style="margin-top:var(--s2);">Adding a negative is the same as subtracting: 6 + (−2) = 6 − 2 = 4. Subtracting a negative is the same as adding: 6 − (−2) = 6 + 2 = 8.</p>
+        </div></div>
+        <div class="sheet"><div class="sheet-head">Prime, factors &amp; multiples</div><div class="sheet-body">
+          <div class="field" style="max-width:200px;"><label>Whole number</label><input type="number" id="numN" value="24" min="1" step="1"></div>
+          <div id="numOut" style="margin-top:var(--s3);"></div>
+        </div></div>
+      </div>
+      <div class="sheet"><div class="sheet-head">Fraction ⇄ decimal ⇄ percentage</div><div class="sheet-body">
+        <div class="grid-3">
+          <div class="field"><label>Fraction (e.g. 3/4)</label><input type="text" id="fdpFrac" value="3/4"></div>
+          <div class="field"><label>Decimal</label><input type="number" id="fdpDec" step="any"></div>
+          <div class="field"><label>Percentage (%)</label><input type="number" id="fdpPct" step="any"></div>
+        </div>
+        <p class="hint" style="margin-top:var(--s2);">Edit any one field — the other two update.</p>
+      </div></div>
+    `;
+  }
+  function wireNumber(){
+    const nEl = document.getElementById("numN"), out = document.getElementById("numOut");
+    function updateN(){
+      const n = parseInt(nEl.value,10);
+      if (!isFinite(n) || n<1){ out.innerHTML=""; return; }
+      const factors = [];
+      for (let i=1;i<=n;i++) if (n%i===0) factors.push(i);
+      const isPrime = n>1 && factors.length===2;
+      const multiples = Array.from({length:10},(_,i)=>n*(i+1));
+      out.innerHTML = `
+        <div class="table-wrap"><table>
+          <tr><td>Factors</td><td class="tabular">${factors.join(", ")}</td></tr>
+          <tr><td>Prime?</td><td>${n===1?"Neither prime nor composite":(isPrime?"Yes":"No")}</td></tr>
+          <tr><td>First 10 multiples</td><td class="tabular">${multiples.join(", ")}</td></tr>
+        </table></div>
+      `;
+    }
+    nEl.addEventListener("input", updateN); updateN();
+
+    const fracEl=document.getElementById("fdpFrac"), decEl=document.getElementById("fdpDec"), pctEl=document.getElementById("fdpPct");
+    function gcd(a,b){ a=Math.abs(a); b=Math.abs(b); while(b){ [a,b]=[b,a%b]; } return a||1; }
+    function fromFrac(){
+      const m = fracEl.value.match(/^\s*(-?\d+)\s*\/\s*(\d+)\s*$/);
+      if (!m) return;
+      const dec = parseInt(m[1],10)/parseInt(m[2],10);
+      decEl.value = Number(dec.toFixed(6)); pctEl.value = Number((dec*100).toFixed(4));
+    }
+    function fromDec(){
+      const dec = parseFloat(decEl.value);
+      if (!isFinite(dec)) return;
+      pctEl.value = Number((dec*100).toFixed(4));
+      const denom=1000, num=Math.round(dec*denom), g=gcd(num,denom);
+      fracEl.value = `${num/g}/${denom/g}`;
+    }
+    function fromPct(){
+      const pct = parseFloat(pctEl.value);
+      if (!isFinite(pct)) return;
+      const dec = pct/100; decEl.value = Number(dec.toFixed(6));
+      const denom=1000, num=Math.round(dec*denom), g=gcd(num,denom);
+      fracEl.value = `${num/g}/${denom/g}`;
+    }
+    fracEl.addEventListener("input", fromFrac);
+    decEl.addEventListener("input", fromDec);
+    pctEl.addEventListener("input", fromPct);
+    fromFrac();
+  }
+
+  /* ---- Algebra ---- */
+  function renderAlgebra(){
+    return `
+      <div class="grid-2">
+        <div class="sheet"><div class="sheet-head">Vocabulary</div><div class="sheet-body table-wrap">
+          <table><thead><tr><th>Term</th><th>Meaning</th><th>Example</th></tr></thead>
+          <tbody>${ALGEBRA_VOCAB.map(v=>`<tr><td style="font-weight:600;">${v.term}</td><td>${v.def}</td><td class="tabular">${v.example}</td></tr>`).join("")}</tbody></table>
+        </div></div>
+        <div class="sheet"><div class="sheet-head">Simplifying expressions</div><div class="sheet-body prose" style="font-size:var(--t-sm);">
+          <ul style="padding-left:1.2em;">${SIMPLIFY_EXAMPLES.map(e=>`<li class="tabular">${e}</li>`).join("")}</ul>
+        </div></div>
+      </div>
+      <div class="sheet"><div class="sheet-head">Solve ax + b = c</div><div class="sheet-body">
+        <div class="grid-3">
+          <div class="field"><label>a</label><input type="number" id="eqA" value="3"></div>
+          <div class="field"><label>b</label><input type="number" id="eqB" value="4"></div>
+          <div class="field"><label>c</label><input type="number" id="eqC" value="19"></div>
+        </div>
+        <p id="eqOut" class="prose" style="margin-top:var(--s3);font-size:var(--t-sm);"></p>
+      </div></div>
+    `;
+  }
+  function wireAlgebra(){
+    const a=document.getElementById("eqA"), b=document.getElementById("eqB"), c=document.getElementById("eqC"), out=document.getElementById("eqOut");
+    function update(){
+      const A=parseFloat(a.value), B=parseFloat(b.value), C=parseFloat(c.value);
+      if (![A,B,C].every(isFinite) || A===0){ out.innerHTML=""; return; }
+      const x = (C-B)/A;
+      out.innerHTML = `${A}x + ${B} = ${C}<br>${A}x = ${C} − ${B} = ${Number((C-B).toPrecision(6))}<br><strong>x = ${Number((C-B).toPrecision(6))} ÷ ${A} = ${Number(x.toPrecision(6))}</strong>`;
+    }
+    [a,b,c].forEach(el=>el.addEventListener("input",update)); update();
+  }
+
+  /* ---- Geometry ---- */
+  function renderAreaSolver(){
+    return `
+      <div class="sheet"><div class="sheet-head">Calculate — area &amp; circumference</div><div class="sheet-body">
+        <div class="field" style="max-width:360px;margin-bottom:var(--s4);">
+          <label for="areaPick">Formula</label>
+          <select id="areaPick">${AREA_FORMULAS.map(f=>`<option value="${f.id}">${f.label}</option>`).join("")}</select>
+        </div>
+        <div id="areaFields"></div>
+        <div id="areaOut" style="margin-top:var(--s4);"></div>
+      </div></div>
+    `;
+  }
+  function wireAreaSolver(){
+    const pick = document.getElementById("areaPick");
+    const fields = document.getElementById("areaFields");
+    const out = document.getElementById("areaOut");
+    function build(){
+      const f = AREA_FORMULAS.find(x=>x.id===pick.value);
+      fields.innerHTML = `<div class="grid-3">${f.vars.map(([key,label,unit])=>`
+        <div class="field"><label>${label} (${unit})</label><input type="number" step="any" data-key="${key}" value=""></div>
+      `).join("")}</div><p class="hint" style="margin-top:var(--s2);">Leave exactly one field blank — that's the one it solves for.</p>`;
+      fields.querySelectorAll("input").forEach(inp => inp.addEventListener("input", () => compute(f)));
+      compute(f);
+    }
+    function compute(f){
+      const inputs = Array.from(fields.querySelectorAll("input"));
+      const blanks = inputs.filter(i => i.value.trim()==="");
+      if (blanks.length !== 1){ out.innerHTML = `<p class="hint">${blanks.length===0?"All fields filled — clear one to solve for it.":"Leave exactly one field blank."}</p>`; return; }
+      const missing = blanks[0].dataset.key;
+      const known = {};
+      inputs.forEach(i => { if (i.dataset.key !== missing) known[i.dataset.key] = parseFloat(i.value); });
+      const result = f.solve(known, missing);
+      if (!isFinite(result)){ out.innerHTML = `<p class="err">No valid solution for these values.</p>`; return; }
+      out.innerHTML = `<p class="prose" style="font-size:var(--t-sm);">Rearranged: <strong class="tabular">${f.rearranged[missing]}</strong></p>
+        <p style="font-size:var(--t-md);font-weight:600;">${missing} = <span class="tabular">${Number(result.toPrecision(6))}</span></p>`;
+    }
+    pick.addEventListener("change", build);
+    build();
+  }
+  function renderGeometry(){
+    return `
+      <div class="grid-2">
+        <div class="sheet"><div class="sheet-head">Angle rules</div><div class="sheet-body table-wrap">
+          <table>${ANGLE_RULES.map(r=>`<tr><td style="font-weight:600;white-space:nowrap;">${r.name}</td><td>${r.desc}</td></tr>`).join("")}</table>
+        </div></div>
+        <div class="sheet"><div class="sheet-head">2D shape properties</div><div class="sheet-body table-wrap">
+          <table><thead><tr><th>Shape</th><th>Sides</th><th>Angle sum</th><th>Notes</th></tr></thead>
+          <tbody>${SHAPES_2D.map(s=>`<tr><td style="font-weight:600;">${s.name}</td><td class="tabular">${s.sides}</td><td class="tabular">${s.angleSum}</td><td>${s.note}</td></tr>`).join("")}</tbody></table>
+        </div></div>
+      </div>
+      <div class="sheet"><div class="sheet-head">3D shape properties</div><div class="sheet-body table-wrap">
+        <table><thead><tr><th>Shape</th><th>Faces</th><th>Edges</th><th>Vertices</th></tr></thead>
+        <tbody>${SHAPES_3D.map(s=>`<tr><td style="font-weight:600;">${s.name}</td><td class="tabular">${s.faces}</td><td class="tabular">${s.edges}</td><td class="tabular">${s.vertices}</td></tr>`).join("")}</tbody></table>
+      </div></div>
+      ${renderAreaSolver()}
+    `;
+  }
+
+  /* ---- Statistics ---- */
+  function renderStatistics(){
+    return `
+      <div class="sheet"><div class="sheet-head">Statistics — paste a data column</div><div class="sheet-body">
+        <div class="field"><label>Data (comma, space, or newline separated)</label>
+          <textarea id="statData" rows="4" style="width:100%;">12, 15, 14, 10, 18, 21, 14, 16, 9, 20</textarea>
+        </div>
+        <div id="statOut" style="margin-top:var(--s4);"></div>
+        <div style="margin-top:var(--s4);"><p class="hint" style="margin-bottom:4px;">Bar chart</p><canvas id="statHist" width="420" height="220" style="width:100%;max-width:420px;border:1px solid var(--rule);"></canvas></div>
+      </div></div>
+      <div class="sheet"><div class="sheet-head">Probability</div><div class="sheet-body prose" style="font-size:var(--t-sm);">
+        <ul style="padding-left:1.2em;">${PROBABILITY_NOTES.map(p=>`<li>${p}</li>`).join("")}</ul>
+      </div></div>
+    `;
+  }
+  function wireStatistics(){
+    const dataEl = document.getElementById("statData"), out = document.getElementById("statOut");
+    const histCanvas = document.getElementById("statHist");
+    function update(){
+      const nums = dataEl.value.split(/[\s,]+/).map(s=>parseFloat(s)).filter(v=>isFinite(v));
+      if (nums.length < 2){ out.innerHTML = `<p class="err">Enter at least two numbers.</p>`; return; }
+      const sorted = [...nums].sort((a,b)=>a-b);
+      const n = nums.length;
+      const mean = nums.reduce((a,b)=>a+b,0)/n;
+      const modeMap = {}; nums.forEach(v=>modeMap[v]=(modeMap[v]||0)+1);
+      const maxFreq = Math.max(...Object.values(modeMap));
+      const modes = Object.keys(modeMap).filter(k=>modeMap[k]===maxFreq).map(Number);
+      const median = n%2 ? sorted[(n-1)/2] : (sorted[n/2-1]+sorted[n/2])/2;
+      const range = sorted[n-1]-sorted[0];
+      out.innerHTML = `
+        <div class="table-wrap"><table>
+          <tr><td>n</td><td class="tabular">${n}</td></tr>
+          <tr><td>Mean</td><td class="tabular">${mean.toFixed(4)}</td></tr>
+          <tr><td>Median</td><td class="tabular">${median}</td></tr>
+          <tr><td>Mode</td><td class="tabular">${modes.length===Object.keys(modeMap).length?"none (all unique)":modes.join(", ")}</td></tr>
+          <tr><td>Range</td><td class="tabular">${range}</td></tr>
+        </table></div>
+      `;
+      drawHist(histCanvas, sorted);
+    }
+    function drawHist(canvas, sorted){
+      const ctx = canvas.getContext("2d"); const W=canvas.width, H=canvas.height;
+      ctx.clearRect(0,0,W,H);
+      const min=sorted[0], max=sorted[sorted.length-1];
+      const bins = Math.max(4, Math.ceil(Math.log2(sorted.length)+1));
+      const width = (max-min)/bins || 1;
+      const counts = Array(bins).fill(0);
+      sorted.forEach(v => { let idx = Math.floor((v-min)/width); if (idx>=bins) idx=bins-1; if(idx<0) idx=0; counts[idx]++; });
+      const maxCount = Math.max(...counts);
+      const pad=24, plotH = H-2*pad, barW = (W-2*pad)/bins;
+      ctx.fillStyle = "rgb(15,110,99)";
+      counts.forEach((c,i) => { const h = maxCount? c/maxCount*plotH : 0; ctx.fillRect(pad+i*barW+2, H-pad-h, barW-4, h); });
+      ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue("--rule-strong").trim();
+      ctx.beginPath(); ctx.moveTo(pad,H-pad); ctx.lineTo(W-pad,H-pad); ctx.stroke();
+    }
+    dataEl.addEventListener("input", update);
+    update();
+  }
+
+  function renderSection(id){
+    const body = document.getElementById("body-maths");
+    if (id==="number"){ body.innerHTML = renderNumber(); wireNumber(); }
+    else if (id==="algebra"){ body.innerHTML = renderAlgebra(); wireAlgebra(); }
+    else if (id==="geometry"){ body.innerHTML = renderGeometry(); wireAreaSolver(); }
+    else if (id==="statistics"){ body.innerHTML = renderStatistics(); wireStatistics(); }
+  }
+
+  registerTab({
+    id: "maths", label: "Maths", short: "Ma", accent: "--lilac",
+    icon: `<svg viewBox="0 0 24 24" fill="none"><path d="M4 4h16v16H4z" stroke="currentColor" stroke-width="2"/><path d="M9 4v16M4 9h16" stroke="currentColor" stroke-width="1.4"/></svg>`,
+    searchEntries: SECTIONS.map(s => ({ label: s.label, keywords: s.label.toLowerCase(), route:`#maths/${s.id}`, group:"Maths" })),
+    init(){
+      const wrap = document.createElement("div");
+      wrap.innerHTML = renderSegmented();
+      document.getElementById("body-maths").before(wrap.firstElementChild);
+      document.getElementById("mathSeg").addEventListener("click", (e) => {
+        const btn = e.target.closest("button[data-id]");
+        if (btn) router.go(`#maths/${btn.dataset.id}`);
+      });
+      renderSection(activeSection);
+    },
+    onRoute(rest){
+      const id = (rest && rest[0]) || "number";
+      activeSection = SECTIONS.some(s=>s.id===id) ? id : "number";
+      document.querySelectorAll("#mathSeg button").forEach(b => b.setAttribute("aria-selected", b.dataset.id===activeSection));
+      renderSection(activeSection);
+    }
+  });
+})();
+
+/* ============================================================
+   BOOTSTRAP
+   ============================================================ */
+function boot(){
+  renderRail();
+  buildPanelShells();
+  buildSearchIndex();
+  palette.init();
+  shortcutModal.init();
+
+  let initialHash = window.location.hash;
+  if (!initialHash){
+    const last = store.get("lastTab", "#periodic");
+    initialHash = last;
+    window.location.hash = last;
+  }
+  router.fire();
+
+  window.addEventListener("beforeprint", () => {});
+  window.addEventListener("afterprint", () => {
+    document.querySelectorAll(".panel[data-printing]").forEach(p => p.removeAttribute("data-printing"));
+  });
+}
+
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+else boot();
+</script>
+</body>
+</html>

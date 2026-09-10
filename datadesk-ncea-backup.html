@@ -1,0 +1,3155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Data Desk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+/* ============================= TOKENS ============================= */
+:root{
+  --paper:        #F3F5F4;
+  --paper-sunk:   #E8EDEB;
+  --grid:         #D6DEDB;
+  --rule:         #C2CCC9;
+  --rule-strong:  #8A9A96;
+
+  --ink:          #16232E;
+  --ink-2:        #47585F;
+  --ink-3:        #7C8C90;
+
+  --signal:       #0F6E63;
+  --signal-lift:  #12897C;
+  --signal-wash:  #DCEBE8;
+  --crimson:      #B3123A;
+  --amber:        #C7860B;
+  --lilac:        #6E5AC8;
+  --strontium:    #D4453B;
+  --barium:       #4E9A2F;
+
+  --cat-alkali:        #F6D9D0; --cat-alkali-edge:      #C25A3E;
+  --cat-alkaline:      #F8E7C8; --cat-alkaline-edge:    #C08A22;
+  --cat-transition:    #DCE7EC; --cat-transition-edge:  #547A8E;
+  --cat-post-trans:    #E2E6DE; --cat-post-trans-edge:  #6E7B63;
+  --cat-metalloid:     #E5DFF2; --cat-metalloid-edge:   #6E5AC8;
+  --cat-nonmetal:      #D9EDDF; --cat-nonmetal-edge:    #35774A;
+  --cat-halogen:       #D6EAF0; --cat-halogen-edge:     #2C7C93;
+  --cat-noble:         #EDDDE8; --cat-noble-edge:       #8E4A78;
+  --cat-lanthanide:    #F1E3D5; --cat-lanthanide-edge:  #A9722F;
+  --cat-actinide:      #EEDCDC; --cat-actinide-edge:    #9C4444;
+  --cat-unknown:       #E4E7E8; --cat-unknown-edge:     #7C8C90;
+
+  --font-ui:   "Archivo", "Segoe UI Variable", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-read: "Source Serif 4", Georgia, "Times New Roman", serif;
+
+  --t-xs:  0.75rem;
+  --t-sm:  0.875rem;
+  --t-base:1rem;
+  --t-md:  1.25rem;
+  --t-lg:  1.563rem;
+  --t-xl:  1.953rem;
+  --t-2xl: 3.052rem;
+
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px; --s7:48px;
+  --radius-tile: 2px;
+  --radius-panel: 0;
+  --radius-control: 6px;
+
+  --shadow-card: 0 8px 28px rgba(22,35,46,.16);
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:      #10262A;
+    --paper-sunk: #0B1D21;
+    --grid:       #1C3A3F;
+    --rule:       #24474D;
+    --rule-strong:#3E6B71;
+    --ink:        #E4EFEC;
+    --ink-2:      #A3BAB6;
+    --ink-3:      #6E8A87;
+    --signal:     #4FC7B6;
+    --signal-lift:#6FDCCB;
+    --signal-wash:#123B3B;
+    --crimson:    #FF7A93;
+    --amber:      #F0B44A;
+    --lilac:      #A996F0;
+    --strontium:  #FF7A6B;
+    --barium:     #86D45F;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:      #10262A;
+  --paper-sunk: #0B1D21;
+  --grid:       #1C3A3F;
+  --rule:       #24474D;
+  --rule-strong:#3E6B71;
+  --ink:        #E4EFEC;
+  --ink-2:      #A3BAB6;
+  --ink-3:      #6E8A87;
+  --signal:     #4FC7B6;
+  --signal-lift:#6FDCCB;
+  --signal-wash:#123B3B;
+  --crimson:    #FF7A93;
+  --amber:      #F0B44A;
+  --lilac:      #A996F0;
+  --strontium:  #FF7A6B;
+  --barium:     #86D45F;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) .cat-tile{ --cat-fill-mix: 22%; }
+}
+:root[data-theme="dark"] .cat-tile{ --cat-fill-mix: 22%; }
+
+/* ============================= BASE ============================= */
+*,*::before,*::after{ box-sizing:border-box; }
+html,body{ height:100%; }
+body{
+  margin:0;
+  font-family:var(--font-ui);
+  font-size:var(--t-base);
+  color:var(--ink);
+  background:var(--paper);
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4,p,dl,dd{ margin:0; }
+button,input,select,textarea{ font:inherit; color:inherit; }
+button{ cursor:pointer; }
+a{ color:var(--signal); }
+::selection{ background:var(--signal-wash); color:var(--ink); }
+
+:focus-visible{
+  outline:2px solid var(--signal);
+  outline-offset:2px;
+  border-radius:2px;
+}
+:focus:not(:focus-visible){ outline:none; }
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{
+    animation-duration:0.001ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:0.001ms !important;
+  }
+}
+
+.tabular{ font-variant-numeric: tabular-nums lining-nums; }
+
+/* ============================= LAYOUT ============================= */
+.app{
+  display:grid;
+  grid-template-columns:64px minmax(0,1fr);
+  grid-template-rows:56px 1fr;
+  grid-template-areas:
+    "bar bar"
+    "rail main";
+  height:100vh;
+}
+
+/* graph-paper ground */
+#desk{
+  grid-area:main;
+  position:relative;
+  overflow-y:auto;
+  background-color:var(--paper);
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size:20px 20px;
+  background-position:-1px -1px;
+}
+:root:not([data-theme="light"]) #desk{
+  background-image:
+    linear-gradient(color-mix(in oklab, var(--grid) 55%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in oklab, var(--grid) 55%, transparent) 1px, transparent 1px);
+}
+
+.desk-inner{
+  max-width:1400px;
+  margin:0 auto;
+  padding:var(--s5) var(--s5) var(--s7);
+}
+
+/* command bar */
+.bar{
+  grid-area:bar;
+  display:flex;
+  align-items:center;
+  gap:var(--s4);
+  padding:0 var(--s4);
+  background:var(--paper);
+  border-bottom:2px solid var(--ink);
+  position:sticky;
+  top:0;
+  z-index:40;
+}
+.bar-brand{
+  font-weight:700;
+  font-size:var(--t-sm);
+  letter-spacing:0.02em;
+  white-space:nowrap;
+  color:var(--ink);
+}
+.bar-search{
+  flex:1;
+  min-width:0;
+  display:flex;
+  align-items:center;
+  gap:var(--s2);
+  background:var(--paper-sunk);
+  border:1px solid var(--rule);
+  border-radius:var(--radius-control);
+  padding:0 var(--s3);
+  height:36px;
+  max-width:560px;
+}
+.bar-search input{
+  flex:1;
+  min-width:0;
+  width:0;
+  background:none;
+  border:none;
+  color:var(--ink);
+  font-size:var(--t-sm);
+}
+@media (max-width:480px){
+  .bar-brand{ display:none; }
+  .bar-search kbd{ display:none; }
+}
+.bar-search input::placeholder{ color:var(--ink-3); }
+.bar-search kbd{
+  font-family:var(--font-ui);
+  font-size:var(--t-xs);
+  color:var(--ink-3);
+  border:1px solid var(--rule);
+  border-radius:4px;
+  padding:1px 5px;
+  background:var(--paper);
+}
+.bar-actions{ display:flex; align-items:center; gap:var(--s2); margin-left:auto; }
+.icon-btn{
+  width:36px; height:36px;
+  display:flex; align-items:center; justify-content:center;
+  background:none; border:1px solid transparent; border-radius:var(--radius-control);
+  color:var(--ink-2);
+}
+.icon-btn:hover{ background:var(--paper-sunk); color:var(--ink); }
+.icon-btn svg{ width:18px; height:18px; }
+
+/* rail */
+.rail{
+  grid-area:rail;
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+  background:var(--paper-sunk);
+  border-right:1px solid var(--rule);
+  padding:var(--s3) 0;
+}
+.rail-item{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:2px;
+  padding:var(--s3) 0;
+  background:none;
+  border:none;
+  border-left:3px solid transparent;
+  color:var(--ink-2);
+  position:relative;
+}
+.rail-item svg{ width:20px; height:20px; }
+.rail-item .rail-label{ font-size:10px; font-weight:600; letter-spacing:0.02em; }
+.rail-item:hover{ color:var(--ink); background:color-mix(in oklab, var(--paper) 50%, transparent); }
+.rail-item[aria-current="true"]{
+  color:var(--accent, var(--signal));
+  border-left-color:var(--accent, var(--signal));
+  background:var(--paper);
+}
+.rail-spacer{ flex:1; }
+
+/* panels */
+.panel{ display:none; }
+.panel[data-active="true"]{ display:block; }
+.panel-head{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:var(--s4);
+  flex-wrap:wrap;
+  padding-bottom:var(--s3);
+  border-bottom:1px solid var(--rule);
+  margin-bottom:var(--s4);
+}
+.panel-title{
+  font-size:var(--t-lg);
+  font-weight:600;
+  color:var(--ink);
+}
+.panel-title .accent-mark{ color:var(--accent, var(--signal)); }
+.panel-tools{ display:flex; gap:var(--s2); flex-wrap:wrap; align-items:center; }
+
+.sheet{
+  background:var(--paper);
+  border:1px solid var(--rule);
+}
+.sheet + .sheet{ margin-top:var(--s4); }
+.sheet-head{
+  padding:var(--s3) var(--s4);
+  border-bottom:1px solid var(--rule);
+  font-weight:600;
+  font-size:var(--t-sm);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:var(--s3);
+}
+.sheet-body{ padding:var(--s4); }
+
+/* segmented control (chem/phys/maths sub-nav) */
+.segmented{
+  display:flex;
+  flex-wrap:wrap;
+  gap:2px;
+  background:var(--paper-sunk);
+  border:1px solid var(--rule);
+  padding:2px;
+  margin-bottom:var(--s4);
+}
+.segmented button{
+  background:none;
+  border:none;
+  padding:var(--s2) var(--s3);
+  font-size:var(--t-sm);
+  font-weight:500;
+  color:var(--ink-2);
+  border-radius:2px;
+}
+.segmented button:hover{ color:var(--ink); }
+.segmented button[aria-selected="true"]{
+  background:var(--paper);
+  color:var(--accent, var(--signal));
+  box-shadow:inset 0 0 0 1px var(--rule);
+  font-weight:600;
+}
+
+/* form controls */
+.field{ display:flex; flex-direction:column; gap:4px; }
+.field label{ font-size:var(--t-xs); color:var(--ink-2); font-weight:500; }
+input[type="text"], input[type="number"], input[type="search"], select, textarea{
+  background:var(--paper);
+  border:1px solid var(--rule);
+  border-radius:var(--radius-control);
+  padding:var(--s2) var(--s3);
+  font-size:var(--t-sm);
+  color:var(--ink);
+}
+textarea{ font-family:var(--font-ui); resize:vertical; }
+input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible{ outline-offset:1px; }
+.btn{
+  background:var(--paper);
+  border:1px solid var(--rule-strong);
+  border-radius:var(--radius-control);
+  padding:var(--s2) var(--s4);
+  font-size:var(--t-sm);
+  font-weight:600;
+  color:var(--ink);
+  transition:background 120ms ease-out, color 120ms ease-out;
+}
+.btn:hover{ background:var(--paper-sunk); }
+.btn-primary{
+  background:var(--accent, var(--signal));
+  border-color:var(--accent, var(--signal));
+  color:var(--paper);
+}
+.btn-primary:hover{ background:var(--accent-lift, var(--signal-lift)); border-color:var(--accent-lift, var(--signal-lift)); }
+.btn-sm{ padding:4px var(--s3); font-size:var(--t-xs); }
+
+table{ width:100%; border-collapse:collapse; font-size:var(--t-sm); }
+th,td{ text-align:left; padding:var(--s2) var(--s3); border-bottom:1px solid var(--rule); }
+thead th{ font-size:var(--t-xs); color:var(--ink-2); font-weight:600; text-transform:none; border-bottom:1px solid var(--rule-strong); }
+tbody tr:nth-child(even){ background:var(--paper-sunk); }
+.table-wrap{ overflow-x:auto; }
+
+.prose{
+  font-family:var(--font-read);
+  font-size:var(--t-base);
+  line-height:1.6;
+  max-width:68ch;
+  color:var(--ink);
+}
+
+.hint{ font-size:var(--t-xs); color:var(--ink-2); }
+.err{ font-size:var(--t-xs); color:var(--crimson); font-weight:500; }
+.badge{
+  display:inline-flex; align-items:center;
+  font-size:var(--t-xs); font-weight:600;
+  padding:2px 8px; border-radius:100px;
+  background:var(--signal-wash); color:var(--signal);
+}
+
+.grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:var(--s4); }
+.grid-3{ display:grid; grid-template-columns:repeat(3,1fr); gap:var(--s4); }
+@media (max-width:800px){ .grid-2,.grid-3{ grid-template-columns:1fr; } }
+
+.empty-state{
+  padding:var(--s6);
+  text-align:center;
+  color:var(--ink-2);
+  font-size:var(--t-sm);
+}
+
+/* ============================= COMMAND PALETTE ============================= */
+.palette-overlay{
+  position:fixed; inset:0;
+  background:rgba(16,20,22,.35);
+  display:none;
+  align-items:flex-start;
+  justify-content:center;
+  padding-top:12vh;
+  z-index:100;
+}
+.palette-overlay[data-open="true"]{ display:flex; }
+.palette{
+  width:min(600px, 92vw);
+  background:var(--paper);
+  border:1px solid var(--rule-strong);
+  box-shadow:var(--shadow-card);
+  max-height:60vh;
+  display:flex;
+  flex-direction:column;
+}
+.palette-input{
+  padding:var(--s4);
+  border-bottom:1px solid var(--rule);
+  display:flex;
+  gap:var(--s2);
+  align-items:center;
+}
+.palette-input input{ flex:1; border:none; background:none; font-size:var(--t-md); }
+.palette-results{ overflow-y:auto; padding:var(--s2) 0; }
+.palette-group-label{ font-size:var(--t-xs); color:var(--ink-3); padding:var(--s2) var(--s4) 4px; font-weight:600; }
+.palette-item{
+  display:flex; align-items:center; gap:var(--s3);
+  padding:var(--s2) var(--s4);
+  border-left:3px solid var(--item-accent, transparent);
+  cursor:pointer;
+}
+.palette-item:hover, .palette-item[data-active="true"]{ background:var(--paper-sunk); }
+.palette-item-label{ font-weight:500; font-size:var(--t-sm); }
+.palette-item-meta{ font-size:var(--t-xs); color:var(--ink-3); margin-left:auto; }
+
+/* ============================= MODAL / SHORTCUT SHEET ============================= */
+.modal-overlay{
+  position:fixed; inset:0;
+  background:rgba(16,20,22,.35);
+  display:none;
+  align-items:center; justify-content:center;
+  z-index:100;
+  padding:var(--s4);
+}
+.modal-overlay[data-open="true"]{ display:flex; }
+.modal{
+  width:min(520px,92vw);
+  max-height:80vh;
+  overflow-y:auto;
+  background:var(--paper);
+  border:1px solid var(--rule-strong);
+  box-shadow:var(--shadow-card);
+  padding:var(--s5);
+}
+.modal h2{ font-size:var(--t-md); font-weight:600; margin-bottom:var(--s4); }
+.kbd-row{ display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid var(--rule); font-size:var(--t-sm); }
+.kbd-row kbd{ font-family:var(--font-ui); background:var(--paper-sunk); border:1px solid var(--rule); border-radius:4px; padding:1px 6px; }
+
+/* ============================= PRINT ============================= */
+@page{ size: A4 landscape; margin: 12mm; }
+@media print{
+  .bar, .rail, .panel-tools, .palette-overlay, .modal-overlay, .no-print{ display:none !important; }
+  #desk{ background-image:none; overflow:visible; height:auto; }
+  .app{ display:block; height:auto; }
+  .desk-inner{ max-width:none; padding:0; }
+  .panel{ display:none !important; }
+  .panel[data-printing="true"]{ display:block !important; }
+  body{ background:#fff; color:#000; }
+}
+
+/* ============================================================ PERIODIC TABLE ============================================================ */
+.pt-controls-row{ display:flex; align-items:flex-end; justify-content:space-between; gap:var(--s4); flex-wrap:wrap; margin-bottom:var(--s4); }
+.pt-controls-row input[type="range"]{ width:100%; accent-color:var(--signal); }
+.pt-grid-wrap{ overflow-x:auto; padding-bottom:var(--s3); }
+.periodic-grid{
+  display:grid;
+  grid-template-columns:repeat(18, minmax(48px, 1fr));
+  grid-auto-rows:minmax(48px, 1fr);
+  gap:3px;
+  min-width:1000px;
+}
+.element-tile{
+  position:relative;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  border:1px solid var(--cat-unknown-edge);
+  border-radius:var(--radius-tile);
+  padding:2px;
+  min-width:0;
+  transition:opacity 120ms ease-out, transform 120ms ease-out;
+  color:var(--ink);
+}
+.element-tile:hover{ transform:translateY(-1px); box-shadow:0 2px 6px rgba(22,35,46,.18); z-index:2; }
+.et-num{ position:absolute; top:2px; left:3px; font-size:9px; color:var(--ink-2); }
+.et-sym{ font-weight:600; font-size:var(--t-sm); line-height:1; }
+.et-name{ font-size:8px; color:var(--ink-2); max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.et-mass{ font-size:8px; color:var(--ink-3); }
+@media (max-width:900px){ .et-name{ display:none; } }
+@media (max-width:700px){ .et-mass{ display:none; } }
+
+.element-detail{ display:none; }
+.element-detail[data-open="true"]{
+  display:block;
+  position:fixed;
+  top:50%; left:50%; transform:translate(-50%,-50%);
+  width:min(480px, 92vw);
+  max-height:82vh;
+  overflow-y:auto;
+  z-index:60;
+  box-shadow:var(--shadow-card);
+  border:1px solid var(--rule-strong);
+}
+.detail-inner{ position:relative; padding:var(--s5); }
+.detail-top{ display:flex; gap:var(--s4); align-items:center; margin-bottom:var(--s4); }
+.detail-symbol{
+  font-size:var(--t-2xl); font-weight:700; line-height:1;
+  width:88px; height:88px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--paper); border:2px solid; border-radius:var(--radius-tile);
+}
+.detail-top h2{ font-size:var(--t-md); font-weight:600; }
+.detail-grid{ display:grid; grid-template-columns:1fr 1fr; gap:var(--s3) var(--s4); margin-bottom:var(--s4); }
+.detail-grid dt{ font-size:var(--t-xs); color:var(--ink-2); }
+.detail-grid dd{ font-size:var(--t-sm); font-weight:500; }
+.detail-shell{ display:flex; justify-content:center; margin-bottom:var(--s3); }
+
+/* ============================================================ CHEMISTRY ============================================================ */
+.sol-grid td{ text-align:center; font-size:var(--t-xs); cursor:default; }
+.sol-grid th{ font-size:var(--t-xs); }
+.sol-sol{ background:color-mix(in oklab, var(--barium) 18%, var(--paper)); }
+.sol-insol{ background:color-mix(in oklab, var(--crimson) 16%, var(--paper)); }
+.sol-slight{ background:color-mix(in oklab, var(--amber) 18%, var(--paper)); }
+
+/* ============================================================ MATHS ============================================================ */
+.uc-wrap{ display:flex; gap:var(--s5); flex-wrap:wrap; align-items:flex-start; }
+#ucSvg{ flex-shrink:0; background:var(--paper-sunk); border:1px solid var(--rule); }
+#ucHandle{ touch-action:none; }
+
+/* animations */
+@media (prefers-reduced-motion:no-preference){
+  .element-tile{ animation: tile-in 220ms ease-out backwards; }
+  @keyframes tile-in{ from{ opacity:0; transform:translateY(2px); } to{ opacity:1; transform:none; } }
+  .card-pop{ animation: card-in 160ms ease-out; }
+  @keyframes card-in{ from{ opacity:0; transform:scale(.98); } to{ opacity:1; transform:none; } }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header class="bar">
+    <div class="bar-brand">The Data Desk</div>
+    <div class="bar-search" id="openPaletteBtn" role="button" tabindex="0">
+      <svg viewBox="0 0 24 24" fill="none" width="16" height="16"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <input type="text" id="paletteTrigger" placeholder="Search anything — press /" readonly>
+      <kbd>/</kbd>
+    </div>
+    <div class="bar-actions">
+      <button class="icon-btn no-print" id="shortcutBtn" title="Keyboard shortcuts (?)" aria-label="Keyboard shortcuts">
+        <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="7" width="18" height="12" rx="2" stroke="currentColor" stroke-width="2"/><path d="M7 11h.01M11 11h.01M15 11h.01M17 11h.01M7 15h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+      <button class="icon-btn no-print" id="themeBtn" title="Toggle theme" aria-label="Toggle theme">
+        <svg viewBox="0 0 24 24" fill="none" id="themeIcon"><circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2"/><path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <nav class="rail" id="rail" aria-label="Tabs"></nav>
+
+  <main id="desk">
+    <div class="desk-inner" id="deskInner"></div>
+  </main>
+</div>
+
+<div class="palette-overlay" id="paletteOverlay">
+  <div class="palette" role="dialog" aria-modal="true" aria-label="Command palette">
+    <div class="palette-input">
+      <svg viewBox="0 0 24 24" fill="none" width="18" height="18"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <input type="text" id="paletteInput" placeholder="Jump to an element, formula, constant, tool…" autocomplete="off">
+    </div>
+    <div class="palette-results" id="paletteResults"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="shortcutOverlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Keyboard shortcuts">
+    <h2>Keyboard shortcuts</h2>
+    <div class="kbd-row"><span>Open search / command palette</span><kbd>/</kbd> or <kbd>Ctrl K</kbd></div>
+    <div class="kbd-row"><span>Switch tab</span><kbd>1</kbd>–<kbd>4</kbd></div>
+    <div class="kbd-row"><span>Toggle theme</span><kbd>T</kbd></div>
+    <div class="kbd-row"><span>Close dialog / detail card</span><kbd>Esc</kbd></div>
+    <div class="kbd-row"><span>Periodic table: move selection</span><kbd>↑ ↓ ← →</kbd></div>
+    <div class="kbd-row"><span>Periodic table: open element</span><kbd>Enter</kbd></div>
+    <div class="kbd-row"><span>Show this sheet</span><kbd>?</kbd></div>
+  </div>
+</div>
+
+<template id="tpl-element-card"></template>
+
+<script>
+"use strict";
+/* ============================================================
+   DATA — periodic table
+   ============================================================ */
+// [Z, symbol, name, standardAtomicWeight, category, group, period]
+const ELEMENTS = [
+[1,"H","Hydrogen",1.008,"nonmetal",1,1],
+[2,"He","Helium",4.003,"noble",18,1],
+[3,"Li","Lithium",6.94,"alkali",1,2],
+[4,"Be","Beryllium",9.012,"alkaline",2,2],
+[5,"B","Boron",10.81,"metalloid",13,2],
+[6,"C","Carbon",12.011,"nonmetal",14,2],
+[7,"N","Nitrogen",14.007,"nonmetal",15,2],
+[8,"O","Oxygen",15.999,"nonmetal",16,2],
+[9,"F","Fluorine",18.998,"halogen",17,2],
+[10,"Ne","Neon",20.180,"noble",18,2],
+[11,"Na","Sodium",22.990,"alkali",1,3],
+[12,"Mg","Magnesium",24.305,"alkaline",2,3],
+[13,"Al","Aluminium",26.982,"post-transition",13,3],
+[14,"Si","Silicon",28.085,"metalloid",14,3],
+[15,"P","Phosphorus",30.974,"nonmetal",15,3],
+[16,"S","Sulfur",32.06,"nonmetal",16,3],
+[17,"Cl","Chlorine",35.45,"halogen",17,3],
+[18,"Ar","Argon",39.95,"noble",18,3],
+[19,"K","Potassium",39.098,"alkali",1,4],
+[20,"Ca","Calcium",40.078,"alkaline",2,4],
+[21,"Sc","Scandium",44.956,"transition",3,4],
+[22,"Ti","Titanium",47.867,"transition",4,4],
+[23,"V","Vanadium",50.942,"transition",5,4],
+[24,"Cr","Chromium",51.996,"transition",6,4],
+[25,"Mn","Manganese",54.938,"transition",7,4],
+[26,"Fe","Iron",55.845,"transition",8,4],
+[27,"Co","Cobalt",58.933,"transition",9,4],
+[28,"Ni","Nickel",58.693,"transition",10,4],
+[29,"Cu","Copper",63.546,"transition",11,4],
+[30,"Zn","Zinc",65.38,"transition",12,4],
+[31,"Ga","Gallium",69.723,"post-transition",13,4],
+[32,"Ge","Germanium",72.630,"metalloid",14,4],
+[33,"As","Arsenic",74.922,"metalloid",15,4],
+[34,"Se","Selenium",78.971,"nonmetal",16,4],
+[35,"Br","Bromine",79.904,"halogen",17,4],
+[36,"Kr","Krypton",83.798,"noble",18,4],
+[37,"Rb","Rubidium",85.468,"alkali",1,5],
+[38,"Sr","Strontium",87.62,"alkaline",2,5],
+[39,"Y","Yttrium",88.906,"transition",3,5],
+[40,"Zr","Zirconium",91.224,"transition",4,5],
+[41,"Nb","Niobium",92.906,"transition",5,5],
+[42,"Mo","Molybdenum",95.95,"transition",6,5],
+[43,"Tc","Technetium","[98]","transition",7,5],
+[44,"Ru","Ruthenium",101.07,"transition",8,5],
+[45,"Rh","Rhodium",102.91,"transition",9,5],
+[46,"Pd","Palladium",106.42,"transition",10,5],
+[47,"Ag","Silver",107.87,"transition",11,5],
+[48,"Cd","Cadmium",112.41,"transition",12,5],
+[49,"In","Indium",114.82,"post-transition",13,5],
+[50,"Sn","Tin",118.71,"post-transition",14,5],
+[51,"Sb","Antimony",121.76,"metalloid",15,5],
+[52,"Te","Tellurium",127.60,"metalloid",16,5],
+[53,"I","Iodine",126.90,"halogen",17,5],
+[54,"Xe","Xenon",131.29,"noble",18,5],
+[55,"Cs","Caesium",132.91,"alkali",1,6],
+[56,"Ba","Barium",137.33,"alkaline",2,6],
+[57,"La","Lanthanum",138.91,"lanthanide",3,6],
+[58,"Ce","Cerium",140.12,"lanthanide",null,6],
+[59,"Pr","Praseodymium",140.91,"lanthanide",null,6],
+[60,"Nd","Neodymium",144.24,"lanthanide",null,6],
+[61,"Pm","Promethium","[145]","lanthanide",null,6],
+[62,"Sm","Samarium",150.36,"lanthanide",null,6],
+[63,"Eu","Europium",151.96,"lanthanide",null,6],
+[64,"Gd","Gadolinium",157.25,"lanthanide",null,6],
+[65,"Tb","Terbium",158.93,"lanthanide",null,6],
+[66,"Dy","Dysprosium",162.50,"lanthanide",null,6],
+[67,"Ho","Holmium",164.93,"lanthanide",null,6],
+[68,"Er","Erbium",167.26,"lanthanide",null,6],
+[69,"Tm","Thulium",168.93,"lanthanide",null,6],
+[70,"Yb","Ytterbium",173.05,"lanthanide",null,6],
+[71,"Lu","Lutetium",174.97,"lanthanide",null,6],
+[72,"Hf","Hafnium",178.49,"transition",4,6],
+[73,"Ta","Tantalum",180.95,"transition",5,6],
+[74,"W","Tungsten",183.84,"transition",6,6],
+[75,"Re","Rhenium",186.21,"transition",7,6],
+[76,"Os","Osmium",190.23,"transition",8,6],
+[77,"Ir","Iridium",192.22,"transition",9,6],
+[78,"Pt","Platinum",195.08,"transition",10,6],
+[79,"Au","Gold",196.97,"transition",11,6],
+[80,"Hg","Mercury",200.59,"transition",12,6],
+[81,"Tl","Thallium",204.38,"post-transition",13,6],
+[82,"Pb","Lead",207.2,"post-transition",14,6],
+[83,"Bi","Bismuth",208.98,"post-transition",15,6],
+[84,"Po","Polonium","[209]","post-transition",16,6],
+[85,"At","Astatine","[210]","halogen",17,6],
+[86,"Rn","Radon","[222]","noble",18,6],
+[87,"Fr","Francium","[223]","alkali",1,7],
+[88,"Ra","Radium","[226]","alkaline",2,7],
+[89,"Ac","Actinium","[227]","actinide",3,7],
+[90,"Th","Thorium",232.04,"actinide",null,7],
+[91,"Pa","Protactinium",231.04,"actinide",null,7],
+[92,"U","Uranium",238.03,"actinide",null,7],
+[93,"Np","Neptunium","[237]","actinide",null,7],
+[94,"Pu","Plutonium","[244]","actinide",null,7],
+[95,"Am","Americium","[243]","actinide",null,7],
+[96,"Cm","Curium","[247]","actinide",null,7],
+[97,"Bk","Berkelium","[247]","actinide",null,7],
+[98,"Cf","Californium","[251]","actinide",null,7],
+[99,"Es","Einsteinium","[252]","actinide",null,7],
+[100,"Fm","Fermium","[257]","actinide",null,7],
+[101,"Md","Mendelevium","[258]","actinide",null,7],
+[102,"No","Nobelium","[259]","actinide",null,7],
+[103,"Lr","Lawrencium","[266]","actinide",null,7],
+[104,"Rf","Rutherfordium","[267]","transition",4,7],
+[105,"Db","Dubnium","[268]","transition",5,7],
+[106,"Sg","Seaborgium","[269]","transition",6,7],
+[107,"Bh","Bohrium","[270]","transition",7,7],
+[108,"Hs","Hassium","[269]","transition",8,7],
+[109,"Mt","Meitnerium","[278]","transition",9,7],
+[110,"Ds","Darmstadtium","[281]","transition",10,7],
+[111,"Rg","Roentgenium","[282]","transition",11,7],
+[112,"Cn","Copernicium","[285]","transition",12,7],
+[113,"Nh","Nihonium","[286]","post-transition",13,7],
+[114,"Fl","Flerovium","[289]","post-transition",14,7],
+[115,"Mc","Moscovium","[290]","post-transition",15,7],
+[116,"Lv","Livermorium","[293]","post-transition",16,7],
+[117,"Ts","Tennessine","[294]","halogen",17,7],
+[118,"Og","Oganesson","[294]","noble",18,7]
+];
+
+// Extended per-element data. Fields left null when not confidently known
+// (mostly synthetic/superheavy elements with unmeasured bulk properties).
+const EXT = {
+H:{ox:[1,-1],en:2.20,radius:53,ie1:1312.0,mp:14,bp:20,density:0.00008988,phase:"gas",discovered:1766,by:"Henry Cavendish",use:"Ammonia synthesis, hydrogenation, fuel cells."},
+He:{ox:[0],en:null,radius:31,ie1:2372.3,mp:1,bp:4,density:0.0001785,phase:"gas",discovered:1868,by:"Janssen & Lockyer (Norman Lockyer named it)",use:"Cryogenics, balloons, inert shielding gas for welding."},
+Li:{ox:[1],en:0.98,radius:167,ie1:520.2,mp:454,bp:1615,density:0.534,phase:"solid",discovered:1817,by:"Johan August Arfwedson",use:"Rechargeable batteries, mood-stabilising medication."},
+Be:{ox:[2],en:1.57,radius:112,ie1:899.5,mp:1560,bp:2742,density:1.85,phase:"solid",discovered:1798,by:"Louis-Nicolas Vauquelin",use:"Lightweight aerospace alloys, X-ray windows."},
+B:{ox:[3],en:2.04,radius:87,ie1:800.6,mp:2349,bp:4200,density:2.34,phase:"solid",discovered:1808,by:"Gay-Lussac & Thénard",use:"Borosilicate glass, semiconductors, detergents."},
+C:{ox:[4,2,-4],en:2.55,radius:67,ie1:1086.5,mp:3823,bp:4098,density:2.267,phase:"solid",discovered:-3750,by:"Known since antiquity (charcoal, soot)",use:"Organic chemistry backbone, steel, graphite, diamond."},
+N:{ox:[-3,3,5],en:3.04,radius:56,ie1:1402.3,mp:63,bp:77,density:0.0012506,phase:"gas",discovered:1772,by:"Daniel Rutherford",use:"Fertilisers, inert atmosphere, liquid nitrogen cooling."},
+O:{ox:[-2,-1],en:3.44,radius:48,ie1:1313.9,mp:54,bp:90,density:0.001429,phase:"gas",discovered:1774,by:"Carl Wilhelm Scheele & Joseph Priestley",use:"Respiration, combustion, steelmaking."},
+F:{ox:[-1],en:3.98,radius:42,ie1:1681.0,mp:53,bp:85,density:0.001696,phase:"gas",discovered:1886,by:"Henri Moissan",use:"Teflon, toothpaste (fluoride), refrigerants."},
+Ne:{ox:[0],en:null,radius:38,ie1:2080.7,mp:24,bp:27,density:0.0008999,phase:"gas",discovered:1898,by:"William Ramsay & Morris Travers",use:"Neon signage, cryogenic refrigerant."},
+Na:{ox:[1],en:0.93,radius:190,ie1:495.8,mp:371,bp:1156,density:0.971,phase:"solid",discovered:1807,by:"Humphry Davy",use:"Table salt, street lighting, heat-transfer fluid."},
+Mg:{ox:[2],en:1.31,radius:145,ie1:737.7,mp:923,bp:1363,density:1.738,phase:"solid",discovered:1755,by:"Joseph Black",use:"Lightweight alloys, chlorophyll, fireworks."},
+Al:{ox:[3],en:1.61,radius:118,ie1:577.5,mp:933,bp:2792,density:2.70,phase:"solid",discovered:1825,by:"Hans Christian Ørsted",use:"Aircraft, cans, foil, construction."},
+Si:{ox:[4,-4],en:1.90,radius:111,ie1:786.5,mp:1687,bp:3538,density:2.3296,phase:"solid",discovered:1824,by:"Jöns Jacob Berzelius",use:"Semiconductors, glass, silicone."},
+P:{ox:[-3,3,5],en:2.19,radius:98,ie1:1011.8,mp:317,bp:550,density:1.823,phase:"solid",discovered:1669,by:"Hennig Brand",use:"Fertilisers, matches, DNA backbone."},
+S:{ox:[-2,4,6],en:2.58,radius:88,ie1:999.6,mp:388,bp:718,density:2.07,phase:"solid",discovered:-2000,by:"Known since antiquity",use:"Sulfuric acid, vulcanised rubber, fungicides."},
+Cl:{ox:[-1,1,3,5,7],en:3.16,radius:79,ie1:1251.2,mp:172,bp:239,density:0.003214,phase:"gas",discovered:1774,by:"Carl Wilhelm Scheele",use:"Water disinfection, PVC, bleach."},
+Ar:{ox:[0],en:null,radius:71,ie1:1520.6,mp:84,bp:87,density:0.0017837,phase:"gas",discovered:1894,by:"Lord Rayleigh & William Ramsay",use:"Inert shielding gas for welding, incandescent bulbs."},
+K:{ox:[1],en:0.82,radius:243,ie1:418.8,mp:337,bp:1032,density:0.862,phase:"solid",discovered:1807,by:"Humphry Davy",use:"Fertilisers, flame test standard, biological electrolyte."},
+Ca:{ox:[2],en:1.00,radius:194,ie1:589.8,mp:1115,bp:1757,density:1.55,phase:"solid",discovered:1808,by:"Humphry Davy",use:"Bones and teeth, cement, limestone."},
+Sc:{ox:[3],en:1.36,radius:184,ie1:633.1,mp:1814,bp:3109,density:2.985,phase:"solid",discovered:1879,by:"Lars Fredrik Nilson",use:"Aerospace alloys, stadium lighting."},
+Ti:{ox:[4,3],en:1.54,radius:176,ie1:658.8,mp:1941,bp:3560,density:4.506,phase:"solid",discovered:1791,by:"William Gregor",use:"Aircraft frames, hip implants, white pigment."},
+V:{ox:[5,4,3,2],en:1.63,radius:171,ie1:650.9,mp:2183,bp:3680,density:6.0,phase:"solid",discovered:1801,by:"Andrés Manuel del Río",use:"Steel alloys, catalysts, redox-flow batteries."},
+Cr:{ox:[3,6,2],en:1.66,radius:166,ie1:652.9,mp:2180,bp:2944,density:7.15,phase:"solid",discovered:1797,by:"Louis Nicolas Vauquelin",use:"Stainless steel, chrome plating, pigments."},
+Mn:{ox:[2,4,7],en:1.55,radius:161,ie1:717.3,mp:1519,bp:2334,density:7.21,phase:"solid",discovered:1774,by:"Johan Gottlieb Gahn",use:"Steel hardening, batteries, glass decolouriser."},
+Fe:{ox:[2,3],en:1.83,radius:156,ie1:762.5,mp:1811,bp:3134,density:7.874,phase:"solid",discovered:-3000,by:"Known since antiquity",use:"Structural steel, haemoglobin."},
+Co:{ox:[2,3],en:1.88,radius:152,ie1:760.4,mp:1768,bp:3200,density:8.90,phase:"solid",discovered:1735,by:"Georg Brandt",use:"Rechargeable battery cathodes, blue pigment, alloys."},
+Ni:{ox:[2,3],en:1.91,radius:149,ie1:737.1,mp:1728,bp:3186,density:8.908,phase:"solid",discovered:1751,by:"Axel Fredrik Cronstedt",use:"Stainless steel, coinage, battery electrodes."},
+Cu:{ox:[2,1],en:1.90,radius:145,ie1:745.5,mp:1358,bp:2835,density:8.96,phase:"solid",discovered:-9000,by:"Known since antiquity",use:"Electrical wiring, plumbing, alloys (brass, bronze)."},
+Zn:{ox:[2],en:1.65,radius:142,ie1:906.4,mp:693,bp:1180,density:7.14,phase:"solid",discovered:1746,by:"Andreas Sigismund Marggraf",use:"Galvanising steel, batteries, brass."},
+Ga:{ox:[3],en:1.81,radius:136,ie1:578.8,mp:303,bp:2477,density:5.91,phase:"solid",discovered:1875,by:"Paul-Émile Lecoq de Boisbaudran",use:"LEDs, semiconductors (GaAs), low-melting alloys."},
+Ge:{ox:[4],en:2.01,radius:125,ie1:762.2,mp:1211,bp:3106,density:5.323,phase:"solid",discovered:1886,by:"Clemens Winkler",use:"Fibre-optic and infrared optics, semiconductors."},
+As:{ox:[-3,3,5],en:2.18,radius:114,ie1:947.0,mp:1090,bp:887,density:5.727,phase:"solid",discovered:1250,by:"Albertus Magnus",use:"Semiconductor doping, historically pesticides (toxic)."},
+Se:{ox:[-2,4,6],en:2.55,radius:103,ie1:941.0,mp:494,bp:958,density:4.81,phase:"solid",discovered:1817,by:"Jöns Jacob Berzelius",use:"Photocopier drums, glass decolouriser, dietary trace mineral."},
+Br:{ox:[-1,1,5],en:2.96,radius:94,ie1:1139.9,mp:266,bp:332,density:3.10,phase:"liquid",discovered:1826,by:"Antoine Balard",use:"Flame retardants, photographic film."},
+Kr:{ox:[0,2],en:3.00,radius:88,ie1:1350.8,mp:116,bp:120,density:0.003733,phase:"gas",discovered:1898,by:"William Ramsay & Morris Travers",use:"High-performance camera flashes, lasers."},
+Rb:{ox:[1],en:0.82,radius:265,ie1:403.0,mp:312,bp:961,density:1.532,phase:"solid",discovered:1861,by:"Robert Bunsen & Gustav Kirchhoff",use:"Atomic clocks, research reagent."},
+Sr:{ox:[2],en:0.95,radius:219,ie1:549.5,mp:1050,bp:1655,density:2.64,phase:"solid",discovered:1790,by:"Adair Crawford",use:"Fireworks (red flame), ferrite magnets."},
+Y:{ox:[3],en:1.22,radius:212,ie1:600.0,mp:1799,bp:3609,density:4.47,phase:"solid",discovered:1794,by:"Johan Gadolin",use:"LED phosphors, camera lenses, superconductors."},
+Zr:{ox:[4],en:1.33,radius:206,ie1:640.1,mp:2128,bp:4682,density:6.52,phase:"solid",discovered:1789,by:"Martin Heinrich Klaproth",use:"Nuclear reactor cladding, ceramics."},
+Nb:{ox:[5,3],en:1.6,radius:198,ie1:652.1,mp:2750,bp:5017,density:8.57,phase:"solid",discovered:1801,by:"Charles Hatchett",use:"Superconducting magnets, steel alloys."},
+Mo:{ox:[6,4,3],en:2.16,radius:190,ie1:684.3,mp:2896,bp:4912,density:10.28,phase:"solid",discovered:1781,by:"Carl Wilhelm Scheele",use:"High-strength steel alloys, filaments."},
+Tc:{ox:[7,4],en:1.9,radius:183,ie1:702.0,mp:2430,bp:4538,density:11.0,phase:"solid",discovered:1937,by:"Carlo Perrier & Emilio Segrè",use:"Medical radioisotope imaging (⁹⁹ᵐTc)."},
+Ru:{ox:[3,4],en:2.2,radius:178,ie1:710.2,mp:2607,bp:4423,density:12.45,phase:"solid",discovered:1844,by:"Karl Ernst Claus",use:"Electrical contacts, catalysts, hard alloy plating."},
+Rh:{ox:[3],en:2.28,radius:173,ie1:719.7,mp:2237,bp:3968,density:12.41,phase:"solid",discovered:1803,by:"William Hyde Wollaston",use:"Catalytic converters, jewellery plating."},
+Pd:{ox:[2,4],en:2.20,radius:169,ie1:804.4,mp:1828,bp:3236,density:12.02,phase:"solid",discovered:1803,by:"William Hyde Wollaston",use:"Catalytic converters, hydrogen storage, jewellery."},
+Ag:{ox:[1],en:1.93,radius:165,ie1:731.0,mp:1235,bp:2435,density:10.49,phase:"solid",discovered:-3000,by:"Known since antiquity",use:"Jewellery, electrical contacts, photography, antimicrobial coatings."},
+Cd:{ox:[2],en:1.69,radius:161,ie1:867.8,mp:594,bp:1040,density:8.65,phase:"solid",discovered:1817,by:"Karl Samuel Leberecht Hermann & Friedrich Stromeyer",use:"Rechargeable NiCd batteries, pigments."},
+In:{ox:[3],en:1.78,radius:156,ie1:558.3,mp:430,bp:2345,density:7.31,phase:"solid",discovered:1863,by:"Ferdinand Reich & Hieronymous Richter",use:"Touchscreen electrodes (ITO), solder."},
+Sn:{ox:[2,4],en:1.96,radius:145,ie1:708.6,mp:505,bp:2875,density:7.265,phase:"solid",discovered:-3500,by:"Known since antiquity",use:"Solder, tin plating, bronze alloys."},
+Sb:{ox:[-3,3,5],en:2.05,radius:133,ie1:833.7,mp:904,bp:1860,density:6.697,phase:"solid",discovered:1450,by:"Known since antiquity",use:"Flame retardants, lead-acid battery alloys."},
+Te:{ox:[-2,4,6],en:2.1,radius:123,ie1:869.3,mp:723,bp:1261,density:6.24,phase:"solid",discovered:1782,by:"Franz-Joseph Müller von Reichenstein",use:"Solar panel alloys, steel and copper alloys."},
+I:{ox:[-1,1,5,7],en:2.66,radius:115,ie1:1008.4,mp:387,bp:457,density:4.933,phase:"solid",discovered:1811,by:"Bernard Courtois",use:"Antiseptics, thyroid hormone, contrast media."},
+Xe:{ox:[0,2,4,6],en:2.60,radius:108,ie1:1170.4,mp:161,bp:165,density:0.005887,phase:"gas",discovered:1898,by:"William Ramsay & Morris Travers",use:"Ion propulsion, high-intensity lamps."},
+Cs:{ox:[1],en:0.79,radius:298,ie1:375.7,mp:302,bp:944,density:1.93,phase:"solid",discovered:1860,by:"Robert Bunsen & Gustav Kirchhoff",use:"Atomic clocks (defines the second), drilling fluids."},
+Ba:{ox:[2],en:0.89,radius:253,ie1:502.9,mp:1000,bp:2170,density:3.51,phase:"solid",discovered:1808,by:"Humphry Davy",use:"Fireworks (green flame), medical imaging (barium meal)."},
+La:{ox:[3],en:1.10,radius:226,ie1:538.1,mp:1193,bp:3737,density:6.15,phase:"solid",discovered:1839,by:"Carl Gustaf Mosander",use:"Camera lenses, catalytic cracking catalysts."},
+Ce:{ox:[3,4],en:1.12,radius:210,ie1:534.4,mp:1068,bp:3716,density:6.77,phase:"solid",discovered:1803,by:"Jöns Jacob Berzelius & Wilhelm Hisinger",use:"Catalytic converters, self-cleaning ovens, lighter flints."},
+Pr:{ox:[3],en:1.13,radius:247,ie1:527.0,mp:1208,bp:3403,density:6.77,phase:"solid",discovered:1885,by:"Carl Auer von Welsbach",use:"Magnets, welding-goggle glass."},
+Nd:{ox:[3],en:1.14,radius:206,ie1:533.1,mp:1297,bp:3347,density:7.01,phase:"solid",discovered:1885,by:"Carl Auer von Welsbach",use:"Powerful permanent magnets (NdFeB)."},
+Pm:{ox:[3],en:null,radius:205,ie1:540.0,mp:1315,bp:3273,density:7.26,phase:"solid",discovered:1945,by:"Marinsky, Glendenin & Coryell",use:"Nuclear-powered pacemaker batteries (historic), luminous paint."},
+Sm:{ox:[3,2],en:1.17,radius:238,ie1:544.5,mp:1345,bp:2067,density:7.52,phase:"solid",discovered:1879,by:"Paul-Émile Lecoq de Boisbaudran",use:"SmCo permanent magnets, control rods."},
+Eu:{ox:[3,2],en:null,radius:231,ie1:547.1,mp:1099,bp:1802,density:5.24,phase:"solid",discovered:1901,by:"Eugène-Anatole Demarçay",use:"Red and blue phosphors in displays."},
+Gd:{ox:[3],en:1.20,radius:233,ie1:593.4,mp:1585,bp:3273,density:7.90,phase:"solid",discovered:1880,by:"Jean Charles Galissard de Marignac",use:"MRI contrast agents, neutron shielding."},
+Tb:{ox:[3],en:null,radius:225,ie1:565.8,mp:1629,bp:3396,density:8.23,phase:"solid",discovered:1843,by:"Carl Gustaf Mosander",use:"Green phosphors, magnetostrictive alloys."},
+Dy:{ox:[3],en:1.22,radius:228,ie1:573.0,mp:1680,bp:2840,density:8.54,phase:"solid",discovered:1886,by:"Paul-Émile Lecoq de Boisbaudran",use:"High-strength magnets in EV motors."},
+Ho:{ox:[3],en:1.23,radius:226,ie1:581.0,mp:1734,bp:2873,density:8.79,phase:"solid",discovered:1878,by:"Delafontaine & Soret",use:"Medical and dental lasers, magnets."},
+Er:{ox:[3],en:1.24,radius:226,ie1:589.3,mp:1802,bp:3141,density:9.07,phase:"solid",discovered:1843,by:"Carl Gustaf Mosander",use:"Fibre-optic amplifiers, pink glass/glaze colourant."},
+Tm:{ox:[3],en:1.25,radius:222,ie1:596.7,mp:1818,bp:2223,density:9.32,phase:"solid",discovered:1879,by:"Per Teodor Cleve",use:"Portable X-ray sources."},
+Yb:{ox:[3,2],en:null,radius:222,ie1:603.4,mp:1097,bp:1469,density:6.90,phase:"solid",discovered:1878,by:"Jean Charles Galissard de Marignac",use:"Stress gauges, atomic clock research."},
+Lu:{ox:[3],en:1.27,radius:217,ie1:523.5,mp:1925,bp:3675,density:9.84,phase:"solid",discovered:1907,by:"Georges Urbain",use:"PET scan detector crystals."},
+Hf:{ox:[4],en:1.3,radius:208,ie1:658.5,mp:2506,bp:4876,density:13.31,phase:"solid",discovered:1923,by:"Dirk Coster & George de Hevesy",use:"Nuclear control rods, high-k transistor gates."},
+Ta:{ox:[5],en:1.5,radius:200,ie1:761.0,mp:3290,bp:5731,density:16.69,phase:"solid",discovered:1802,by:"Anders Gustaf Ekeberg",use:"Capacitors in phones and laptops, surgical implants."},
+W:{ox:[6,4],en:2.36,radius:193,ie1:770.0,mp:3695,bp:5828,density:19.25,phase:"solid",discovered:1783,by:"Juan José and Fausto Elhuyar",use:"Light bulb filaments, drill bits, radiation shielding."},
+Re:{ox:[7,4],en:1.9,radius:188,ie1:760.0,mp:3459,bp:5869,density:21.02,phase:"solid",discovered:1925,by:"Noddack, Tacke & Berg",use:"Jet engine superalloys, thermocouples."},
+Os:{ox:[4,3],en:2.2,radius:185,ie1:840.0,mp:3306,bp:5285,density:22.59,phase:"solid",discovered:1803,by:"Smithson Tennant",use:"Fountain pen nibs, electrical contacts (densest natural element)."},
+Ir:{ox:[3,4],en:2.20,radius:180,ie1:880.0,mp:2719,bp:4403,density:22.56,phase:"solid",discovered:1803,by:"Smithson Tennant",use:"Spark plugs, crucibles, the Paris kilogram standard alloy."},
+Pt:{ox:[2,4],en:2.28,radius:177,ie1:870.0,mp:2041,bp:4098,density:21.45,phase:"solid",discovered:1735,by:"Antonio de Ulloa",use:"Catalytic converters, jewellery, cancer drugs (cisplatin)."},
+Au:{ox:[1,3],en:2.54,radius:174,ie1:890.1,mp:1337,bp:3129,density:19.30,phase:"solid",discovered:-2600,by:"Known since antiquity",use:"Jewellery, electronics contacts, currency reserve."},
+Hg:{ox:[2,1],en:2.00,radius:171,ie1:1007.1,mp:234,bp:630,density:13.53,phase:"liquid",discovered:-1500,by:"Known since antiquity",use:"Thermometers (historic), fluorescent lamps, dental amalgam."},
+Tl:{ox:[1,3],en:1.62,radius:156,ie1:589.4,mp:577,bp:1746,density:11.85,phase:"solid",discovered:1861,by:"William Crookes",use:"Historically rodenticide (toxic, now restricted), infrared optics."},
+Pb:{ox:[2,4],en:2.33,radius:154,ie1:715.6,mp:601,bp:2022,density:11.34,phase:"solid",discovered:-7000,by:"Known since antiquity",use:"Lead-acid batteries, radiation shielding."},
+Bi:{ox:[3,5],en:2.02,radius:143,ie1:703.0,mp:544,bp:1837,density:9.78,phase:"solid",discovered:1400,by:"Known since antiquity (isolated by Claude François Geoffroy, 1753)",use:"Low-toxicity solder, cosmetics, stomach-ailment medication."},
+Po:{ox:[2,4],en:2.0,radius:135,ie1:812.1,mp:527,bp:1235,density:9.20,phase:"solid",discovered:1898,by:"Marie & Pierre Curie",use:"Anti-static devices, historic heat sources for spacecraft."},
+At:{ox:[-1,1],en:2.2,radius:127,ie1:null,mp:575,bp:610,density:null,phase:"solid",discovered:1940,by:"Corson, MacKenzie & Segrè",use:"Experimental targeted alpha-particle cancer therapy."},
+Rn:{ox:[0,2],en:2.2,radius:120,ie1:1037.0,mp:202,bp:211,density:0.00973,phase:"gas",discovered:1900,by:"Friedrich Ernst Dorn",use:"Historic radiotherapy source; now mainly a soil-gas hazard indicator."},
+Fr:{ox:[1],en:0.7,radius:null,ie1:380.0,mp:300,bp:950,density:null,phase:"solid",discovered:1939,by:"Marguerite Perey",use:"No commercial use — studied only in trace nuclear-physics samples."},
+Ra:{ox:[2],en:0.9,radius:null,ie1:509.3,mp:973,bp:2010,density:5.5,phase:"solid",discovered:1898,by:"Marie & Pierre Curie",use:"Historic luminous paint (discontinued, radioactive hazard)."},
+Ac:{ox:[3],en:1.1,radius:null,ie1:499.0,mp:1500,bp:3200,density:10.07,phase:"solid",discovered:1899,by:"André-Louis Debierne",use:"Neutron source in research; no large-scale use (rare, intensely radioactive)."},
+Th:{ox:[4],en:1.3,radius:null,ie1:587.0,mp:2023,bp:5061,density:11.72,phase:"solid",discovered:1829,by:"Jöns Jacob Berzelius",use:"Gas mantle historic use; proposed thorium-cycle nuclear fuel."},
+Pa:{ox:[5,4],en:1.5,radius:null,ie1:568.0,mp:1841,bp:4300,density:15.37,phase:"solid",discovered:1913,by:"Kasimir Fajans & Oswald Helmuth Göhring",use:"No practical use — research only."},
+U:{ox:[6,4],en:1.38,radius:null,ie1:597.6,mp:1405,bp:4404,density:19.1,phase:"solid",discovered:1789,by:"Martin Heinrich Klaproth",use:"Nuclear fuel and weapons, historic glass colourant."},
+Np:{ox:[5,4,6],en:1.36,radius:null,ie1:604.5,mp:917,bp:4273,density:20.2,phase:"solid",discovered:1940,by:"Edwin McMillan & Philip H. Abelson",use:"Neutron detectors; byproduct of nuclear reactors."},
+Pu:{ox:[4,3,6],en:1.28,radius:null,ie1:584.7,mp:913,bp:3501,density:19.85,phase:"solid",discovered:1940,by:"Glenn T. Seaborg and team",use:"Nuclear weapons and reactor fuel, spacecraft power (RTGs)."},
+Am:{ox:[3],en:1.3,radius:null,ie1:578.0,mp:1449,bp:2880,density:12.0,phase:"solid",discovered:1944,by:"Glenn T. Seaborg and team",use:"Smoke detector ionisation chambers."},
+Cm:{ox:[3],en:1.3,radius:null,ie1:581.0,mp:1613,bp:3383,density:13.51,phase:"solid",discovered:1944,by:"Glenn T. Seaborg and team",use:"Spacecraft alpha-particle X-ray spectrometers (e.g. Mars rovers)."},
+Bk:{ox:[3,4],en:1.3,radius:null,ie1:601.0,mp:1259,bp:2900,density:14.78,phase:"solid",discovered:1949,by:"Glenn T. Seaborg and team",use:"No practical use — produced in milligram quantities for research."},
+Cf:{ox:[3],en:1.3,radius:null,ie1:608.0,mp:1173,bp:1743,density:15.1,phase:"solid",discovered:1950,by:"Glenn T. Seaborg and team",use:"Portable neutron source for well-logging and reactor start-up."},
+Es:{ox:[3],en:1.3,radius:null,ie1:619.0,mp:1133,bp:null,density:null,phase:"solid",discovered:1952,by:"Argonne, Los Alamos & Berkeley teams",use:"No practical use — synthesised in atom-at-a-time quantities."},
+Fm:{ox:[3],en:1.3,radius:null,ie1:627.0,mp:1800,bp:null,density:null,phase:"solid",discovered:1952,by:"Argonne, Los Alamos & Berkeley teams",use:"No practical use — research only."},
+Md:{ox:[3,2],en:1.3,radius:null,ie1:635.0,mp:1100,bp:null,density:null,phase:"solid",discovered:1955,by:"Glenn T. Seaborg and team",use:"No practical use — research only."},
+No:{ox:[2,3],en:1.3,radius:null,ie1:642.0,mp:1100,bp:null,density:null,phase:"solid",discovered:1958,by:"Joint Institute for Nuclear Research, Dubna",use:"No practical use — research only."},
+Lr:{ox:[3],en:null,radius:null,ie1:470.0,mp:1900,bp:null,density:null,phase:"solid",discovered:1961,by:"Lawrence Berkeley Laboratory",use:"No practical use — research only."},
+Rf:{ox:[4],en:null,radius:null,ie1:null,mp:null,bp:null,density:null,phase:"solid",discovered:1964,by:"Dubna / Berkeley (disputed priority)",use:"No practical use — a few atoms at a time."},
+Db:{ox:[5],en:null,radius:null,ie1:null,mp:null,bp:null,density:null,phase:"solid",discovered:1970,by:"Berkeley / Dubna (disputed priority)",use:"No practical use — a few atoms at a time."},
+Sg:{ox:[6],en:null,radius:null,ie1:null,mp:null,bp:null,density:null,phase:"solid",discovered:1974,by:"Berkeley / Dubna (disputed priority)",use:"No practical use — a few atoms at a time."},
+Bh:{ox:[7],en:null,radius:null,ie1:null,mp:null,bp:null,density:null,phase:"solid",discovered:1981,by:"GSI Darmstadt",use:"No practical use — a few atoms at a time."},
+Hs:{ox:[8],en:null,radius:null,ie1:null,mp:null,bp:null,density:null,phase:"solid",discovered:1984,by:"GSI Darmstadt",use:"No practical use — a few atoms at a time."},
+Mt:{ox:[null],en:null,radius:null,ie1:null,mp:null,bp:null,density:null,phase:"solid",discovered:1982,by:"GSI Darmstadt",use:"No practical use — only a handful of atoms ever produced."},
+Ds:{ox:[null],en:null,radius:null,ie1:null,mp:null,bp:null,density:null,phase:"solid",discovered:1994,by:"GSI Darmstadt",use:"No practical use — only a handful of atoms ever produced."},
+Rg:{ox:[null],en:null,radius:null,ie1:null,mp:null,bp:null,density:null,phase:"solid",discovered:1994,by:"GSI Darmstadt",use:"No practical use — only a handful of atoms ever produced."},
+Cn:{ox:[2],en:null,radius:null,ie1:null,mp:null,bp:null,density:null,phase:"gas",discovered:1996,by:"GSI Darmstadt",use:"No practical use — predicted to be a volatile liquid or gas at room temperature."},
+Nh:{ox:[null],en:null,radius:null,ie1:null,mp:null,bp:null,density:null,phase:"solid",discovered:2004,by:"RIKEN, Japan",use:"No practical use — only a few atoms ever produced."},
+Fl:{ox:[null],en:null,radius:null,ie1:null,mp:null,bp:null,density:null,phase:"solid",discovered:1998,by:"Joint Institute for Nuclear Research, Dubna",use:"No practical use — predicted to be volatile; only a few atoms ever produced."},
+Mc:{ox:[null],en:null,radius:null,ie1:null,mp:null,bp:null,density:null,phase:"solid",discovered:2003,by:"Joint Institute for Nuclear Research, Dubna",use:"No practical use — only a few atoms ever produced."},
+Lv:{ox:[null],en:null,radius:null,ie1:null,mp:null,bp:null,density:null,phase:"solid",discovered:2000,by:"Joint Institute for Nuclear Research, Dubna",use:"No practical use — only a few atoms ever produced."},
+Ts:{ox:[null],en:null,radius:null,ie1:null,mp:null,bp:null,density:null,phase:"solid",discovered:2010,by:"Dubna & Oak Ridge",use:"No practical use — only a few atoms ever produced."},
+Og:{ox:[null],en:null,radius:null,ie1:null,mp:null,bp:null,density:null,phase:"solid",discovered:2002,by:"Joint Institute for Nuclear Research, Dubna",use:"No practical use — a handful of atoms ever produced, each lasting under a millisecond."}
+};
+
+/* ============================================================
+   Electron configuration generator (aufbau order + known ground-state
+   exceptions), rendered in conventional shell-grouped order.
+   ============================================================ */
+const AUFBAU_ORDER = ["1s","2s","2p","3s","3p","4s","3d","4p","5s","4d","5p","6s","4f","5d","6p","7s","5f","6d","7p"];
+const SUB_CAP = { s:2, p:6, d:10, f:14 };
+const CONFIG_EXCEPTIONS = {
+  24:"1s2 2s2 2p6 3s2 3p6 3d5 4s1", 29:"1s2 2s2 2p6 3s2 3p6 3d10 4s1",
+  41:"1s2 2s2 2p6 3s2 3p6 3d10 4s2 4p6 4d4 5s1", 42:"1s2 2s2 2p6 3s2 3p6 3d10 4s2 4p6 4d5 5s1",
+  44:"1s2 2s2 2p6 3s2 3p6 3d10 4s2 4p6 4d7 5s1", 45:"1s2 2s2 2p6 3s2 3p6 3d10 4s2 4p6 4d8 5s1",
+  46:"1s2 2s2 2p6 3s2 3p6 3d10 4s2 4p6 4d10", 47:"1s2 2s2 2p6 3s2 3p6 3d10 4s2 4p6 4d10 5s1",
+  57:"1s2 2s2 2p6 3s2 3p6 3d10 4s2 4p6 4d10 5s2 5p6 5d1 6s2",
+  58:"1s2 2s2 2p6 3s2 3p6 3d10 4s2 4p6 4d10 5s2 5p6 4f1 5d1 6s2",
+  64:"1s2 2s2 2p6 3s2 3p6 3d10 4s2 4p6 4d10 5s2 5p6 4f7 5d1 6s2",
+  78:"1s2 2s2 2p6 3s2 3p6 3d10 4s2 4p6 4d10 4f14 5s2 5p6 5d9 6s1",
+  79:"1s2 2s2 2p6 3s2 3p6 3d10 4s2 4p6 4d10 4f14 5s2 5p6 5d10 6s1",
+  89:"1s2 2s2 2p6 3s2 3p6 3d10 4s2 4p6 4d10 4f14 5s2 5p6 5d10 6s2 6p6 6d1 7s2",
+  90:"1s2 2s2 2p6 3s2 3p6 3d10 4s2 4p6 4d10 4f14 5s2 5p6 5d10 6s2 6p6 6d2 7s2",
+  91:"1s2 2s2 2p6 3s2 3p6 3d10 4s2 4p6 4d10 4f14 5s2 5p6 5d10 6s2 6p6 5f2 6d1 7s2",
+  92:"1s2 2s2 2p6 3s2 3p6 3d10 4s2 4p6 4d10 4f14 5s2 5p6 5d10 6s2 6p6 5f3 6d1 7s2",
+  93:"1s2 2s2 2p6 3s2 3p6 3d10 4s2 4p6 4d10 4f14 5s2 5p6 5d10 6s2 6p6 5f4 6d1 7s2",
+  96:"1s2 2s2 2p6 3s2 3p6 3d10 4s2 4p6 4d10 4f14 5s2 5p6 5d10 6s2 6p6 5f7 6d1 7s2",
+  103:"1s2 2s2 2p6 3s2 3p6 3d10 4s2 4p6 4d10 4f14 5s2 5p6 5d10 6s2 6p6 5f14 7s2 7p1"
+};
+const L_ORDER = { s:0, p:1, d:2, f:3 };
+function configDisplayOrder(str){
+  const parts = str.split(" ").map(p=>{
+    const n = parseInt(p,10);
+    const l = p.match(/[a-z]/)[0];
+    return { n, l, str:p };
+  });
+  parts.sort((a,b)=> a.n-b.n || L_ORDER[a.l]-L_ORDER[b.l]);
+  return parts.map(p=>p.str).join(" ");
+}
+function buildElectronConfig(Z){
+  if (CONFIG_EXCEPTIONS[Z]) return configDisplayOrder(CONFIG_EXCEPTIONS[Z]);
+  let remaining = Z;
+  const parts = [];
+  for (const sub of AUFBAU_ORDER){
+    const l = sub[sub.length-1];
+    const take = Math.min(SUB_CAP[l], remaining);
+    if (take > 0) parts.push(sub+take);
+    remaining -= take;
+    if (remaining <= 0) break;
+  }
+  return configDisplayOrder(parts.join(" "));
+}
+const NOBLE_Z = [2,10,18,36,54,86,118];
+const NOBLE_SYM = {2:"He",10:"Ne",18:"Ar",36:"Kr",54:"Xe",86:"Rn",118:"Og"};
+function toNobleShorthand(Z, fullConfig){
+  let coreZ = 0;
+  for (const n of NOBLE_Z){ if (n < Z) coreZ = n; else break; }
+  if (coreZ === 0) return fullConfig;
+  const coreParts = new Set(buildElectronConfig(coreZ).split(" "));
+  const remaining = fullConfig.split(" ").filter(p => !coreParts.has(p));
+  return "["+NOBLE_SYM[coreZ]+"] "+remaining.join(" ");
+}
+function toShellCounts(fullConfig){
+  const shells = {};
+  for (const part of fullConfig.split(" ")){
+    const n = parseInt(part[0],10);
+    const count = parseInt(part.slice(2),10);
+    shells[n] = (shells[n]||0) + count;
+  }
+  const maxN = Math.max(...Object.keys(shells).map(Number));
+  const arr = [];
+  for (let n=1; n<=maxN; n++) arr.push(shells[n]||0);
+  return arr;
+}
+
+/* ============================================================
+   DATA — chemistry, physics, maths reference
+   ============================================================ */
+const CONSTANTS = [
+  {sym:"c",name:"Speed of light in vacuum",value:"2.998 × 10⁸",unit:"m s⁻¹"},
+  {sym:"h",name:"Planck constant",value:"6.626 × 10⁻³⁴",unit:"J s"},
+  {sym:"h",name:"Planck constant",value:"4.136 × 10⁻¹⁵",unit:"eV s"},
+  {sym:"e",name:"Elementary charge",value:"1.602 × 10⁻¹⁹",unit:"C"},
+  {sym:"mₑ",name:"Electron mass",value:"9.109 × 10⁻³¹",unit:"kg"},
+  {sym:"m_p",name:"Proton mass",value:"1.673 × 10⁻²⁷",unit:"kg"},
+  {sym:"m_n",name:"Neutron mass",value:"1.675 × 10⁻²⁷",unit:"kg"},
+  {sym:"u",name:"Unified atomic mass unit",value:"1.661 × 10⁻²⁷",unit:"kg"},
+  {sym:"N_A",name:"Avogadro constant",value:"6.022 × 10²³",unit:"mol⁻¹"},
+  {sym:"R",name:"Molar gas constant",value:"8.314",unit:"J K⁻¹ mol⁻¹"},
+  {sym:"k_B",name:"Boltzmann constant",value:"1.381 × 10⁻²³",unit:"J K⁻¹"},
+  {sym:"G",name:"Gravitational constant",value:"6.674 × 10⁻¹¹",unit:"N m² kg⁻²"},
+  {sym:"g",name:"Free-fall acceleration (NZ, ~41°S)",value:"9.81",unit:"m s⁻²"},
+  {sym:"V_m",name:"Molar volume, ideal gas at STP (0 °C, 100 kPa)",value:"22.7",unit:"L mol⁻¹"},
+  {sym:"V_m",name:"Molar volume, ideal gas at 25 °C, 100 kPa",value:"24.8",unit:"L mol⁻¹"},
+  {sym:"ε₀",name:"Permittivity of free space",value:"8.854 × 10⁻¹²",unit:"F m⁻¹"},
+  {sym:"k",name:"Coulomb constant",value:"8.988 × 10⁹",unit:"N m² C⁻²"},
+  {sym:"μ₀",name:"Permeability of free space",value:"1.257 × 10⁻⁶",unit:"T m A⁻¹"},
+  {sym:"σ",name:"Stefan–Boltzmann constant",value:"5.670 × 10⁻⁸",unit:"W m⁻² K⁻⁴"},
+  {sym:"F",name:"Faraday constant",value:"9.649 × 10⁴",unit:"C mol⁻¹"},
+  {sym:"atm",name:"Standard atmosphere",value:"1.013 × 10⁵",unit:"Pa"},
+  {sym:"K_w",name:"Ionic product of water at 25 °C",value:"1.00 × 10⁻¹⁴",unit:"mol² L⁻²"},
+  {sym:"c",name:"Specific heat capacity of water",value:"4.18 × 10³",unit:"J kg⁻¹ K⁻¹"},
+  {sym:"L_f",name:"Latent heat of fusion, water",value:"3.34 × 10⁵",unit:"J kg⁻¹"},
+  {sym:"L_v",name:"Latent heat of vaporisation, water",value:"2.26 × 10⁶",unit:"J kg⁻¹"},
+  {sym:"M_E",name:"Earth mass",value:"5.972 × 10²⁴",unit:"kg"},
+  {sym:"R_E",name:"Earth radius (mean)",value:"6.371 × 10⁶",unit:"m"}
+];
+
+const POLYATOMIC_IONS = {
+  "1−": [["Hydroxide","OH⁻"],["Nitrate","NO₃⁻"],["Nitrite","NO₂⁻"],["Hydrogencarbonate","HCO₃⁻"],["Hydrogensulfate","HSO₄⁻"],["Dihydrogenphosphate","H₂PO₄⁻"],["Ethanoate (acetate)","CH₃COO⁻"],["Permanganate","MnO₄⁻"],["Cyanide","CN⁻"],["Hypochlorite","ClO⁻"],["Chlorate","ClO₃⁻"],["Perchlorate","ClO₄⁻"],["Thiocyanate","SCN⁻"],["Hydride","H⁻"]],
+  "2−": [["Carbonate","CO₃²⁻"],["Sulfate","SO₄²⁻"],["Sulfite","SO₃²⁻"],["Chromate","CrO₄²⁻"],["Dichromate","Cr₂O₇²⁻"],["Hydrogenphosphate","HPO₄²⁻"],["Thiosulfate","S₂O₃²⁻"],["Oxalate","C₂O₄²⁻"],["Peroxide","O₂²⁻"]],
+  "3−": [["Phosphate","PO₄³⁻"],["Phosphite","PO₃³⁻"],["Nitride","N³⁻"]],
+  "1+": [["Ammonium","NH₄⁺"],["Hydronium","H₃O⁺"]]
+};
+
+const SI_PREFIXES = [
+  ["Y","yotta",24],["Z","zetta",21],["E","exa",18],["P","peta",15],["T","tera",12],["G","giga",9],
+  ["M","mega",6],["k","kilo",3],["h","hecto",2],["da","deka",1],["","(base)",0],
+  ["d","deci",-1],["c","centi",-2],["m","milli",-3],["µ","micro",-6],["n","nano",-9],
+  ["p","pico",-12],["f","femto",-15],["a","atto",-18],["z","zepto",-21],["y","yocto",-24]
+];
+
+const SOLUBILITY_RULES = {
+  soluble: [
+    "All nitrates (NO₃⁻)",
+    "All Group 1 metal salts and all ammonium (NH₄⁺) salts",
+    "All ethanoates (acetates)",
+    "Most chlorides, bromides, iodides — except Ag⁺, Pb²⁺, Hg₂²⁺",
+    "Most sulfates — except Ba²⁺, Pb²⁺ (insoluble), Ca²⁺, Sr²⁺ (slightly soluble)"
+  ],
+  insoluble: [
+    "Most carbonates, phosphates, sulfides, hydroxides — except Group 1 and ammonium",
+    "Ca(OH)₂ and Ba(OH)₂ are slightly soluble"
+  ],
+  precipitateColours: [
+    ["AgCl","white"],["AgBr","cream"],["AgI","yellow"],["PbI₂","bright yellow"],["BaSO₄","white"],
+    ["Cu(OH)₂","pale blue"],["Fe(OH)₂","green"],["Fe(OH)₃","rust brown"],["CuCO₃","green-blue"],["CaCO₃","white"]
+  ]
+};
+
+const FLAME_TESTS = [
+  ["Li","Lithium","crimson","--crimson"],["Na","Sodium","intense yellow-orange","--amber"],
+  ["K","Potassium","lilac","--lilac"],["Ca","Calcium","brick red","--strontium"],
+  ["Sr","Strontium","scarlet","--strontium"],["Ba","Barium","apple green","--barium"],
+  ["Cu","Copper","blue-green","--signal"]
+];
+
+const REACTIVITY_SERIES = ["Potassium","Sodium","Lithium","Calcium","Magnesium","Aluminium","Zinc","Iron","Tin","Lead","(Hydrogen)","Copper","Silver","Gold"];
+
+const ACIDS_BASES = {
+  strongAcids: [["Hydrochloric acid","HCl"],["Sulfuric acid","H₂SO₄"],["Nitric acid","HNO₃"]],
+  weakAcids: [["Ethanoic acid","CH₃COOH"],["Carbonic acid","H₂CO₃"],["Citric acid","C₆H₈O₇"]],
+  strongBases: [["Sodium hydroxide","NaOH"],["Potassium hydroxide","KOH"],["Barium hydroxide","Ba(OH)₂"]],
+  weakBases: [["Ammonia","NH₃"],["Calcium hydroxide","Ca(OH)₂"]]
+};
+
+const ORGANIC_GROUPS = [
+  {name:"Alkane",formula:"CₙH₂ₙ₊₂",suffix:"-ane",example:"CH₃CH₂CH₃ (propane)"},
+  {name:"Alkene",formula:"CₙH₂ₙ",suffix:"-ene",example:"CH₂=CHCH₃ (propene)"},
+  {name:"Alkyne",formula:"CₙH₂ₙ₋₂",suffix:"-yne",example:"CH≡CCH₃ (propyne)"},
+  {name:"Alkanol (alcohol)",formula:"R-OH",suffix:"-ol",example:"CH₃CH₂OH (ethanol)"},
+  {name:"Alkanoic acid",formula:"R-COOH",suffix:"-oic acid",example:"CH₃COOH (ethanoic acid)"},
+  {name:"Ester",formula:"R-COO-R′",suffix:"-oate",example:"CH₃COOCH₃ (methyl ethanoate)"},
+  {name:"Ketone",formula:"R-CO-R′",suffix:"-one",example:"CH₃COCH₃ (propanone)"},
+  {name:"Aldehyde",formula:"R-CHO",suffix:"-al",example:"CH₃CHO (ethanal)"},
+  {name:"Amine",formula:"R-NH₂",suffix:"-amine",example:"CH₃NH₂ (methanamine)"},
+  {name:"Haloalkane",formula:"R-X",suffix:"halo-",example:"CH₃CH₂Cl (chloroethane)"}
+];
+const ALKANE_STEMS = ["meth","eth","prop","but","pent","hex","hept","oct","non","dec"];
+
+const PHYSICS_FORMULAS = {
+  Mechanics: [
+    {name:"v = u + at",vars:"v final velocity (m s⁻¹), u initial velocity (m s⁻¹), a acceleration (m s⁻²), t time (s)",note:"Constant acceleration only."},
+    {name:"v² = u² + 2as",vars:"v final velocity, u initial velocity, a acceleration, s displacement (m)",note:"Constant acceleration only; no time needed."},
+    {name:"s = ut + ½at²",vars:"s displacement, u initial velocity, a acceleration, t time",note:"Constant acceleration only."},
+    {name:"F = ma",vars:"F net force (N), m mass (kg), a acceleration (m s⁻²)",note:"F is the net (resultant) force."},
+    {name:"p = mv",vars:"p momentum (kg m s⁻¹), m mass, v velocity",note:"Vector — direction matters."},
+    {name:"W = Fd",vars:"W work (J), F force (N), d displacement in direction of force (m)",note:"Only the force component along the displacement counts."},
+    {name:"Ek = ½mv²",vars:"Ek kinetic energy (J), m mass, v speed",note:"Non-relativistic only."},
+    {name:"Ep = mgh",vars:"Ep gravitational PE (J), m mass, g 9.81 m s⁻², h height (m)",note:"Height measured from a chosen reference level."},
+    {name:"P = W/t",vars:"P power (W), W work or energy (J), t time (s)",note:"Average power over interval t."}
+  ],
+  Waves: [
+    {name:"v = fλ",vars:"v wave speed (m s⁻¹), f frequency (Hz), λ wavelength (m)",note:"Applies to all waves, mechanical and EM."},
+    {name:"f = 1/T",vars:"f frequency (Hz), T period (s)",note:"Always true for periodic motion."},
+    {name:"n₁sinθ₁ = n₂sinθ₂",vars:"n refractive index, θ angle from normal",note:"Snell's law — refraction at a boundary only."}
+  ],
+  Electricity: [
+    {name:"V = IR",vars:"V potential difference (V), I current (A), R resistance (Ω)",note:"Ohmic conductors only."},
+    {name:"P = VI",vars:"P power (W), V p.d. (V), I current (A)",note:"Also P = I²R = V²/R for resistors."},
+    {name:"Q = It",vars:"Q charge (C), I current (A), t time (s)",note:"Constant current only."}
+  ],
+  "Atomic & nuclear": [
+    {name:"E = hf",vars:"E photon energy (J), h Planck constant, f frequency (Hz)",note:"Energy of a single photon."}
+  ]
+};
+
+const MATHS_REFERENCE = {
+  Algebra: [
+    "Difference of squares: a² − b² = (a − b)(a + b)",
+    "Perfect square: (a ± b)² = a² ± 2ab + b²",
+    "Sum/difference of cubes: a³ ± b³ = (a ± b)(a² ∓ ab + b²)"
+  ],
+  Quadratics: [
+    "x = (−b ± √(b² − 4ac)) / 2a",
+    "Discriminant Δ = b² − 4ac: Δ > 0 → two real roots · Δ = 0 → one repeated root · Δ < 0 → no real roots"
+  ],
+  "Logs & indices": [
+    "logₐ(xy) = logₐx + logₐy",
+    "logₐ(x/y) = logₐx − logₐy",
+    "logₐ(xⁿ) = n·logₐx",
+    "aˣ·aʸ = aˣ⁺ʸ,  aˣ/aʸ = aˣ⁻ʸ,  (aˣ)ʸ = aˣʸ,  a⁰ = 1,  a⁻ˣ = 1/aˣ"
+  ],
+  "Sequences & series": [
+    "Arithmetic: Tₙ = a + (n−1)d,  Sₙ = n/2·(2a + (n−1)d)",
+    "Geometric: Tₙ = arⁿ⁻¹,  Sₙ = a(1−rⁿ)/(1−r),  S∞ = a/(1−r) for |r| < 1"
+  ],
+  "Binomial expansion": ["(a + b)ⁿ = Σ C(n,k) aⁿ⁻ᵏ bᵏ, where C(n,k) = n! / (k!(n−k)!)"],
+  "Trig identities": [
+    "sin²θ + cos²θ = 1",
+    "tanθ = sinθ / cosθ",
+    "Sine rule: a/sinA = b/sinB = c/sinC",
+    "Cosine rule: a² = b² + c² − 2bc·cosA"
+  ],
+  Calculus: [
+    "d/dx(xⁿ) = nxⁿ⁻¹  →  ∫xⁿ dx = xⁿ⁺¹/(n+1) + c  (n ≠ −1)",
+    "d/dx(sin x) = cos x  →  ∫cos x dx = sin x + c",
+    "d/dx(cos x) = −sin x  →  ∫sin x dx = −cos x + c",
+    "d/dx(eˣ) = eˣ  →  ∫eˣ dx = eˣ + c",
+    "d/dx(ln x) = 1/x  →  ∫(1/x) dx = ln|x| + c"
+  ]
+};
+
+/* ============================================================
+   STORE — localStorage wrapper, versioned schema
+   ============================================================ */
+const SCHEMA_VERSION = 1;
+const store = {
+  _ok: (() => { try { const k="dd:__test__"; localStorage.setItem(k,"1"); localStorage.removeItem(k); return true; } catch(e){ return false; } })(),
+  get(key, fallback){
+    if (!this._ok) return fallback;
+    try {
+      const raw = localStorage.getItem("dd:"+key);
+      return raw === null ? fallback : JSON.parse(raw);
+    } catch(e){ return fallback; }
+  },
+  set(key, value){
+    if (!this._ok) return;
+    try { localStorage.setItem("dd:"+key, JSON.stringify(value)); } catch(e){}
+  },
+  init(){
+    const v = this.get("v", null);
+    if (v === null) {
+      this.set("v", SCHEMA_VERSION);
+      this.set("theme", "system");
+      this.set("recent", []);
+      this.set("pinned", []);
+      this.set("notes", "");
+    }
+    // future schema migrations go here, keyed on stored version number
+  },
+  pushRecent(item){
+    const recent = this.get("recent", []).filter(r => r.route !== item.route);
+    recent.unshift({ ...item, at: Date.now() });
+    this.set("recent", recent.slice(0, 12));
+  }
+};
+store.init();
+
+/* ============================================================
+   THEME
+   ============================================================ */
+const themeCtl = {
+  apply(mode){
+    const root = document.documentElement;
+    if (mode === "light" || mode === "dark") root.setAttribute("data-theme", mode);
+    else root.removeAttribute("data-theme");
+    store.set("theme", mode);
+    this.updateIcon(mode);
+  },
+  current(){ return store.get("theme", "system"); },
+  toggle(){
+    const order = ["system","light","dark"];
+    const next = order[(order.indexOf(this.current())+1) % order.length];
+    this.apply(next);
+  },
+  updateIcon(mode){
+    const icon = document.getElementById("themeIcon");
+    if (!icon) return;
+    icon.innerHTML = mode === "dark"
+      ? '<path d="M21 12.8A9 9 0 1111.2 3 7 7 0 0021 12.8z" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/>'
+      : '<circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2"/><path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
+  }
+};
+themeCtl.apply(themeCtl.current());
+
+/* ============================================================
+   ROUTER — hash based, "#tab/sub/detail"
+   ============================================================ */
+const router = {
+  listeners: [],
+  on(fn){ this.listeners.push(fn); },
+  parse(hash){
+    const clean = (hash || "").replace(/^#/, "");
+    const [tab, ...rest] = clean.split("/");
+    return { tab: tab || null, rest, full: clean };
+  },
+  go(route){ window.location.hash = route.startsWith("#") ? route : "#"+route; },
+  current(){ return this.parse(window.location.hash); },
+  fire(){ const r = this.current(); this.listeners.forEach(fn => fn(r)); }
+};
+window.addEventListener("hashchange", () => router.fire());
+
+/* ============================================================
+   TABS registry + rail
+   ============================================================ */
+const TABS = [];
+function registerTab(def){ TABS.push(def); }
+
+function renderRail(){
+  const rail = document.getElementById("rail");
+  rail.innerHTML = "";
+  TABS.forEach((tab, idx) => {
+    const btn = document.createElement("button");
+    btn.className = "rail-item";
+    btn.style.setProperty("--accent", `var(${tab.accent})`);
+    btn.dataset.tab = tab.id;
+    btn.setAttribute("aria-label", tab.label);
+    btn.innerHTML = tab.icon + `<span class="rail-label">${tab.short}</span>`;
+    btn.addEventListener("click", () => router.go("#"+tab.id));
+    rail.appendChild(btn);
+  });
+}
+
+function activateTab(tabId, rest){
+  const tab = TABS.find(t => t.id === tabId) || TABS[0];
+  document.querySelectorAll(".rail-item").forEach(b => {
+    b.setAttribute("aria-current", b.dataset.tab === tab.id ? "true" : "false");
+  });
+  document.querySelectorAll(".panel").forEach(p => {
+    p.dataset.active = (p.dataset.tab === tab.id) ? "true" : "false";
+  });
+  if (!tab._initDone) { tab.init(); tab._initDone = true; }
+  if (tab.onRoute) tab.onRoute(rest);
+  store.set("lastTab", "#"+tab.id+(rest && rest.length ? "/"+rest.join("/") : ""));
+  document.title = tab.label + " — The Data Desk";
+}
+
+function buildPanelShells(){
+  const inner = document.getElementById("deskInner");
+  TABS.forEach(tab => {
+    const section = document.createElement("section");
+    section.className = "panel";
+    section.dataset.tab = tab.id;
+    section.style.setProperty("--accent", `var(${tab.accent})`);
+    section.style.setProperty("--accent-lift", `var(${tab.accentLift || tab.accent})`);
+    section.innerHTML = `
+      <div class="panel-head">
+        <h1 class="panel-title"><span class="accent-mark">${tab.icon}</span> ${tab.label}</h1>
+        <div class="panel-tools" id="tools-${tab.id}"></div>
+      </div>
+      <div id="body-${tab.id}"></div>
+    `;
+    inner.appendChild(section);
+  });
+}
+
+router.on(({ tab, rest }) => activateTab(tab, rest));
+
+/* ============================================================
+   SEARCH INDEX / COMMAND PALETTE
+   ============================================================ */
+let SEARCH_INDEX = [];
+function buildSearchIndex(){
+  const idx = [];
+  ELEMENTS.forEach(([Z,sym,name]) => {
+    idx.push({ label: `${name} (${sym})`, keywords: `${name} ${sym} ${Z} element`.toLowerCase(), tab:"periodic", route:`#periodic/${sym}`, group:"Periodic table", accent:"--signal" });
+  });
+  CONSTANTS.forEach(c => {
+    idx.push({ label: `${c.name} (${c.sym})`, keywords: `${c.name} ${c.sym} constant`.toLowerCase(), tab:"phys", route:`#phys/constants`, group:"Physics constants", accent:"--amber" });
+  });
+  Object.entries(POLYATOMIC_IONS).forEach(([charge, list]) => {
+    list.forEach(([name, formula]) => {
+      idx.push({ label: `${name} (${formula})`, keywords: `${name} ${formula} ion polyatomic`.toLowerCase(), tab:"chem", route:`#chem/reference`, group:"Polyatomic ions", accent:"--crimson" });
+    });
+  });
+  ORGANIC_GROUPS.forEach(g => {
+    idx.push({ label: g.name, keywords: `${g.name} ${g.formula} ${g.suffix} organic`.toLowerCase(), tab:"chem", route:`#chem/organic`, group:"Organic chemistry", accent:"--crimson" });
+  });
+  TABS.forEach(tab => {
+    idx.push({ label: tab.label, keywords: tab.label.toLowerCase(), tab: tab.id, route:"#"+tab.id, group:"Tabs", accent: tab.accent });
+    (tab.searchEntries || []).forEach(e => idx.push({ ...e, tab: tab.id, accent: tab.accent }));
+  });
+  SEARCH_INDEX = idx;
+}
+
+const palette = {
+  overlay: null, input: null, results: null, activeIndex: 0, items: [],
+  init(){
+    this.overlay = document.getElementById("paletteOverlay");
+    this.input = document.getElementById("paletteInput");
+    this.results = document.getElementById("paletteResults");
+    document.getElementById("openPaletteBtn").addEventListener("click", () => this.open());
+    this.overlay.addEventListener("click", (e) => { if (e.target === this.overlay) this.close(); });
+    this.input.addEventListener("input", () => this.filter());
+    this.input.addEventListener("keydown", (e) => this.onKey(e));
+  },
+  open(){
+    this.overlay.dataset.open = "true";
+    this.input.value = "";
+    this.filter();
+    setTimeout(() => this.input.focus(), 0);
+  },
+  close(){ this.overlay.dataset.open = "false"; },
+  isOpen(){ return this.overlay.dataset.open === "true"; },
+  filter(){
+    const q = this.input.value.trim().toLowerCase();
+    let list;
+    if (!q) {
+      const recent = store.get("recent", []);
+      list = recent.map(r => ({ label:r.label, keywords:"", tab:r.tab, route:r.route, group:"Recent", accent:r.accent||"--signal" }));
+      if (!list.length) list = SEARCH_INDEX.slice(0, 8);
+    } else {
+      list = SEARCH_INDEX.filter(e => e.keywords.includes(q) || e.label.toLowerCase().includes(q))
+        .sort((a,b) => a.keywords.indexOf(q) - b.keywords.indexOf(q))
+        .slice(0, 40);
+    }
+    this.items = list;
+    this.activeIndex = 0;
+    this.renderResults();
+  },
+  renderResults(){
+    if (!this.items.length){
+      this.results.innerHTML = `<div class="empty-state">No matches. Try an element symbol, a formula, or a tool name.</div>`;
+      return;
+    }
+    let lastGroup = null;
+    let html = "";
+    this.items.forEach((item, i) => {
+      if (item.group !== lastGroup){
+        html += `<div class="palette-group-label">${item.group}</div>`;
+        lastGroup = item.group;
+      }
+      html += `<div class="palette-item" data-idx="${i}" style="--item-accent:var(${item.accent})" aria-selected="${i===this.activeIndex}">
+        <span class="palette-item-label">${item.label}</span>
+        <span class="palette-item-meta">${item.tab}</span>
+      </div>`;
+    });
+    this.results.innerHTML = html;
+    this.results.querySelectorAll(".palette-item").forEach(el => {
+      el.addEventListener("click", () => this.select(parseInt(el.dataset.idx,10)));
+    });
+    this.highlight();
+  },
+  highlight(){
+    this.results.querySelectorAll(".palette-item").forEach((el,i) => {
+      el.dataset.active = (i === this.activeIndex) ? "true" : "false";
+    });
+    const activeEl = this.results.querySelector(`[data-idx="${this.activeIndex}"]`);
+    if (activeEl) activeEl.scrollIntoView({ block:"nearest" });
+  },
+  select(i){
+    const item = this.items[i];
+    if (!item) return;
+    store.pushRecent({ label:item.label, tab:item.tab, route:item.route, accent:item.accent });
+    router.go(item.route);
+    this.close();
+  },
+  onKey(e){
+    if (e.key === "ArrowDown"){ e.preventDefault(); this.activeIndex = Math.min(this.activeIndex+1, this.items.length-1); this.highlight(); }
+    else if (e.key === "ArrowUp"){ e.preventDefault(); this.activeIndex = Math.max(this.activeIndex-1, 0); this.highlight(); }
+    else if (e.key === "Enter"){ e.preventDefault(); this.select(this.activeIndex); }
+    else if (e.key === "Escape"){ e.preventDefault(); this.close(); }
+  }
+};
+
+/* ============================================================
+   KEYBOARD SHORTCUTS + MODAL
+   ============================================================ */
+function isTypingTarget(el){
+  return el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.isContentEditable);
+}
+const shortcutModal = {
+  overlay: null,
+  init(){
+    this.overlay = document.getElementById("shortcutOverlay");
+    document.getElementById("shortcutBtn").addEventListener("click", () => this.open());
+    this.overlay.addEventListener("click", (e) => { if (e.target === this.overlay) this.close(); });
+  },
+  open(){ this.overlay.dataset.open = "true"; },
+  close(){ this.overlay.dataset.open = "false"; },
+  isOpen(){ return this.overlay.dataset.open === "true"; }
+};
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape"){
+    if (palette.isOpen()) return palette.close();
+    if (shortcutModal.isOpen()) return shortcutModal.close();
+    const active = TABS.find(t => t._initDone) ;
+    document.dispatchEvent(new CustomEvent("dd:escape"));
+    return;
+  }
+  if (palette.isOpen() || isTypingTarget(e.target)) return;
+  if (e.key === "/" ){ e.preventDefault(); palette.open(); return; }
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k"){ e.preventDefault(); palette.open(); return; }
+  if (e.key === "?"){ e.preventDefault(); shortcutModal.open(); return; }
+  if (e.key === "t" || e.key === "T"){ e.preventDefault(); themeCtl.toggle(); return; }
+  if (/^[1-4]$/.test(e.key)){
+    const tab = TABS[parseInt(e.key,10)-1];
+    if (tab) router.go("#"+tab.id);
+  }
+});
+document.getElementById("themeBtn").addEventListener("click", () => themeCtl.toggle());
+
+/* ============================================================
+   TAB: Periodic table
+   ============================================================ */
+(function(){
+  const CATEGORY_LABEL = {
+    alkali:"Alkali metal", alkaline:"Alkaline earth metal", transition:"Transition metal",
+    "post-transition":"Post-transition metal", metalloid:"Metalloid", nonmetal:"Nonmetal",
+    halogen:"Halogen", noble:"Noble gas", lanthanide:"Lanthanide", actinide:"Actinide", unknown:"Unknown"
+  };
+  function getBlock(cat, group, period){
+    if (cat === "lanthanide" || cat === "actinide") return "f";
+    if (group === 1 || group === 2) return "s";
+    if (period === 1 && group === 18) return "s"; // helium
+    if (group >= 13 && group <= 18) return "p";
+    return "d";
+  }
+  const TREND_FIELDS = {
+    radius: { label:"Atomic radius (pm)", get:e=>e.ext.radius, fmt:v=>v+" pm" },
+    en:     { label:"Electronegativity (Pauling)", get:e=>e.ext.en, fmt:v=>v.toFixed(2) },
+    ie1:    { label:"First ionisation energy (kJ/mol)", get:e=>e.ext.ie1, fmt:v=>v.toFixed(0)+" kJ/mol" },
+    mp:     { label:"Melting point (K)", get:e=>e.ext.mp, fmt:v=>v+" K" },
+    discovered: { label:"Discovery year", get:e=>e.ext.discovered, fmt:v=> v<0 ? Math.abs(v)+" BCE" : v }
+  };
+
+  let els = [];
+  let selected = null; // {Z}
+  let gridEl, detailCard;
+
+  function buildElements(){
+    els = ELEMENTS.map(([Z,sym,name,mass,category,group,period]) => {
+      const ext = EXT[sym] || {};
+      const cfg = buildElectronConfig(Z);
+      return {
+        Z, sym, name, mass, category, group, period,
+        block: getBlock(category, group, period),
+        config: cfg, shorthand: toNobleShorthand(Z, cfg), shells: toShellCounts(cfg),
+        ext
+      };
+    });
+  }
+
+  function tileEl(e){
+    const btn = document.createElement("button");
+    btn.className = "element-tile cat-tile";
+    btn.type = "button";
+    btn.tabIndex = 0;
+    btn.dataset.z = e.Z;
+    btn.dataset.group = e.group || "";
+    btn.dataset.period = e.period;
+    btn.setAttribute("aria-label", `${e.name}, atomic number ${e.Z}`);
+    btn.style.gridColumn = e.group ? e.group : (3 + (e.category==="lanthanide" ? e.Z-58 : e.Z-90));
+    btn.style.gridRow = e.group ? e.period : (e.category==="lanthanide" ? 9 : 10);
+    btn.style.animationDelay = (e.Z * 2) + "ms";
+    btn.style.background = `color-mix(in oklab, var(--cat-${e.category}) var(--cat-fill-mix, 100%), var(--paper))`;
+    btn.style.borderColor = `var(--cat-${e.category}-edge)`;
+    btn.innerHTML = `
+      <span class="et-num tabular">${e.Z}</span>
+      <span class="et-sym">${e.sym}</span>
+      <span class="et-name">${e.name}</span>
+      <span class="et-mass tabular">${typeof e.mass === "string" ? e.mass : e.mass.toFixed(3)}</span>
+    `;
+    btn.addEventListener("click", () => router.go(`#periodic/${e.sym}`));
+    btn.addEventListener("keydown", (ev) => handleTileKey(ev, e));
+    return btn;
+  }
+
+  function handleTileKey(ev, e){
+    const deltas = { ArrowRight:[1,0], ArrowLeft:[-1,0], ArrowDown:[0,1], ArrowUp:[0,-1] };
+    if (ev.key === "Enter"){ ev.preventDefault(); router.go(`#periodic/${e.sym}`); return; }
+    const d = deltas[ev.key];
+    if (!d) return;
+    ev.preventDefault();
+    let g = (e.group || (3 + (e.category==="lanthanide"?e.Z-58:e.Z-90))) + d[0];
+    let p = (e.group ? e.period : (e.category==="lanthanide"?9:10)) + d[1];
+    const target = Array.from(gridEl.children).find(t => parseInt(t.style.gridColumn,10)===g && parseInt(t.style.gridRow,10)===p);
+    if (target) target.focus();
+  }
+
+  function renderGrid(){
+    gridEl.innerHTML = "";
+    els.forEach(e => gridEl.appendChild(tileEl(e)));
+    applyColourMode();
+  }
+
+  function applySearch(q){
+    const query = q.trim().toLowerCase();
+    gridEl.querySelectorAll(".element-tile").forEach(t => {
+      const e = els.find(x => x.Z === parseInt(t.dataset.z,10));
+      const match = !query || e.name.toLowerCase().includes(query) || e.sym.toLowerCase().includes(query) || String(e.Z) === query;
+      t.style.opacity = match ? "1" : "0.15";
+    });
+  }
+
+  let colourMode = "category", trendMode = "none";
+  function applyColourMode(){
+    const trendActive = trendMode !== "none";
+    gridEl.querySelectorAll(".element-tile").forEach(t => {
+      const e = els.find(x => x.Z === parseInt(t.dataset.z,10));
+      if (trendActive){
+        const field = TREND_FIELDS[trendMode];
+        const val = field.get(e);
+        if (val === null || val === undefined || Number.isNaN(val)){
+          t.style.background = "var(--paper-sunk)"; t.style.borderColor = "var(--rule)"; t.title = "No data";
+        } else {
+          const { min, max } = trendRange(trendMode);
+          const frac = max === min ? 0.5 : (val - min) / (max - min);
+          t.style.background = `color-mix(in oklab, var(--strontium) ${Math.round(frac*100)}%, var(--barium) ${Math.round((1-frac)*100)}%)`;
+          t.style.borderColor = "var(--rule-strong)";
+          t.title = `${field.label}: ${field.fmt(val)}`;
+        }
+        return;
+      }
+      t.title = "";
+      if (colourMode === "category"){
+        t.style.background = `color-mix(in oklab, var(--cat-${e.category}) var(--cat-fill-mix, 100%), var(--paper))`; t.style.borderColor = `var(--cat-${e.category}-edge)`;
+      } else if (colourMode === "state"){
+        const phase = e.ext.phase || "unknown";
+        const map = { solid:"--rule-strong", liquid:"--signal", gas:"--lilac", unknown:"--rule" };
+        t.style.background = "var(--paper-sunk)"; t.style.borderColor = `var(${map[phase]||"--rule"})`;
+      } else if (colourMode === "block"){
+        const map = { s:"--crimson", p:"--signal", d:"--amber", f:"--lilac" };
+        t.style.background = "var(--paper-sunk)"; t.style.borderColor = `var(${map[e.block]})`;
+      } else if (colourMode === "metal"){
+        const metal = !["nonmetal","halogen","noble","metalloid"].includes(e.category);
+        const map = metal ? "--rule-strong" : (e.category==="metalloid" ? "--lilac" : "--signal");
+        t.style.background = "var(--paper-sunk)"; t.style.borderColor = `var(${map})`;
+      }
+    });
+  }
+  function trendRange(mode){
+    const field = TREND_FIELDS[mode];
+    const vals = els.map(field.get).filter(v => v !== null && v !== undefined && !Number.isNaN(v));
+    return { min: Math.min(...vals), max: Math.max(...vals) };
+  }
+
+  function applyTemperature(K){
+    gridEl.querySelectorAll(".element-tile").forEach(t => {
+      const e = els.find(x => x.Z === parseInt(t.dataset.z,10));
+      const { mp, bp } = e.ext;
+      if (mp == null || bp == null){ t.style.opacity = "0.35"; return; }
+      t.style.opacity = "1";
+      let state = K < mp ? "solid" : (K < bp ? "liquid" : "gas");
+      const map = { solid:"--rule-strong", liquid:"--signal", gas:"--lilac" };
+      t.style.borderColor = `var(${map[state]})`;
+      t.style.borderWidth = "2px";
+      t.title = `${e.name}: ${state} at ${K} K`;
+    });
+  }
+
+  function shellSVG(shells){
+    const cx=60, cy=60;
+    let svg = `<svg viewBox="0 0 120 120" width="120" height="120" role="img" aria-label="Electron shell diagram">`;
+    svg += `<circle cx="${cx}" cy="${cy}" r="4" fill="var(--ink)"/>`;
+    shells.forEach((count, i) => {
+      const r = 12 + i*13;
+      svg += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--rule-strong)" stroke-width="1"/>`;
+      for (let k=0;k<count;k++){
+        const ang = (k / count) * Math.PI*2 - Math.PI/2;
+        const x = cx + r*Math.cos(ang), y = cy + r*Math.sin(ang);
+        svg += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.6" fill="var(--signal)"/>`;
+      }
+    });
+    svg += `</svg>`;
+    return svg;
+  }
+
+  function fmtOx(ox){
+    if (!ox || !ox.length || ox[0]===null) return "—";
+    return ox.map(o => (o>0?"+":"")+o).join(", ");
+  }
+  function kToC(k){ return k==null ? null : Math.round((k - 273.15)*10)/10; }
+
+  function openDetail(sym){
+    const e = els.find(x => x.sym === sym);
+    if (!e) return;
+    selected = e;
+    const x = e.ext;
+    detailCard.innerHTML = `
+      <div class="detail-inner card-pop cat-tile" style="background:color-mix(in oklab, var(--cat-${e.category}) var(--cat-fill-mix, 100%), var(--paper));">
+        <button class="icon-btn detail-close" aria-label="Close" style="position:absolute;top:8px;right:8px;">✕</button>
+        <div class="detail-top">
+          <div class="detail-symbol" style="border-color:var(--cat-${e.category}-edge)">${e.sym}</div>
+          <div>
+            <h2>${e.name}</h2>
+            <div class="hint">Z = ${e.Z} · ${typeof e.mass==="string"?e.mass:e.mass.toFixed(3)} · ${CATEGORY_LABEL[e.category]||e.category}</div>
+            <div class="hint">Group ${e.group||"—"} · Period ${e.period} · ${e.block}-block</div>
+          </div>
+        </div>
+        <dl class="detail-grid">
+          <div><dt>Electron config</dt><dd class="tabular">${e.config}</dd></div>
+          <div><dt>Shorthand</dt><dd class="tabular">${e.shorthand}</dd></div>
+          <div><dt>Shells</dt><dd class="tabular">${e.shells.join(", ")}</dd></div>
+          <div><dt>Oxidation states</dt><dd>${fmtOx(x.ox)}</dd></div>
+          <div><dt>Electronegativity</dt><dd>${x.en ?? "—"}</dd></div>
+          <div><dt>Atomic radius</dt><dd>${x.radius!=null? x.radius+" pm":"—"}</dd></div>
+          <div><dt>First ionisation</dt><dd>${x.ie1!=null? x.ie1+" kJ/mol":"—"}</dd></div>
+          <div><dt>Melting point</dt><dd>${x.mp!=null? `${kToC(x.mp)} °C (${x.mp} K)`:"—"}</dd></div>
+          <div><dt>Boiling point</dt><dd>${x.bp!=null? `${kToC(x.bp)} °C (${x.bp} K)`:"—"}</dd></div>
+          <div><dt>Density</dt><dd>${x.density!=null? x.density+" g/cm³":"—"}</dd></div>
+          <div><dt>Phase at STP</dt><dd>${x.phase||"—"}</dd></div>
+          <div><dt>Discovered</dt><dd>${x.discovered!=null? (x.discovered<0? Math.abs(x.discovered)+" BCE":x.discovered):"—"} · ${x.by||"—"}</dd></div>
+        </dl>
+        <div class="detail-shell">${shellSVG(e.shells)}</div>
+        <p class="prose" style="font-size:var(--t-sm);">${x.use||""}</p>
+        <button class="btn btn-sm" id="copyElData">Copy data</button>
+      </div>
+    `;
+    detailCard.dataset.open = "true";
+    detailCard.querySelector(".detail-close").addEventListener("click", () => router.go("#periodic"));
+    detailCard.querySelector("#copyElData").addEventListener("click", () => {
+      const row = [e.sym,e.name,e.Z,e.mass,e.category,e.group,e.period,e.config,e.shells.join("-"),fmtOx(x.ox),x.en,x.radius,x.ie1,x.mp,x.bp,x.density,x.phase,x.discovered,x.by,x.use].join("\t");
+      navigator.clipboard && navigator.clipboard.writeText(row).catch(()=>{});
+    });
+    store.pushRecent({ label:`${e.name} (${e.sym})`, tab:"periodic", route:`#periodic/${e.sym}`, accent:"--signal" });
+  }
+  function closeDetail(){
+    detailCard.dataset.open = "false";
+    selected = null;
+  }
+
+  registerTab({
+    id: "periodic", label: "Periodic table", short: "Pe", accent: "--signal",
+    icon: `<svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="6" height="6" rx="1" stroke="currentColor" stroke-width="2"/><rect x="10.5" y="3" width="6" height="6" rx="1" stroke="currentColor" stroke-width="2"/><rect x="18" y="3" width="3" height="6" rx="1" stroke="currentColor" stroke-width="2"/><rect x="3" y="10.5" width="6" height="6" rx="1" stroke="currentColor" stroke-width="2"/><rect x="10.5" y="10.5" width="6" height="6" rx="1" stroke="currentColor" stroke-width="2"/></svg>`,
+    searchEntries: [],
+    init(){
+      buildElements();
+      const tools = document.getElementById("tools-periodic");
+      tools.innerHTML = `
+        <input type="search" id="ptSearch" placeholder="Filter by name, symbol, number…" style="width:220px;">
+        <select id="ptColour">
+          <option value="category">Colour: Category</option>
+          <option value="state">Colour: State at 25 °C</option>
+          <option value="block">Colour: Group block (s/p/d/f)</option>
+          <option value="metal">Colour: Metal–nonmetal</option>
+        </select>
+        <select id="ptTrend">
+          <option value="none">Trend: None</option>
+          <option value="radius">Trend: Atomic radius</option>
+          <option value="en">Trend: Electronegativity</option>
+          <option value="ie1">Trend: First ionisation energy</option>
+          <option value="mp">Trend: Melting point</option>
+          <option value="discovered">Trend: Discovery year</option>
+        </select>
+        <button class="btn btn-sm no-print" id="ptPrint">Print table</button>
+      `;
+      const body = document.getElementById("body-periodic");
+      body.innerHTML = `
+        <div class="pt-controls-row">
+          <label class="field" style="max-width:340px;">
+            <span>Temperature — recolours tiles by predicted state</span>
+            <input type="range" id="ptTemp" min="0" max="6000" value="298" step="10">
+            <span class="hint tabular" id="ptTempLabel">298 K (25 °C)</span>
+          </label>
+          <div class="hint" id="ptLegend"></div>
+        </div>
+        <div class="pt-grid-wrap"><div class="periodic-grid" id="ptGrid"></div></div>
+      `;
+      gridEl = document.getElementById("ptGrid");
+      detailCard = document.createElement("div");
+      detailCard.className = "element-detail";
+      detailCard.dataset.open = "false";
+      body.appendChild(detailCard);
+
+      renderGrid();
+
+      document.getElementById("ptSearch").addEventListener("input", (e) => applySearch(e.target.value));
+      document.getElementById("ptColour").addEventListener("change", (e) => { colourMode = e.target.value; trendMode="none"; document.getElementById("ptTrend").value="none"; applyColourMode(); });
+      document.getElementById("ptTrend").addEventListener("change", (e) => { trendMode = e.target.value; updateLegend(); applyColourMode(); });
+      const tempInput = document.getElementById("ptTemp");
+      tempInput.addEventListener("input", (e) => {
+        const K = parseInt(e.target.value,10);
+        document.getElementById("ptTempLabel").textContent = `${K} K (${Math.round(K-273.15)} °C)`;
+        applyTemperature(K);
+      });
+      document.getElementById("ptPrint").addEventListener("click", () => {
+        const panel = document.querySelector('.panel[data-tab="periodic"]');
+        panel.dataset.printing = "true";
+        window.print();
+        setTimeout(() => panel.dataset.printing = "false", 500);
+      });
+      document.addEventListener("click", (e) => {
+        if (detailCard.dataset.open === "true" && !detailCard.contains(e.target) && !e.target.closest(".element-tile")){
+          router.go("#periodic");
+        }
+      });
+      document.addEventListener("dd:escape", () => { if (detailCard.dataset.open === "true") router.go("#periodic"); });
+      function updateLegend(){
+        const el = document.getElementById("ptLegend");
+        if (trendMode === "none"){ el.textContent = ""; return; }
+        const field = TREND_FIELDS[trendMode];
+        const { min, max } = trendRange(trendMode);
+        el.innerHTML = `${field.label}: <span style="color:var(--barium)">low ${field.fmt(min)}</span> → <span style="color:var(--strontium)">high ${field.fmt(max)}</span>`;
+      }
+    },
+    onRoute(rest){
+      if (rest && rest[0]) openDetail(rest[0]);
+      else closeDetail();
+    }
+  });
+})();
+
+/* ============================================================
+   TAB: Chemistry
+   ============================================================ */
+(function(){
+  const ATOMIC_MASS = {};
+  ELEMENTS.forEach(([Z,sym,name,mass]) => { ATOMIC_MASS[sym] = typeof mass === "string" ? parseFloat(mass.replace(/[[\]]/g,"")) : mass; });
+
+  /* ---- formula parsing (handles nested brackets + hydrate dots) ---- */
+  function parseFormula(formula){
+    let segments = [], depth = 0, buf = "";
+    for (let i=0;i<formula.length;i++){
+      const c = formula[i];
+      if (c === "(" || c === "[") depth++;
+      if (c === ")" || c === "]") depth--;
+      if (c === "." && depth === 0){ segments.push(buf); buf=""; } else buf += c;
+    }
+    segments.push(buf);
+    const counts = {};
+    function parseGroup(s, start, end, local){
+      let i = start;
+      while (i < end){
+        const c = s[i];
+        if (c === "(" || c === "["){
+          const open=c, close = open==="(" ? ")" : "]";
+          let depth=1, j=i+1;
+          while (j<end && depth>0){ if (s[j]===open) depth++; if (s[j]===close) depth--; j++; }
+          const innerEnd = j-1;
+          let k=j, numStr="";
+          while (k<end && /\d/.test(s[k])){ numStr+=s[k]; k++; }
+          const groupMult = numStr ? parseInt(numStr,10) : 1;
+          const inner = {};
+          parseGroup(s, i+1, innerEnd, inner);
+          for (const el in inner) local[el] = (local[el]||0) + inner[el]*groupMult;
+          i = k;
+        } else if (/[A-Z]/.test(c)){
+          let j=i+1;
+          while (j<end && /[a-z]/.test(s[j])) j++;
+          const el = s.slice(i,j);
+          let numStr="";
+          while (j<end && /\d/.test(s[j])){ numStr+=s[j]; j++; }
+          const n = numStr ? parseInt(numStr,10) : 1;
+          local[el] = (local[el]||0) + n;
+          i = j;
+        } else i++;
+      }
+    }
+    function parseSegment(seg){
+      let m = seg.match(/^(\d+)(.*)$/);
+      let mult = 1;
+      if (m){ mult = parseInt(m[1],10); seg = m[2]; }
+      const local = {};
+      parseGroup(seg, 0, seg.length, local);
+      for (const el in local) counts[el] = (counts[el]||0) + local[el]*mult;
+    }
+    segments.forEach(parseSegment);
+    return counts;
+  }
+  function molarMass(formula){
+    const counts = parseFormula(formula);
+    let total = 0;
+    const breakdown = [];
+    const unknown = [];
+    for (const el in counts){
+      const mass = ATOMIC_MASS[el];
+      if (mass === undefined){ unknown.push(el); continue; }
+      const subtotal = mass * counts[el];
+      breakdown.push({ el, count:counts[el], mass, subtotal });
+      total += subtotal;
+    }
+    return { total, breakdown, counts, unknown };
+  }
+
+  /* ---- equation balancer (Gaussian elimination over rationals) ---- */
+  function gcdInt(a,b){ a=Math.abs(a); b=Math.abs(b); while(b){ [a,b]=[b,a%b]; } return a||1; }
+  function rSimplify([n,d]){ if (d<0){n=-n;d=-d;} const g=gcdInt(n,d); return g?[n/g,d/g]:[0,1]; }
+  function rAdd(a,b){ return rSimplify([a[0]*b[1]+b[0]*a[1], a[1]*b[1]]); }
+  function rSub(a,b){ return rSimplify([a[0]*b[1]-b[0]*a[1], a[1]*b[1]]); }
+  function rMul(a,b){ return rSimplify([a[0]*b[0], a[1]*b[1]]); }
+  function rDiv(a,b){ return rSimplify([a[0]*b[1], a[1]*b[0]]); }
+  function rIsZero(a){ return a[0]===0; }
+  function elementCounts(formula){
+    const counts = {};
+    function parseGroup(s,start,end,local){
+      let i=start;
+      while(i<end){
+        const c=s[i];
+        if (c==="(" || c==="["){
+          const open=c, close=open==="("?")":"]";
+          let depth=1,j=i+1;
+          while(j<end && depth>0){ if(s[j]===open) depth++; if(s[j]===close) depth--; j++; }
+          const innerEnd=j-1;
+          let k=j,numStr="";
+          while(k<end && /\d/.test(s[k])){ numStr+=s[k]; k++; }
+          const groupMult = numStr?parseInt(numStr,10):1;
+          const inner={};
+          parseGroup(s,i+1,innerEnd,inner);
+          for (const el in inner) local[el]=(local[el]||0)+inner[el]*groupMult;
+          i=k;
+        } else if (/[A-Z]/.test(c)){
+          let j=i+1;
+          while(j<end && /[a-z]/.test(s[j])) j++;
+          const el=s.slice(i,j);
+          let numStr="";
+          while(j<end && /\d/.test(s[j])){ numStr+=s[j]; j++; }
+          const n=numStr?parseInt(numStr,10):1;
+          local[el]=(local[el]||0)+n;
+          i=j;
+        } else i++;
+      }
+    }
+    parseGroup(formula,0,formula.length,counts);
+    return counts;
+  }
+  function balanceEquation(eqStr){
+    if (!/->|=/.test(eqStr)) return { ok:false, reason:"Use -> to separate reactants and products." };
+    const [lhsStr, rhsStr] = eqStr.split(/->|=/).map(s=>s.trim());
+    if (!lhsStr || !rhsStr) return { ok:false, reason:"Both sides of the equation are needed." };
+    const parseSide = side => side.split("+").map(s=>s.trim()).map(term=>{
+      let m = term.match(/^(\d*)(.+)$/);
+      return { formula: (m ? m[2] : term).trim() };
+    });
+    const lhs = parseSide(lhsStr), rhs = parseSide(rhsStr);
+    const species = [...lhs.map(t=>t.formula), ...rhs.map(t=>t.formula)];
+    const nLhs = lhs.length;
+    let speciesCounts;
+    try { speciesCounts = species.map(f => elementCounts(f)); }
+    catch(e){ return { ok:false, reason:"Could not parse a formula." }; }
+    const elements = new Set();
+    speciesCounts.forEach(c => Object.keys(c).forEach(e=>elements.add(e)));
+    const elList = [...elements];
+    let matrix = elList.map(el => speciesCounts.map((c,idx)=> rSimplify([(idx<nLhs?1:-1)*(c[el]||0),1])));
+    let rows = matrix.length, cols = species.length, lead = 0;
+    for (let r=0; r<rows && lead<cols; r++){
+      let i=r;
+      while (i<rows && rIsZero(matrix[i][lead])) i++;
+      if (i===rows){ lead++; r--; continue; }
+      [matrix[i],matrix[r]] = [matrix[r],matrix[i]];
+      const lv = matrix[r][lead];
+      matrix[r] = matrix[r].map(v=>rDiv(v,lv));
+      for (let k=0;k<rows;k++){
+        if (k!==r){
+          const factor = matrix[k][lead];
+          if (!rIsZero(factor)) matrix[k] = matrix[k].map((v,c2)=>rSub(v, rMul(factor, matrix[r][c2])));
+        }
+      }
+      lead++;
+    }
+    const freeIdx = cols-1;
+    let coeffs = new Array(cols).fill(null);
+    coeffs[freeIdx] = [1,1];
+    for (let r=rows-1; r>=0; r--){
+      let pivotCol=-1;
+      for (let c=0;c<cols;c++){ if (!rIsZero(matrix[r][c])){ pivotCol=c; break; } }
+      if (pivotCol===-1 || pivotCol===freeIdx) continue;
+      let sum=[0,1];
+      for (let c=0;c<cols;c++){
+        if (c===pivotCol) continue;
+        if (coeffs[c]==null) continue;
+        sum = rAdd(sum, rMul(matrix[r][c], coeffs[c]));
+      }
+      coeffs[pivotCol] = rSimplify([-sum[0], sum[1]]);
+    }
+    if (coeffs.some(c=>c==null)) return { ok:false, reason:"This equation is underdetermined — it needs an extra constraint (e.g. a known product ratio) to balance uniquely." };
+    let denom=1;
+    for (const c of coeffs) denom = (denom*c[1])/gcdInt(denom,c[1]);
+    let ints = coeffs.map(c => Math.round(c[0]*(denom/c[1])));
+    let g = ints.reduce((a,b)=>gcdInt(a,b),0);
+    ints = ints.map(v=>v/g);
+    if (ints.some(v=>v<=0)) return { ok:false, reason:"No balanced equation exists with positive whole-number coefficients — check the formulas." };
+    return { ok:true, coeffs:ints, species, nLhs };
+  }
+
+  /* ---- UI ---- */
+  const SECTIONS = [
+    { id:"molar", label:"Molar calculator" },
+    { id:"balance", label:"Equation balancer" },
+    { id:"solubility", label:"Solubility" },
+    { id:"reference", label:"Reference" },
+    { id:"organic", label:"Organic" },
+    { id:"titration", label:"Titration" }
+  ];
+  let activeSection = "molar";
+
+  function renderSegmented(){
+    return `<div class="segmented" id="chemSeg">${SECTIONS.map(s=>`<button data-id="${s.id}" aria-selected="${s.id===activeSection}">${s.label}</button>`).join("")}</div>`;
+  }
+
+  function renderMolar(){
+    return `
+      <div class="sheet">
+        <div class="sheet-head">Molar mass calculator</div>
+        <div class="sheet-body">
+          <div class="field" style="max-width:360px;">
+            <label for="molarFormula">Formula (nested brackets and hydrates OK)</label>
+            <input type="text" id="molarFormula" placeholder="e.g. CuSO4.5H2O" value="Ca(OH)2">
+          </div>
+          <div id="molarOut" style="margin-top:var(--s4);"></div>
+        </div>
+      </div>
+      <div class="sheet">
+        <div class="sheet-head">Mass ⇄ moles ⇄ particles</div>
+        <div class="sheet-body">
+          <p class="hint" style="margin-bottom:var(--s3);">Fill in any one field — the others fill themselves in using the molar mass above.</p>
+          <div class="grid-3">
+            <div class="field"><label>Mass (g)</label><input type="number" id="convMass"></div>
+            <div class="field"><label>Moles (mol)</label><input type="number" id="convMol"></div>
+            <div class="field"><label>Particles</label><input type="number" id="convPart"></div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  function wireMolar(){
+    const input = document.getElementById("molarFormula");
+    const out = document.getElementById("molarOut");
+    const massEl = document.getElementById("convMass"), molEl = document.getElementById("convMol"), partEl = document.getElementById("convPart");
+    let currentMM = null;
+    function update(){
+      const f = input.value.trim();
+      if (!f){ out.innerHTML = ""; return; }
+      let result;
+      try { result = molarMass(f); } catch(e){ out.innerHTML = `<p class="err">Could not parse that formula.</p>`; return; }
+      if (result.unknown.length){ out.innerHTML = `<p class="err">Unknown element symbol: ${result.unknown.join(", ")}</p>`; return; }
+      currentMM = result.total;
+      out.innerHTML = `
+        <div class="table-wrap"><table><thead><tr><th>Element</th><th>Count</th><th>Atomic mass</th><th>Subtotal</th></tr></thead><tbody>
+          ${result.breakdown.map(b=>`<tr><td>${b.el}</td><td class="tabular">${b.count}</td><td class="tabular">${b.mass}</td><td class="tabular">${b.subtotal.toFixed(3)}</td></tr>`).join("")}
+        </tbody></table></div>
+        <p style="margin-top:var(--s3);font-weight:600;">Molar mass = <span class="tabular">${result.total.toFixed(2)}</span> g/mol</p>
+      `;
+      syncFromMass();
+    }
+    function syncFromMass(){ if (currentMM && massEl.value) { molEl.value = (parseFloat(massEl.value)/currentMM).toFixed(4); partEl.value = (parseFloat(molEl.value)*6.022e23).toExponential(4); } }
+    input.addEventListener("input", update);
+    massEl.addEventListener("input", () => { if (!currentMM) return; const mol = parseFloat(massEl.value)/currentMM; molEl.value = isFinite(mol)?mol.toFixed(4):""; partEl.value = isFinite(mol)?(mol*6.022e23).toExponential(4):""; });
+    molEl.addEventListener("input", () => { const mol = parseFloat(molEl.value); if (currentMM) massEl.value = isFinite(mol)?(mol*currentMM).toFixed(4):""; partEl.value = isFinite(mol)?(mol*6.022e23).toExponential(4):""; });
+    partEl.addEventListener("input", () => { const part = parseFloat(partEl.value); const mol = part/6.022e23; molEl.value = isFinite(mol)?mol.toFixed(4):""; if (currentMM) massEl.value = isFinite(mol)?(mol*currentMM).toFixed(4):""; });
+    update();
+  }
+
+  function renderBalance(){
+    return `
+      <div class="sheet">
+        <div class="sheet-head">Equation balancer</div>
+        <div class="sheet-body">
+          <div class="field">
+            <label for="balEq">Unbalanced equation (use -&gt; between sides)</label>
+            <input type="text" id="balEq" value="Fe + O2 -> Fe2O3" style="max-width:480px;">
+          </div>
+          <div id="balOut" style="margin-top:var(--s4);"></div>
+        </div>
+      </div>
+    `;
+  }
+  function wireBalance(){
+    const input = document.getElementById("balEq");
+    const out = document.getElementById("balOut");
+    function update(){
+      const eq = input.value.trim();
+      if (!eq){ out.innerHTML=""; return; }
+      const result = balanceEquation(eq);
+      if (!result.ok){ out.innerHTML = `<p class="err">${result.reason}</p>`; return; }
+      const { coeffs, species, nLhs } = result;
+      const side = (from,to) => species.slice(from,to).map((f,i)=>{
+        const c = coeffs[from+i];
+        return (c===1?"":`<strong>${c}</strong> `) + f;
+      }).join(" + ");
+      out.innerHTML = `<p style="font-size:var(--t-md);">${side(0,nLhs)} <span style="color:var(--accent)">→</span> ${side(nLhs, species.length)}</p>`;
+    }
+    input.addEventListener("input", update);
+    update();
+  }
+
+  function renderSolubility(){
+    const cations = ["Na⁺/K⁺/NH₄⁺","Ag⁺","Pb²⁺","Ca²⁺","Ba²⁺","Cu²⁺","Fe³⁺"];
+    const anions = ["Cl⁻","Br⁻","I⁻","SO₄²⁻","CO₃²⁻","OH⁻","NO₃⁻"];
+    function verdict(cat, an){
+      if (an === "NO₃⁻") return ["soluble",""];
+      if (cat === "Na⁺/K⁺/NH₄⁺") return ["soluble",""];
+      if (an === "Cl⁻" || an==="Br⁻" || an==="I⁻"){
+        if (cat==="Ag⁺") return ["insoluble", an==="Cl⁻"?"white":an==="Br⁻"?"cream":"yellow"];
+        if (cat==="Pb²⁺") return ["insoluble", an==="I⁻"?"bright yellow":"white"];
+        return ["soluble",""];
+      }
+      if (an === "SO₄²⁻"){
+        if (cat==="Ba²⁺") return ["insoluble","white"];
+        if (cat==="Pb²⁺") return ["insoluble","white"];
+        if (cat==="Ca²⁺") return ["slightly soluble",""];
+        return ["soluble",""];
+      }
+      if (an === "CO₃²⁻" || an === "OH⁻"){
+        if (cat==="Ca²⁺" || cat==="Ba²⁺") return an==="OH⁻" ? ["slightly soluble",""] : ["insoluble","white"];
+        if (cat==="Cu²⁺") return [an==="OH⁻"?"insoluble":"insoluble", an==="OH⁻"?"pale blue":"green-blue"];
+        if (cat==="Fe³⁺") return [an==="OH⁻"?"insoluble":"insoluble", an==="OH⁻"?"rust brown":"—"];
+        return ["insoluble",""];
+      }
+      return ["—",""];
+    }
+    let rows = `<tr><th></th>${anions.map(a=>`<th>${a}</th>`).join("")}</tr>`;
+    cations.forEach(cat => {
+      rows += `<tr><th>${cat}</th>${anions.map(an=>{
+        const [v,colour] = verdict(cat,an);
+        const cls = v==="insoluble" ? "sol-insol" : v==="soluble" ? "sol-sol" : "sol-slight";
+        return `<td class="${cls}" title="${colour}">${v}${colour?` · ${colour}`:""}</td>`;
+      }).join("")}</tr>`;
+    });
+    return `
+      <div class="sheet">
+        <div class="sheet-head">Solubility grid — click a cell's row/column combo to check</div>
+        <div class="sheet-body table-wrap"><table class="sol-grid">${rows}</table></div>
+      </div>
+      <div class="sheet"><div class="sheet-head">General rules</div><div class="sheet-body prose">
+        <p><strong>Soluble:</strong> ${SOLUBILITY_RULES.soluble.join("; ")}.</p>
+        <p><strong>Insoluble:</strong> ${SOLUBILITY_RULES.insoluble.join("; ")}.</p>
+      </div></div>
+    `;
+  }
+
+  function renderReference(){
+    return `
+      <div class="grid-2">
+        <div class="sheet"><div class="sheet-head">Polyatomic ions</div><div class="sheet-body">
+          ${Object.entries(POLYATOMIC_IONS).map(([charge,list])=>`
+            <p style="font-weight:600;margin:var(--s3) 0 var(--s1);">${charge}</p>
+            <div class="table-wrap"><table>${list.map(([n,f])=>`<tr><td>${n}</td><td class="tabular">${f}</td></tr>`).join("")}</table></div>
+          `).join("")}
+        </div></div>
+        <div class="sheet"><div class="sheet-head">Reactivity series (most → least reactive)</div><div class="sheet-body">
+          <ol style="padding-left:1.2em;">${REACTIVITY_SERIES.map(m=>`<li>${m}</li>`).join("")}</ol>
+        </div></div>
+        <div class="sheet"><div class="sheet-head">Acids &amp; bases</div><div class="sheet-body">
+          <p style="font-weight:600;">Strong acids</p><div class="table-wrap"><table>${ACIDS_BASES.strongAcids.map(([n,f])=>`<tr><td>${n}</td><td class="tabular">${f}</td></tr>`).join("")}</table></div>
+          <p style="font-weight:600;margin-top:var(--s3);">Weak acids</p><div class="table-wrap"><table>${ACIDS_BASES.weakAcids.map(([n,f])=>`<tr><td>${n}</td><td class="tabular">${f}</td></tr>`).join("")}</table></div>
+          <p style="font-weight:600;margin-top:var(--s3);">Strong bases</p><div class="table-wrap"><table>${ACIDS_BASES.strongBases.map(([n,f])=>`<tr><td>${n}</td><td class="tabular">${f}</td></tr>`).join("")}</table></div>
+          <p style="font-weight:600;margin-top:var(--s3);">Weak bases</p><div class="table-wrap"><table>${ACIDS_BASES.weakBases.map(([n,f])=>`<tr><td>${n}</td><td class="tabular">${f}</td></tr>`).join("")}</table></div>
+        </div></div>
+        <div class="sheet"><div class="sheet-head">Flame test colours</div><div class="sheet-body">
+          <div class="table-wrap"><table>${FLAME_TESTS.map(([sym,name,colour,tok])=>`<tr><td><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:var(${tok});margin-right:6px;"></span>${name} (${sym})</td><td>${colour}</td></tr>`).join("")}</table></div>
+        </div></div>
+      </div>
+    `;
+  }
+
+  function romanNo(n){ return ["","","di","tri","tetra","penta","hexa","hepta","octa","nona","deca"][n]||n; }
+  function renderOrganic(){
+    return `
+      <div class="sheet"><div class="sheet-head">Functional groups</div><div class="sheet-body table-wrap">
+        <table><thead><tr><th>Name</th><th>General formula</th><th>Suffix/prefix</th><th>Example</th></tr></thead>
+        <tbody>${ORGANIC_GROUPS.map(g=>`<tr><td>${g.name}</td><td class="tabular">${g.formula}</td><td>${g.suffix}</td><td class="tabular">${g.example}</td></tr>`).join("")}</tbody></table>
+      </div></div>
+      <div class="sheet"><div class="sheet-head">Naming stems, C1–C10</div><div class="sheet-body table-wrap">
+        <table><thead><tr><th>Carbons</th><th>Stem</th><th>Alkane</th><th>Alkanol</th><th>Alkanoic acid</th></tr></thead>
+        <tbody>${ALKANE_STEMS.map((stem,i)=>`<tr><td class="tabular">${i+1}</td><td>${stem}-</td><td>${stem}ane</td><td>${stem}anol</td><td>${stem}anoic acid</td></tr>`).join("")}</tbody></table>
+      </div></div>
+    `;
+  }
+
+  function renderTitration(){
+    return `
+      <div class="sheet"><div class="sheet-head">Titration solver — c₁V₁/n₁ = c₂V₂/n₂</div><div class="sheet-body">
+        <div class="grid-3">
+          <div class="field"><label>c₁ — known conc. (mol/L)</label><input type="number" id="tc1" value="0.100"></div>
+          <div class="field"><label>V₁ — known volume (mL)</label><input type="number" id="tv1" value="25.0"></div>
+          <div class="field"><label>n₁ — mole ratio (known side)</label><input type="number" id="tn1" value="1"></div>
+          <div class="field"><label>V₂ — titre volume (mL)</label><input type="number" id="tv2" value="22.5"></div>
+          <div class="field"><label>n₂ — mole ratio (unknown side)</label><input type="number" id="tn2" value="1"></div>
+        </div>
+        <div id="titOut" style="margin-top:var(--s4);"></div>
+      </div></div>
+    `;
+  }
+  function wireTitration(){
+    const ids = ["tc1","tv1","tn1","tv2","tn2"];
+    const out = document.getElementById("titOut");
+    function update(){
+      const [c1,v1,n1,v2,n2] = ids.map(id => parseFloat(document.getElementById(id).value));
+      if ([c1,v1,n1,v2,n2].some(v=>!isFinite(v)) || v2===0 || n1===0){ out.innerHTML=""; return; }
+      const c2 = (c1*v1*n2)/(n1*v2);
+      out.innerHTML = `
+        <p class="prose" style="font-size:var(--t-sm);">
+          c₂ = (c₁V₁n₂) / (n₁V₂) = (${c1} × ${v1} × ${n2}) / (${n1} × ${v2})<br>
+          c₂ = ${(c1*v1*n2).toFixed(4)} / ${(n1*v2).toFixed(4)}<br>
+          <strong>c₂ = ${c2.toFixed(5)} mol/L</strong>
+        </p>`;
+    }
+    ids.forEach(id => document.getElementById(id).addEventListener("input", update));
+    update();
+  }
+
+  function renderSection(id){
+    const body = document.getElementById("body-chem");
+    if (id === "molar"){ body.innerHTML = renderMolar(); wireMolar(); }
+    else if (id === "balance"){ body.innerHTML = renderBalance(); wireBalance(); }
+    else if (id === "solubility"){ body.innerHTML = renderSolubility(); }
+    else if (id === "reference"){ body.innerHTML = renderReference(); }
+    else if (id === "organic"){ body.innerHTML = renderOrganic(); }
+    else if (id === "titration"){ body.innerHTML = renderTitration(); wireTitration(); }
+  }
+
+  registerTab({
+    id: "chem", label: "Chemistry", short: "Ch", accent: "--crimson",
+    icon: `<svg viewBox="0 0 24 24" fill="none"><path d="M9 3h6M10 3v6l-5 9a2 2 0 001.7 3h10.6a2 2 0 001.7-3l-5-9V3" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>`,
+    searchEntries: SECTIONS.map(s => ({ label: s.label, keywords: s.label.toLowerCase(), route:`#chem/${s.id}`, group:"Chemistry" })),
+    init(){
+      const wrap = document.createElement("div");
+      wrap.innerHTML = renderSegmented();
+      document.getElementById("body-chem").before(wrap.firstElementChild);
+      document.getElementById("chemSeg").addEventListener("click", (e) => {
+        const btn = e.target.closest("button[data-id]");
+        if (btn) router.go(`#chem/${btn.dataset.id}`);
+      });
+      renderSection(activeSection);
+    },
+    onRoute(rest){
+      const id = (rest && rest[0]) || "molar";
+      activeSection = SECTIONS.some(s=>s.id===id) ? id : "molar";
+      document.querySelectorAll("#chemSeg button").forEach(b => b.setAttribute("aria-selected", b.dataset.id===activeSection));
+      renderSection(activeSection);
+    }
+  });
+})();
+
+/* ============================================================
+   TAB: Physics
+   ============================================================ */
+(function(){
+  const G = 9.81;
+  const FORMULAS = [
+    { id:"suvat1", label:"v = u + at", vars:[["v","Final velocity","m/s"],["u","Initial velocity","m/s"],["a","Acceleration","m/s²"],["t","Time","s"]],
+      solve:(k,m)=>{ if(m==="v") return k.u+k.a*k.t; if(m==="u") return k.v-k.a*k.t; if(m==="a") return (k.v-k.u)/k.t; return (k.v-k.u)/k.a; },
+      rearranged:{v:"v = u + at",u:"u = v − at",a:"a = (v − u) / t",t:"t = (v − u) / a"} },
+    { id:"suvat2", label:"v² = u² + 2as", vars:[["v","Final velocity","m/s"],["u","Initial velocity","m/s"],["a","Acceleration","m/s²"],["s","Displacement","m"]],
+      solve:(k,m)=>{ if(m==="v") return Math.sqrt(k.u*k.u+2*k.a*k.s); if(m==="u") return Math.sqrt(k.v*k.v-2*k.a*k.s); if(m==="a") return (k.v*k.v-k.u*k.u)/(2*k.s); return (k.v*k.v-k.u*k.u)/(2*k.a); },
+      rearranged:{v:"v = √(u² + 2as)",u:"u = √(v² − 2as)",a:"a = (v² − u²) / 2s",s:"s = (v² − u²) / 2a"} },
+    { id:"suvat3", label:"s = ut + ½at²", vars:[["s","Displacement","m"],["u","Initial velocity","m/s"],["a","Acceleration","m/s²"],["t","Time","s"]],
+      solve:(k,m)=>{
+        if(m==="s") return k.u*k.t+0.5*k.a*k.t*k.t;
+        if(m==="u") return (k.s-0.5*k.a*k.t*k.t)/k.t;
+        if(m==="a") return 2*(k.s-k.u*k.t)/(k.t*k.t);
+        if (Math.abs(k.a) < 1e-12) return k.s/k.u;
+        const disc = k.u*k.u + 2*k.a*k.s;
+        if (disc < 0) return NaN;
+        return (-k.u + Math.sqrt(disc)) / k.a;
+      },
+      rearranged:{s:"s = ut + ½at²",u:"u = (s − ½at²) / t",a:"a = 2(s − ut) / t²",t:"t = (−u + √(u² + 2as)) / a"} },
+    { id:"newton", label:"F = ma", vars:[["F","Net force","N"],["m","Mass","kg"],["a","Acceleration","m/s²"]],
+      solve:(k,m)=>{ if(m==="F") return k.m*k.a; if(m==="m") return k.F/k.a; return k.F/k.m; },
+      rearranged:{F:"F = ma",m:"m = F / a",a:"a = F / m"} },
+    { id:"momentum", label:"p = mv", vars:[["p","Momentum","kg·m/s"],["m","Mass","kg"],["v","Velocity","m/s"]],
+      solve:(k,m)=>{ if(m==="p") return k.m*k.v; if(m==="m") return k.p/k.v; return k.p/k.m; },
+      rearranged:{p:"p = mv",m:"m = p / v",v:"v = p / m"} },
+    { id:"work", label:"W = Fd", vars:[["W","Work","J"],["F","Force","N"],["d","Displacement","m"]],
+      solve:(k,m)=>{ if(m==="W") return k.F*k.d; if(m==="F") return k.W/k.d; return k.W/k.F; },
+      rearranged:{W:"W = Fd",F:"F = W / d",d:"d = W / F"} },
+    { id:"ke", label:"Ek = ½mv²", vars:[["Ek","Kinetic energy","J"],["m","Mass","kg"],["v","Speed","m/s"]],
+      solve:(k,m)=>{ if(m==="Ek") return 0.5*k.m*k.v*k.v; if(m==="m") return 2*k.Ek/(k.v*k.v); return Math.sqrt(2*k.Ek/k.m); },
+      rearranged:{Ek:"Ek = ½mv²",m:"m = 2Ek / v²",v:"v = √(2Ek / m)"} },
+    { id:"pe", label:"Ep = mgh", vars:[["Ep","Gravitational PE","J"],["m","Mass","kg"],["g","Free-fall accel.","m/s²"],["h","Height","m"]],
+      solve:(k,m)=>{ if(m==="Ep") return k.m*k.g*k.h; if(m==="m") return k.Ep/(k.g*k.h); if(m==="g") return k.Ep/(k.m*k.h); return k.Ep/(k.m*k.g); },
+      rearranged:{Ep:"Ep = mgh",m:"m = Ep / gh",g:"g = Ep / mh",h:"h = Ep / mg"}, defaults:{g:G} },
+    { id:"power", label:"P = W/t", vars:[["P","Power","W"],["W","Work / energy","J"],["t","Time","s"]],
+      solve:(k,m)=>{ if(m==="P") return k.W/k.t; if(m==="W") return k.P*k.t; return k.W/k.P; },
+      rearranged:{P:"P = W / t",W:"W = Pt",t:"t = W / P"} },
+    { id:"ohm", label:"V = IR", vars:[["V","Potential difference","V"],["I","Current","A"],["R","Resistance","Ω"]],
+      solve:(k,m)=>{ if(m==="V") return k.I*k.R; if(m==="I") return k.V/k.R; return k.V/k.I; },
+      rearranged:{V:"V = IR",I:"I = V / R",R:"R = V / I"} },
+    { id:"elecpower", label:"P = VI", vars:[["P","Power","W"],["V","Potential difference","V"],["I","Current","A"]],
+      solve:(k,m)=>{ if(m==="P") return k.V*k.I; if(m==="V") return k.P/k.I; return k.P/k.V; },
+      rearranged:{P:"P = VI",V:"V = P / I",I:"I = P / V"} },
+    { id:"charge", label:"Q = It", vars:[["Q","Charge","C"],["I","Current","A"],["t","Time","s"]],
+      solve:(k,m)=>{ if(m==="Q") return k.I*k.t; if(m==="I") return k.Q/k.t; return k.Q/k.I; },
+      rearranged:{Q:"Q = It",I:"I = Q / t",t:"t = Q / I"} },
+    { id:"period", label:"f = 1/T", vars:[["f","Frequency","Hz"],["T","Period","s"]],
+      solve:(k,m)=>{ return m==="f" ? 1/k.T : 1/k.f; },
+      rearranged:{f:"f = 1 / T",T:"T = 1 / f"} },
+    { id:"wave", label:"v = fλ", vars:[["v","Wave speed","m/s"],["f","Frequency","Hz"],["λ","Wavelength","m"]],
+      solve:(k,m)=>{ if(m==="v") return k.f*k.λ; if(m==="f") return k.v/k.λ; return k.v/k.f; },
+      rearranged:{v:"v = fλ",f:"f = v / λ",λ:"λ = v / f"} },
+    { id:"snell", label:"n₁sinθ₁ = n₂sinθ₂", vars:[["n1","n₁","—"],["t1","θ₁","°"],["n2","n₂","—"],["t2","θ₂","°"]],
+      solve:(k,m)=>{
+        const d2r = Math.PI/180, r2d = 180/Math.PI;
+        if (m==="n1") return k.n2*Math.sin(k.t2*d2r)/Math.sin(k.t1*d2r);
+        if (m==="t1") return Math.asin(k.n2*Math.sin(k.t2*d2r)/k.n1)*r2d;
+        if (m==="n2") return k.n1*Math.sin(k.t1*d2r)/Math.sin(k.t2*d2r);
+        return Math.asin(k.n1*Math.sin(k.t1*d2r)/k.n2)*r2d;
+      },
+      rearranged:{n1:"n₁ = n₂sinθ₂ / sinθ₁",t1:"θ₁ = asin(n₂sinθ₂ / n₁)",n2:"n₂ = n₁sinθ₁ / sinθ₂",t2:"θ₂ = asin(n₁sinθ₁ / n₂)"} },
+    { id:"photon", label:"E = hf", vars:[["E","Photon energy","J"],["h","Planck constant","J·s"],["f","Frequency","Hz"]],
+      solve:(k,m)=>{ if(m==="E") return k.h*k.f; if(m==="h") return k.E/k.f; return k.E/k.h; },
+      rearranged:{E:"E = hf",h:"h = E / f",f:"f = E / h"}, defaults:{h:6.626e-34} }
+  ];
+
+  const SECTIONS = [
+    { id:"formulas", label:"Formula sheet" },
+    { id:"solver", label:"Formula solver" },
+    { id:"constants", label:"Constants" },
+    { id:"converter", label:"Unit converter" },
+    { id:"circuits", label:"Circuits" },
+    { id:"sigfigs", label:"Sig figs & uncertainty" }
+  ];
+  let activeSection = "formulas";
+
+  function renderSegmented(){
+    return `<div class="segmented" id="physSeg">${SECTIONS.map(s=>`<button data-id="${s.id}" aria-selected="${s.id===activeSection}">${s.label}</button>`).join("")}</div>`;
+  }
+
+  function renderFormulaSheet(){
+    return Object.entries(PHYSICS_FORMULAS).map(([group, list]) => `
+      <div class="sheet"><div class="sheet-head">${group}</div><div class="sheet-body">
+        <div class="table-wrap"><table><thead><tr><th>Formula</th><th>Variables</th><th>Applies when</th></tr></thead><tbody>
+        ${list.map(f=>`<tr><td class="tabular" style="font-weight:600;white-space:nowrap;">${f.name}</td><td>${f.vars}</td><td>${f.note}</td></tr>`).join("")}
+        </tbody></table></div>
+      </div></div>
+    `).join("");
+  }
+
+  function renderSolver(){
+    return `
+      <div class="sheet"><div class="sheet-head">Formula solver</div><div class="sheet-body">
+        <div class="field" style="max-width:360px;margin-bottom:var(--s4);">
+          <label for="solverPick">Formula</label>
+          <select id="solverPick">${FORMULAS.map(f=>`<option value="${f.id}">${f.label}</option>`).join("")}</select>
+        </div>
+        <div id="solverFields"></div>
+        <div id="solverOut" style="margin-top:var(--s4);"></div>
+      </div></div>
+    `;
+  }
+  function wireSolver(){
+    const pick = document.getElementById("solverPick");
+    const fields = document.getElementById("solverFields");
+    const out = document.getElementById("solverOut");
+    function build(){
+      const f = FORMULAS.find(x=>x.id===pick.value);
+      fields.innerHTML = `<div class="grid-3">${f.vars.map(([key,label,unit])=>`
+        <div class="field"><label>${label} (${unit})</label><input type="number" step="any" data-key="${key}" value="${f.defaults&&f.defaults[key]!=null?f.defaults[key]:""}"></div>
+      `).join("")}</div><p class="hint" style="margin-top:var(--s2);">Leave exactly one field blank — that's the one it solves for.</p>`;
+      fields.querySelectorAll("input").forEach(inp => inp.addEventListener("input", () => compute(f)));
+      compute(f);
+    }
+    function compute(f){
+      const inputs = Array.from(fields.querySelectorAll("input"));
+      const blanks = inputs.filter(i => i.value.trim()==="");
+      if (blanks.length !== 1){ out.innerHTML = `<p class="hint">${blanks.length===0?"All fields filled — clear one to solve for it.":"Leave exactly one field blank."}</p>`; return; }
+      const missing = blanks[0].dataset.key;
+      const known = {};
+      inputs.forEach(i => { if (i.dataset.key !== missing) known[i.dataset.key] = parseFloat(i.value); });
+      const result = f.solve(known, missing);
+      if (!isFinite(result)){ out.innerHTML = `<p class="err">No real solution for these values.</p>`; return; }
+      out.innerHTML = `<p class="prose" style="font-size:var(--t-sm);">Rearranged: <strong class="tabular">${f.rearranged[missing]}</strong></p>
+        <p style="font-size:var(--t-md);font-weight:600;">${missing} = <span class="tabular">${Number(result.toPrecision(6))}</span></p>`;
+    }
+    pick.addEventListener("change", build);
+    build();
+  }
+
+  function renderConstants(){
+    return `<div class="sheet"><div class="sheet-head">Physical constants</div><div class="sheet-body table-wrap">
+      <table><thead><tr><th>Quantity</th><th>Symbol</th><th>Value</th><th>Unit</th><th></th></tr></thead><tbody>
+      ${CONSTANTS.map((c,i)=>`<tr><td>${c.name}</td><td class="tabular">${c.sym}</td><td class="tabular">${c.value}</td><td>${c.unit}</td>
+        <td><button class="btn btn-sm" data-copy="${c.value}">Copy</button></td></tr>`).join("")}
+      </tbody></table></div></div>`;
+  }
+  function wireConstants(){
+    document.querySelectorAll("[data-copy]").forEach(b => b.addEventListener("click", () => {
+      navigator.clipboard && navigator.clipboard.writeText(b.dataset.copy).catch(()=>{});
+      b.textContent = "Copied"; setTimeout(()=>b.textContent="Copy", 1000);
+    }));
+  }
+
+  function renderConverter(){
+    return `
+      <div class="grid-2">
+        <div class="sheet"><div class="sheet-head">SI prefixes</div><div class="sheet-body">
+          <div class="grid-3">
+            <div class="field"><label>Value</label><input type="number" id="siVal" value="1"></div>
+            <div class="field"><label>From</label><select id="siFrom">${SI_PREFIXES.map(([s,n,p])=>`<option value="${p}" ${p===0?"selected":""}>${n||"(base)"} (${s||"—"})</option>`).join("")}</select></div>
+            <div class="field"><label>To</label><select id="siTo">${SI_PREFIXES.map(([s,n,p])=>`<option value="${p}" ${p===3?"selected":""}>${n||"(base)"} (${s||"—"})</option>`).join("")}</select></div>
+          </div>
+          <p id="siOut" style="margin-top:var(--s3);font-weight:600;"></p>
+        </div></div>
+        <div class="sheet"><div class="sheet-head">Common conversions</div><div class="sheet-body">
+          <div class="field" style="margin-bottom:var(--s3);">
+            <label>Conversion</label>
+            <select id="convPick">
+              <option value="kmh_ms">km/h ⇄ m/s</option>
+              <option value="c_k">°C ⇄ K</option>
+              <option value="c_f">°C ⇄ °F</option>
+              <option value="j_ev">J ⇄ eV</option>
+              <option value="j_kwh">J ⇄ kWh</option>
+              <option value="n_kgf">N ⇄ kgf</option>
+              <option value="pa_atm">Pa ⇄ atm</option>
+              <option value="pa_bar">Pa ⇄ bar</option>
+              <option value="pa_mmhg">Pa ⇄ mmHg</option>
+            </select>
+          </div>
+          <div class="grid-2">
+            <div class="field"><label id="convLabelA">Value A</label><input type="number" id="convA" value="1"></div>
+            <div class="field"><label id="convLabelB">Value B</label><input type="number" id="convB"></div>
+          </div>
+        </div></div>
+      </div>
+    `;
+  }
+  const CONV_DEFS = {
+    kmh_ms: { labelA:"km/h", labelB:"m/s", aToB:v=>v/3.6, bToA:v=>v*3.6 },
+    c_k:    { labelA:"°C", labelB:"K", aToB:v=>v+273.15, bToA:v=>v-273.15 },
+    c_f:    { labelA:"°C", labelB:"°F", aToB:v=>v*9/5+32, bToA:v=>(v-32)*5/9 },
+    j_ev:   { labelA:"J", labelB:"eV", aToB:v=>v/1.602176634e-19, bToA:v=>v*1.602176634e-19 },
+    j_kwh:  { labelA:"J", labelB:"kWh", aToB:v=>v/3.6e6, bToA:v=>v*3.6e6 },
+    n_kgf:  { labelA:"N", labelB:"kgf", aToB:v=>v/9.80665, bToA:v=>v*9.80665 },
+    pa_atm: { labelA:"Pa", labelB:"atm", aToB:v=>v/101325, bToA:v=>v*101325 },
+    pa_bar: { labelA:"Pa", labelB:"bar", aToB:v=>v/1e5, bToA:v=>v*1e5 },
+    pa_mmhg:{ labelA:"Pa", labelB:"mmHg", aToB:v=>v/133.322, bToA:v=>v*133.322 }
+  };
+  function wireConverter(){
+    const siVal=document.getElementById("siVal"), siFrom=document.getElementById("siFrom"), siTo=document.getElementById("siTo"), siOut=document.getElementById("siOut");
+    function updateSI(){
+      const v = parseFloat(siVal.value), from = parseFloat(siFrom.value), to = parseFloat(siTo.value);
+      if (!isFinite(v)){ siOut.textContent=""; return; }
+      const result = v * Math.pow(10, from-to);
+      siOut.textContent = `= ${result.toExponential(6)}`;
+    }
+    [siVal,siFrom,siTo].forEach(el=>el.addEventListener("input",updateSI));
+    updateSI();
+
+    const pick=document.getElementById("convPick"), a=document.getElementById("convA"), b=document.getElementById("convB");
+    const la=document.getElementById("convLabelA"), lb=document.getElementById("convLabelB");
+    let editing = "a";
+    function setLabels(){ const d=CONV_DEFS[pick.value]; la.textContent=`Value A (${d.labelA})`; lb.textContent=`Value B (${d.labelB})`; }
+    function fromA(){ const d=CONV_DEFS[pick.value]; const v=parseFloat(a.value); if (isFinite(v)) b.value = Number(d.aToB(v).toPrecision(8)); }
+    function fromB(){ const d=CONV_DEFS[pick.value]; const v=parseFloat(b.value); if (isFinite(v)) a.value = Number(d.bToA(v).toPrecision(8)); }
+    pick.addEventListener("change", () => { setLabels(); fromA(); });
+    a.addEventListener("input", fromA);
+    b.addEventListener("input", fromB);
+    setLabels(); fromA();
+  }
+
+  function renderCircuits(){
+    return `
+      <div class="grid-2">
+        <div class="sheet"><div class="sheet-head">Series / parallel resistance</div><div class="sheet-body">
+          <div class="field"><label>Resistors (Ω, comma-separated)</label><input type="text" id="resList" value="10, 22, 47"></div>
+          <p id="resOut" style="margin-top:var(--s3);"></p>
+        </div></div>
+        <div class="sheet"><div class="sheet-head">Voltage divider</div><div class="sheet-body">
+          <div class="grid-3">
+            <div class="field"><label>Vin (V)</label><input type="number" id="vdVin" value="12"></div>
+            <div class="field"><label>R1 (Ω)</label><input type="number" id="vdR1" value="1000"></div>
+            <div class="field"><label>R2 (Ω)</label><input type="number" id="vdR2" value="2000"></div>
+          </div>
+          <p id="vdOut" style="margin-top:var(--s3);font-weight:600;"></p>
+        </div></div>
+      </div>
+    `;
+  }
+  function wireCircuits(){
+    const resList = document.getElementById("resList"), resOut = document.getElementById("resOut");
+    function updateRes(){
+      const vals = resList.value.split(",").map(s=>parseFloat(s.trim())).filter(v=>isFinite(v)&&v>0);
+      if (!vals.length){ resOut.innerHTML=""; return; }
+      const series = vals.reduce((a,b)=>a+b,0);
+      const parallel = 1/vals.reduce((a,b)=>a+1/b,0);
+      resOut.innerHTML = `<span class="tabular">Series: ${series.toFixed(3)} Ω &nbsp;·&nbsp; Parallel: ${parallel.toFixed(3)} Ω</span>`;
+    }
+    resList.addEventListener("input", updateRes); updateRes();
+
+    const vin=document.getElementById("vdVin"), r1=document.getElementById("vdR1"), r2=document.getElementById("vdR2"), vdOut=document.getElementById("vdOut");
+    function updateVD(){
+      const Vin=parseFloat(vin.value), R1=parseFloat(r1.value), R2=parseFloat(r2.value);
+      if (![Vin,R1,R2].every(isFinite) || R1+R2===0){ vdOut.textContent=""; return; }
+      const Vout = Vin*R2/(R1+R2);
+      const I = Vin/(R1+R2);
+      vdOut.innerHTML = `<span class="tabular">Vout across R2 = ${Vout.toFixed(4)} V &nbsp;·&nbsp; Total current = ${I.toFixed(5)} A</span>`;
+    }
+    [vin,r1,r2].forEach(el=>el.addEventListener("input",updateVD)); updateVD();
+  }
+
+  function countSigFigs(str){
+    let s = str.trim();
+    if (!s || isNaN(parseFloat(s))) return null;
+    s = s.replace(/^[+-]/,"");
+    if (/e/i.test(s)) s = s.split(/e/i)[0];
+    if (s.includes(".")){
+      const stripped = s.replace(/^0+(?=\d)/,"").replace(".","");
+      return stripped.replace(/^0+$/,"0").length || stripped.length;
+    } else {
+      const noLeading = s.replace(/^0+/,"") || "0";
+      return noLeading.replace(/0+$/,"").length || 1;
+    }
+  }
+  function roundToSigFigs(v, n){
+    if (v === 0) return 0;
+    const d = Math.ceil(Math.log10(Math.abs(v)));
+    const power = n - d;
+    const factor = Math.pow(10, power);
+    return Math.round(v*factor)/factor;
+  }
+  function renderSigFigs(){
+    return `
+      <div class="grid-2">
+        <div class="sheet"><div class="sheet-head">Significant figures</div><div class="sheet-body">
+          <div class="field"><label>Number</label><input type="text" id="sfNum" value="0.02050"></div>
+          <p id="sfOut" style="margin-top:var(--s3);"></p>
+          <div class="field" style="margin-top:var(--s3);"><label>Round to N sig figs</label><input type="number" id="sfRoundN" value="3" min="1"></div>
+          <p id="sfRoundOut" style="margin-top:var(--s2);font-weight:600;"></p>
+        </div></div>
+        <div class="sheet"><div class="sheet-head">Uncertainty propagation</div><div class="sheet-body">
+          <div class="grid-2">
+            <div class="field"><label>Value A</label><input type="number" id="ufA" value="12.3"></div>
+            <div class="field"><label>± Uncertainty A</label><input type="number" id="ufDA" value="0.1"></div>
+          </div>
+          <div class="field" style="margin:var(--s3) 0;"><label>Operation</label>
+            <select id="ufOp"><option value="add">A + B</option><option value="sub">A − B</option><option value="mul">A × B</option><option value="div">A ÷ B</option><option value="pow">Aⁿ</option></select>
+          </div>
+          <div class="grid-2" id="ufBRow">
+            <div class="field"><label>Value B</label><input type="number" id="ufB" value="4.5"></div>
+            <div class="field"><label>± Uncertainty B</label><input type="number" id="ufDB" value="0.2"></div>
+          </div>
+          <div class="field" id="ufNRow" style="display:none;"><label>Power n</label><input type="number" id="ufN" value="2"></div>
+          <p id="ufOut" style="margin-top:var(--s3);"></p>
+        </div></div>
+      </div>
+    `;
+  }
+  function wireSigFigs(){
+    const sfNum=document.getElementById("sfNum"), sfOut=document.getElementById("sfOut");
+    const sfRoundN=document.getElementById("sfRoundN"), sfRoundOut=document.getElementById("sfRoundOut");
+    function updateSF(){
+      const n = countSigFigs(sfNum.value);
+      sfOut.innerHTML = n==null ? `<span class="err">Not a valid number.</span>` : `<span class="tabular">${n} significant figure${n===1?"":"s"}</span>`;
+      const v = parseFloat(sfNum.value), rn = parseInt(sfRoundN.value,10);
+      if (isFinite(v) && rn>0) sfRoundOut.innerHTML = `<span class="tabular">${roundToSigFigs(v,rn)}</span>`;
+    }
+    [sfNum,sfRoundN].forEach(el=>el.addEventListener("input",updateSF)); updateSF();
+
+    const ufA=document.getElementById("ufA"), ufDA=document.getElementById("ufDA"), ufOp=document.getElementById("ufOp"),
+          ufB=document.getElementById("ufB"), ufDB=document.getElementById("ufDB"), ufN=document.getElementById("ufN"),
+          ufBRow=document.getElementById("ufBRow"), ufNRow=document.getElementById("ufNRow"), ufOut=document.getElementById("ufOut");
+    function updateUF(){
+      ufBRow.style.display = ufOp.value==="pow" ? "none" : "grid";
+      ufNRow.style.display = ufOp.value==="pow" ? "block" : "none";
+      const A=parseFloat(ufA.value), dA=Math.abs(parseFloat(ufDA.value));
+      if (!isFinite(A) || !isFinite(dA)){ ufOut.innerHTML=""; return; }
+      let value, unc, working;
+      if (ufOp.value==="pow"){
+        const n=parseFloat(ufN.value);
+        value = Math.pow(A,n);
+        const pctA = dA/Math.abs(A);
+        unc = Math.abs(value)*Math.abs(n)*pctA;
+        working = `%unc = |n| × (ΔA/A) = ${Math.abs(n)} × ${(pctA*100).toFixed(2)}% = ${(unc/Math.abs(value)*100).toFixed(2)}%`;
+      } else {
+        const B=parseFloat(ufB.value), dB=Math.abs(parseFloat(ufDB.value));
+        if (!isFinite(B) || !isFinite(dB)){ ufOut.innerHTML=""; return; }
+        if (ufOp.value==="add"){ value=A+B; unc=dA+dB; working = `Absolute uncertainties add: ΔZ = ΔA + ΔB = ${dA} + ${dB} = ${unc}`; }
+        else if (ufOp.value==="sub"){ value=A-B; unc=dA+dB; working = `Absolute uncertainties add: ΔZ = ΔA + ΔB = ${dA} + ${dB} = ${unc}`; }
+        else if (ufOp.value==="mul"){ value=A*B; const pA=dA/Math.abs(A), pB=dB/Math.abs(B); unc=Math.abs(value)*(pA+pB); working = `%unc adds: (${(pA*100).toFixed(2)}% + ${(pB*100).toFixed(2)}%) = ${((pA+pB)*100).toFixed(2)}%`; }
+        else { value=A/B; const pA=dA/Math.abs(A), pB=dB/Math.abs(B); unc=Math.abs(value)*(pA+pB); working = `%unc adds: (${(pA*100).toFixed(2)}% + ${(pB*100).toFixed(2)}%) = ${((pA+pB)*100).toFixed(2)}%`; }
+      }
+      const uncRounded = Number(unc.toPrecision(1));
+      ufOut.innerHTML = `<p class="hint tabular">${working}</p><p style="font-weight:600;margin-top:var(--s2);">Z = ${value.toFixed(6).replace(/0+$/,"").replace(/\.$/,"")} ± ${uncRounded}</p>`;
+    }
+    [ufA,ufDA,ufOp,ufB,ufDB,ufN].forEach(el=>el.addEventListener("input",updateUF));
+    updateUF();
+  }
+
+  function renderSection(id){
+    const body = document.getElementById("body-phys");
+    if (id==="formulas"){ body.innerHTML = renderFormulaSheet(); }
+    else if (id==="solver"){ body.innerHTML = renderSolver(); wireSolver(); }
+    else if (id==="constants"){ body.innerHTML = renderConstants(); wireConstants(); }
+    else if (id==="converter"){ body.innerHTML = renderConverter(); wireConverter(); }
+    else if (id==="circuits"){ body.innerHTML = renderCircuits(); wireCircuits(); }
+    else if (id==="sigfigs"){ body.innerHTML = renderSigFigs(); wireSigFigs(); }
+  }
+
+  registerTab({
+    id: "phys", label: "Physics", short: "Ph", accent: "--amber",
+    icon: `<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="2.5" fill="currentColor"/><ellipse cx="12" cy="12" rx="9" ry="4" stroke="currentColor" stroke-width="1.6"/><ellipse cx="12" cy="12" rx="9" ry="4" stroke="currentColor" stroke-width="1.6" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="9" ry="4" stroke="currentColor" stroke-width="1.6" transform="rotate(120 12 12)"/></svg>`,
+    searchEntries: SECTIONS.map(s => ({ label: s.label, keywords: s.label.toLowerCase(), route:`#phys/${s.id}`, group:"Physics" })),
+    init(){
+      const wrap = document.createElement("div");
+      wrap.innerHTML = renderSegmented();
+      document.getElementById("body-phys").before(wrap.firstElementChild);
+      document.getElementById("physSeg").addEventListener("click", (e) => {
+        const btn = e.target.closest("button[data-id]");
+        if (btn) router.go(`#phys/${btn.dataset.id}`);
+      });
+      renderSection(activeSection);
+    },
+    onRoute(rest){
+      const id = (rest && rest[0]) || "formulas";
+      activeSection = SECTIONS.some(s=>s.id===id) ? id : "formulas";
+      document.querySelectorAll("#physSeg button").forEach(b => b.setAttribute("aria-selected", b.dataset.id===activeSection));
+      renderSection(activeSection);
+    }
+  });
+})();
+
+/* ============================================================
+   TAB: Maths
+   ============================================================ */
+(function(){
+  /* ---- expression parser: tokeniser + shunting-yard, no eval() ---- */
+  const FUNCS = new Set(["sin","cos","tan","asin","acos","atan","sqrt","ln","log","exp","abs"]);
+  function tokenize(expr){
+    const tokens = []; let i=0;
+    const s = expr.replace(/\s+/g,"");
+    while (i<s.length){
+      const c=s[i];
+      if (/[0-9.]/.test(c)){ let j=i; while(j<s.length && /[0-9.]/.test(s[j])) j++; tokens.push({type:"num",value:parseFloat(s.slice(i,j))}); i=j; }
+      else if (/[a-zA-Z]/.test(c)){
+        let j=i; while(j<s.length && /[a-zA-Z]/.test(s[j])) j++;
+        const word = s.slice(i,j);
+        if (FUNCS.has(word)) tokens.push({type:"func",value:word});
+        else if (word==="pi") tokens.push({type:"num",value:Math.PI});
+        else if (word==="e") tokens.push({type:"num",value:Math.E});
+        else if (word==="x") tokens.push({type:"var",value:"x"});
+        else throw new Error("Unknown identifier: "+word);
+        i=j;
+      } else if ("+-*/^(),".includes(c)){ tokens.push({type:"op",value:c}); i++; }
+      else throw new Error("Unexpected character: "+c);
+    }
+    const out=[];
+    for (let k=0;k<tokens.length;k++){
+      const t=tokens[k]; out.push(t);
+      const next=tokens[k+1]; if (!next) continue;
+      const closesValue = t.type==="num"||t.type==="var"||(t.type==="op"&&t.value===")");
+      const opensValue = next.type==="num"||next.type==="var"||next.type==="func"||(next.type==="op"&&next.value==="(");
+      if (closesValue && opensValue) out.push({type:"op",value:"*"});
+    }
+    return out;
+  }
+  const PREC = { "+":2,"-":2,"*":3,"/":3,"u-":4,"^":5 };
+  const RIGHT_ASSOC = new Set(["^","u-"]);
+  function toRPN(tokens){
+    const output=[], opStack=[]; let prevType=null;
+    for (const t of tokens){
+      if (t.type==="num"||t.type==="var") output.push(t);
+      else if (t.type==="func") opStack.push(t);
+      else if (t.type==="op" && t.value===","){ while(opStack.length && opStack[opStack.length-1].value!=="(") output.push(opStack.pop()); }
+      else if (t.type==="op" && t.value==="("){ opStack.push(t); }
+      else if (t.type==="op" && t.value===")"){
+        while(opStack.length && opStack[opStack.length-1].value!=="(") output.push(opStack.pop());
+        opStack.pop();
+        if (opStack.length && opStack[opStack.length-1].type==="func") output.push(opStack.pop());
+      } else if (t.type==="op"){
+        let val=t.value;
+        if (val==="-" && (prevType===null||prevType==="op_open"||prevType==="op_infix"||prevType==="comma")) val="u-";
+        while (opStack.length && opStack[opStack.length-1].type==="op" && opStack[opStack.length-1].value!=="(" &&
+          (PREC[opStack[opStack.length-1].value]>PREC[val] || (PREC[opStack[opStack.length-1].value]===PREC[val] && !RIGHT_ASSOC.has(val)))){
+          output.push(opStack.pop());
+        }
+        opStack.push({type:"op",value:val});
+      }
+      if (t.type==="num"||t.type==="var") prevType="val";
+      else if (t.type==="func") prevType="func";
+      else if (t.type==="op" && t.value==="(") prevType="op_open";
+      else if (t.type==="op" && t.value===")") prevType="val";
+      else if (t.type==="op" && t.value===",") prevType="comma";
+      else prevType="op_infix";
+    }
+    while (opStack.length) output.push(opStack.pop());
+    return output;
+  }
+  const FUNC_IMPL = { sin:Math.sin, cos:Math.cos, tan:Math.tan, asin:Math.asin, acos:Math.acos, atan:Math.atan, sqrt:Math.sqrt, ln:Math.log, log:Math.log10, exp:Math.exp, abs:Math.abs };
+  function evalRPN(rpn, x){
+    const stack=[];
+    for (const t of rpn){
+      if (t.type==="num") stack.push(t.value);
+      else if (t.type==="var") stack.push(x);
+      else if (t.type==="func") stack.push(FUNC_IMPL[t.value](stack.pop()));
+      else if (t.type==="op"){
+        if (t.value==="u-"){ stack.push(-stack.pop()); continue; }
+        const b=stack.pop(), a=stack.pop();
+        if (t.value==="+") stack.push(a+b);
+        else if (t.value==="-") stack.push(a-b);
+        else if (t.value==="*") stack.push(a*b);
+        else if (t.value==="/") stack.push(a/b);
+        else if (t.value==="^") stack.push(Math.pow(a,b));
+      }
+    }
+    return stack.pop();
+  }
+  function compileExpr(expr){ const rpn = toRPN(tokenize(expr)); return (x)=>evalRPN(rpn,x); }
+
+  /* ---- exact surds ---- */
+  function simplifySqrt(n){
+    if (n < 0) return null;
+    if (n === 0) return { coeff:0, rad:0 };
+    let rad = n, coeff = 1;
+    for (let f=2; f*f<=rad; f++){ while (rad % (f*f) === 0){ rad/=(f*f); coeff*=f; } }
+    return { coeff, rad };
+  }
+  function surdStr(coeff, rad){
+    if (rad === 0) return "0";
+    if (rad === 1) return String(coeff);
+    return (coeff===1?"":coeff)+"√"+rad;
+  }
+  function gcd3(a,b,c){ const g2=(x,y)=>{x=Math.abs(x);y=Math.abs(y);while(y){[x,y]=[y,x%y];}return x;}; return g2(g2(a,b),c)||1; }
+
+  const SECTIONS = [
+    { id:"reference", label:"Reference" },
+    { id:"unit-circle", label:"Unit circle" },
+    { id:"graph", label:"Graphing" },
+    { id:"solvers", label:"Solvers" },
+    { id:"stats", label:"Statistics" }
+  ];
+  let activeSection = "reference";
+
+  function renderSegmented(){
+    return `<div class="segmented" id="mathSeg">${SECTIONS.map(s=>`<button data-id="${s.id}" aria-selected="${s.id===activeSection}">${s.label}</button>`).join("")}</div>`;
+  }
+
+  function renderReference(){
+    return Object.entries(MATHS_REFERENCE).map(([group,list]) => `
+      <div class="sheet"><div class="sheet-head">${group}</div><div class="sheet-body">
+        <ul style="padding-left:1.1em;">${list.map(l=>`<li class="tabular" style="margin-bottom:4px;">${l}</li>`).join("")}</ul>
+      </div></div>
+    `).join("");
+  }
+
+  /* ---- unit circle ---- */
+  const BASE_TRIG = {
+    0:{sin:"0",cos:"1",tan:"0"},
+    15:{sin:"(√6−√2)/4",cos:"(√6+√2)/4",tan:"2−√3"},
+    30:{sin:"1/2",cos:"√3/2",tan:"√3/3"},
+    45:{sin:"√2/2",cos:"√2/2",tan:"1"},
+    60:{sin:"√3/2",cos:"1/2",tan:"√3"},
+    75:{sin:"(√6+√2)/4",cos:"(√6−√2)/4",tan:"2+√3"},
+    90:{sin:"1",cos:"0",tan:"undefined"}
+  };
+  function exactTrigAt(deg){
+    deg = ((deg % 360)+360)%360;
+    const quadrant = Math.min(Math.floor(deg/90)+1, 4);
+    let ref;
+    if (quadrant===1) ref = deg;
+    else if (quadrant===2) ref = 180-deg;
+    else if (quadrant===3) ref = deg-180;
+    else ref = 360-deg;
+    const base = BASE_TRIG[ref] || BASE_TRIG[90];
+    const signs = { 1:[1,1,1], 2:[1,-1,-1], 3:[-1,-1,1], 4:[-1,1,-1] }[quadrant];
+    const wrap = (val, sign) => (val==="undefined" || val==="0") ? val : (sign<0 ? "−"+val : val);
+    return { sin: wrap(base.sin, signs[0]), cos: wrap(base.cos, signs[1]), tan: wrap(base.tan, signs[2]) };
+  }
+
+  function renderUnitCircle(){
+    return `
+      <div class="sheet"><div class="sheet-head">Interactive unit circle — drag the point (snaps to 15°)</div><div class="sheet-body">
+        <div class="uc-wrap">
+          <svg id="ucSvg" viewBox="0 0 300 300" width="300" height="300"></svg>
+          <dl class="detail-grid" id="ucReadout" style="flex:1;min-width:220px;"></dl>
+        </div>
+      </div></div>
+    `;
+  }
+  function wireUnitCircle(){
+    const svg = document.getElementById("ucSvg");
+    const readout = document.getElementById("ucReadout");
+    const cx=150, cy=150, r=110;
+    let angleDeg = 30;
+    function draw(){
+      const rad = angleDeg*Math.PI/180;
+      const px = cx + r*Math.cos(rad), py = cy - r*Math.sin(rad);
+      svg.innerHTML = `
+        <line x1="20" y1="${cy}" x2="280" y2="${cy}" stroke="var(--rule-strong)" stroke-width="1"/>
+        <line x1="${cx}" y1="20" x2="${cx}" y2="280" stroke="var(--rule-strong)" stroke-width="1"/>
+        <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--rule-strong)" stroke-width="1.5"/>
+        <line x1="${cx}" y1="${cy}" x2="${px}" y2="${py}" stroke="var(--signal)" stroke-width="2"/>
+        <circle id="ucHandle" cx="${px}" cy="${py}" r="9" fill="var(--signal)" style="cursor:grab;"/>
+      `;
+      const exact = exactTrigAt(angleDeg);
+      const cosV = Math.cos(rad), sinV = Math.sin(rad);
+      readout.innerHTML = `
+        <div><dt>Angle</dt><dd class="tabular">${angleDeg}° = ${(rad).toFixed(4)} rad</dd></div>
+        <div><dt>Coordinate</dt><dd class="tabular">(${cosV.toFixed(3)}, ${sinV.toFixed(3)})</dd></div>
+        <div><dt>sin θ (exact)</dt><dd class="tabular">${exact.sin}</dd></div>
+        <div><dt>cos θ (exact)</dt><dd class="tabular">${exact.cos}</dd></div>
+        <div><dt>tan θ (exact)</dt><dd class="tabular">${exact.tan}</dd></div>
+      `;
+      svg.querySelector("#ucHandle").addEventListener("pointerdown", startDrag);
+    }
+    function startDrag(e){
+      e.preventDefault();
+      function move(ev){
+        const rect = svg.getBoundingClientRect();
+        const scale = 300/rect.width;
+        const mx = (ev.clientX-rect.left)*scale, my=(ev.clientY-rect.top)*scale;
+        let ang = Math.atan2(-(my-cy), mx-cx) * 180/Math.PI;
+        ang = Math.round(ang/15)*15;
+        angleDeg = ((ang%360)+360)%360;
+        draw();
+      }
+      function up(){ window.removeEventListener("pointermove",move); window.removeEventListener("pointerup",up); }
+      window.addEventListener("pointermove",move); window.addEventListener("pointerup",up);
+    }
+    draw();
+  }
+
+  /* ---- graphing tool ---- */
+  const GRAPH_COLOURS = ["--signal","--crimson","--lilac"];
+  let graphView = { xMin:-10, xMax:10, yMin:-10, yMax:10 };
+  function renderGraph(){
+    return `
+      <div class="sheet"><div class="sheet-head">Graphing tool — pan by dragging, zoom with the scroll wheel</div><div class="sheet-body">
+        <div class="grid-3" style="margin-bottom:var(--s3);">
+          <div class="field"><label style="color:var(--signal);">f1(x)</label><input type="text" id="gf1" value="x^2-2"></div>
+          <div class="field"><label style="color:var(--crimson);">f2(x)</label><input type="text" id="gf2" value="sin(x)*3"></div>
+          <div class="field"><label style="color:var(--lilac);">f3(x)</label><input type="text" id="gf3" value=""></div>
+        </div>
+        <div style="display:flex;gap:var(--s2);margin-bottom:var(--s2);">
+          <button class="btn btn-sm" id="gReset">Reset view</button>
+          <span class="hint tabular" id="gWindow"></span>
+        </div>
+        <canvas id="gCanvas" width="900" height="480" style="width:100%;max-width:900px;height:auto;border:1px solid var(--rule);background:var(--paper);touch-action:none;"></canvas>
+        <div id="gInfo" style="margin-top:var(--s3);"></div>
+      </div></div>
+    `;
+  }
+  function wireGraph(){
+    const canvas = document.getElementById("gCanvas");
+    const ctx = canvas.getContext("2d");
+    const W = canvas.width, H = canvas.height;
+    const inputs = [document.getElementById("gf1"), document.getElementById("gf2"), document.getElementById("gf3")];
+    const info = document.getElementById("gInfo");
+    const winLabel = document.getElementById("gWindow");
+
+    function toPx(x,y){ const { xMin,xMax,yMin,yMax } = graphView; return [ (x-xMin)/(xMax-xMin)*W, H - (y-yMin)/(yMax-yMin)*H ]; }
+    function toX(px){ const { xMin,xMax } = graphView; return xMin + (px/W)*(xMax-xMin); }
+    function toY(py){ const { yMin,yMax } = graphView; return yMin + ((H-py)/H)*(yMax-yMin); }
+
+    function draw(){
+      ctx.clearRect(0,0,W,H);
+      const cssInk2 = getComputedStyle(document.documentElement).getPropertyValue("--rule").trim();
+      const cssInk = getComputedStyle(document.documentElement).getPropertyValue("--ink").trim();
+      const cssRuleStrong = getComputedStyle(document.documentElement).getPropertyValue("--rule-strong").trim();
+      // grid
+      ctx.strokeStyle = cssInk2; ctx.lineWidth = 1;
+      const { xMin,xMax,yMin,yMax } = graphView;
+      const stepX = niceStep(xMax-xMin), stepY = niceStep(yMax-yMin);
+      ctx.beginPath();
+      for (let gx = Math.ceil(xMin/stepX)*stepX; gx<=xMax; gx+=stepX){ const [px] = toPx(gx,0); ctx.moveTo(px,0); ctx.lineTo(px,H); }
+      for (let gy = Math.ceil(yMin/stepY)*stepY; gy<=yMax; gy+=stepY){ const [,py] = toPx(0,gy); ctx.moveTo(0,py); ctx.lineTo(W,py); }
+      ctx.stroke();
+      // axes
+      ctx.strokeStyle = cssRuleStrong; ctx.lineWidth = 2;
+      ctx.beginPath();
+      const [pxZero] = toPx(0,0), [,pyZero] = toPx(0,0);
+      ctx.moveTo(pxZero,0); ctx.lineTo(pxZero,H); ctx.moveTo(0,pyZero); ctx.lineTo(W,pyZero);
+      ctx.stroke();
+      // functions
+      let anyErr = "";
+      const fns = [];
+      inputs.forEach((inp, i) => {
+        const expr = inp.value.trim();
+        inp.style.borderColor = "";
+        if (!expr) return;
+        let f;
+        try { f = compileExpr(expr); } catch(e){ inp.style.borderColor = "var(--crimson)"; return; }
+        fns.push({ f, colour: GRAPH_COLOURS[i], expr });
+      });
+      fns.forEach(({f,colour}) => {
+        ctx.strokeStyle = `var(${colour})`;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        let started = false, lastY = null;
+        for (let px=0; px<=W; px++){
+          const x = toX(px);
+          let y;
+          try { y = f(x); } catch(e){ y = NaN; }
+          if (!isFinite(y)){ started=false; continue; }
+          const [,py] = toPx(x,y);
+          if (started && lastY!==null && Math.abs(py-lastY) > H*0.9){ started=false; }
+          if (!started){ ctx.moveTo(px,py); started=true; } else ctx.lineTo(px,py);
+          lastY = py;
+        }
+        ctx.stroke();
+      });
+      winLabel.textContent = `x: [${xMin.toFixed(1)}, ${xMax.toFixed(1)}]  y: [${yMin.toFixed(1)}, ${yMax.toFixed(1)}]`;
+      renderInfo(fns);
+    }
+    function niceStep(range){
+      const raw = range/10;
+      const mag = Math.pow(10, Math.floor(Math.log10(raw)));
+      const norm = raw/mag;
+      const nice = norm<1.5?1:norm<3.5?2:norm<7.5?5:10;
+      return nice*mag;
+    }
+    function findRoots(f, xMin, xMax){
+      const roots = []; const N=2000; let prevX=xMin, prevY, prevSign;
+      try { prevY = f(prevX); } catch(e){ prevY=NaN; }
+      prevSign = isFinite(prevY) ? Math.sign(prevY) : 0;
+      for (let i=1;i<=N;i++){
+        const x = xMin + (xMax-xMin)*i/N;
+        let y; try { y=f(x); } catch(e){ y=NaN; }
+        const sign = isFinite(y) ? Math.sign(y) : 0;
+        if (sign===0 && isFinite(y)){ roots.push(x); prevX=x; if (sign!==0){ prevY=y; prevSign=sign; } continue; }
+        if (isFinite(prevY) && isFinite(y) && prevSign!==0 && sign!==0 && prevSign!==sign){
+          let lo=prevX, hi=x, loSign=prevSign;
+          for (let iter=0; iter<40; iter++){ const mid=(lo+hi)/2; let ym; try{ym=f(mid);}catch(e){ym=NaN;} if (!isFinite(ym)) break; (Math.sign(ym)===loSign? lo=mid : hi=mid); }
+          roots.push((lo+hi)/2);
+        }
+        prevX=x;
+        if (sign!==0){ prevY=y; prevSign=sign; }
+      }
+      return roots.sort((a,b)=>a-b).filter((r,i,arr)=> i===0 || Math.abs(r-arr[i-1])>1e-6);
+    }
+    function findTurningPoints(f, xMin, xMax){
+      const N=1000, h=(xMax-xMin)/N/2;
+      const pts=[]; let prevD, prevSign;
+      try { prevD = (f(xMin+h)-f(xMin-h))/(2*h); } catch(e){ prevD=NaN; }
+      prevSign = isFinite(prevD) ? Math.sign(prevD) : 0;
+      for (let i=1;i<=N;i++){
+        const x = xMin + (xMax-xMin)*i/N;
+        let d; try { d=(f(x+h)-f(x-h))/(2*h); } catch(e){ d=NaN; }
+        const sign = isFinite(d) ? Math.sign(d) : 0;
+        if (isFinite(prevD) && isFinite(d) && prevSign!==0 && sign!==0 && prevSign!==sign){
+          let lo=x-(xMax-xMin)/N, hi=x;
+          for (let iter=0; iter<30; iter++){ const mid=(lo+hi)/2; let dm; try{dm=(f(mid+h)-f(mid-h))/(2*h);}catch(e){dm=NaN;} if (!isFinite(dm)) break; (Math.sign(dm)===prevSign? lo=mid : hi=mid); }
+          const xm=(lo+hi)/2; let ym; try{ym=f(xm);}catch(e){ym=NaN;}
+          if (isFinite(ym) && (!pts.length || Math.abs(xm-pts[pts.length-1][0])>1e-4)) pts.push([xm,ym]);
+        }
+        if (sign!==0){ prevD=d; prevSign=sign; }
+      }
+      return pts;
+    }
+    function renderInfo(fns){
+      info.innerHTML = fns.map(({f,colour,expr}) => {
+        const roots = findRoots(f, graphView.xMin, graphView.xMax);
+        const turns = findTurningPoints(f, graphView.xMin, graphView.xMax);
+        let y0; try { y0=f(0); } catch(e){ y0=NaN; }
+        return `<p style="border-left:3px solid var(${colour});padding-left:var(--s3);margin-bottom:var(--s2);">
+          <strong class="tabular">${expr}</strong> —
+          y-intercept: <span class="tabular">${isFinite(y0)?y0.toFixed(3):"—"}</span> ·
+          x-intercepts: <span class="tabular">${roots.length?roots.map(r=>r.toFixed(3)).join(", "):"none found in view"}</span> ·
+          turning points: <span class="tabular">${turns.length?turns.map(([x,y])=>`(${x.toFixed(2)}, ${y.toFixed(2)})`).join(", "):"none found in view"}</span>
+        </p>`;
+      }).join("");
+    }
+
+    let dragging = false, dragStart = null, viewStart = null;
+    canvas.addEventListener("pointerdown", (e) => { dragging=true; dragStart={x:e.clientX,y:e.clientY}; viewStart={...graphView}; canvas.setPointerCapture(e.pointerId); });
+    canvas.addEventListener("pointermove", (e) => {
+      if (!dragging) return;
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = (viewStart.xMax-viewStart.xMin)/rect.width, scaleY=(viewStart.yMax-viewStart.yMin)/rect.height;
+      const dx = (e.clientX-dragStart.x)*scaleX, dy=(e.clientY-dragStart.y)*scaleY;
+      graphView = { xMin:viewStart.xMin-dx, xMax:viewStart.xMax-dx, yMin:viewStart.yMin+dy, yMax:viewStart.yMax+dy };
+      draw();
+    });
+    canvas.addEventListener("pointerup", () => dragging=false);
+    canvas.addEventListener("wheel", (e) => {
+      e.preventDefault();
+      const factor = e.deltaY>0 ? 1.1 : 0.9;
+      const { xMin,xMax,yMin,yMax } = graphView;
+      const cx = (xMin+xMax)/2, cy=(yMin+yMax)/2;
+      const halfX = (xMax-xMin)/2*factor, halfY=(yMax-yMin)/2*factor;
+      graphView = { xMin:cx-halfX, xMax:cx+halfX, yMin:cy-halfY, yMax:cy+halfY };
+      draw();
+    }, { passive:false });
+    document.getElementById("gReset").addEventListener("click", () => { graphView = { xMin:-10,xMax:10,yMin:-10,yMax:10 }; draw(); });
+    inputs.forEach(inp => inp.addEventListener("input", draw));
+    draw();
+  }
+
+  /* ---- solvers ---- */
+  function renderSolvers(){
+    return `
+      <div class="sheet"><div class="sheet-head">Quadratic solver — exact surd form</div><div class="sheet-body">
+        <div class="grid-3">
+          <div class="field"><label>a</label><input type="number" id="qa" value="1"></div>
+          <div class="field"><label>b</label><input type="number" id="qb" value="-4"></div>
+          <div class="field"><label>c</label><input type="number" id="qc" value="1"></div>
+        </div>
+        <div id="qOut" style="margin-top:var(--s3);"></div>
+      </div></div>
+      <div class="sheet"><div class="sheet-head">Simultaneous equations</div><div class="sheet-body">
+        <div class="field" style="max-width:220px;margin-bottom:var(--s3);"><label>System size</label>
+          <select id="simSize"><option value="2">2 × 2</option><option value="3">3 × 3</option></select>
+        </div>
+        <div id="simFields"></div>
+        <div id="simOut" style="margin-top:var(--s3);"></div>
+      </div></div>
+      <div class="sheet"><div class="sheet-head">Triangle solver</div><div class="sheet-body">
+        <div class="field" style="max-width:260px;margin-bottom:var(--s3);"><label>Given</label>
+          <select id="triCase">
+            <option value="SSS">Three sides (SSS)</option>
+            <option value="SAS">Two sides + included angle (SAS)</option>
+            <option value="ASA">Two angles + a side (ASA/AAS)</option>
+            <option value="SSA">Two sides + non-included angle (SSA)</option>
+          </select>
+        </div>
+        <div id="triFields"></div>
+        <div id="triOut" style="margin-top:var(--s3);"></div>
+      </div></div>
+    `;
+  }
+  function wireQuadratic(){
+    const a=document.getElementById("qa"), b=document.getElementById("qb"), c=document.getElementById("qc"), out=document.getElementById("qOut");
+    function update(){
+      const A=parseFloat(a.value), B=parseFloat(b.value), C=parseFloat(c.value);
+      if (![A,B,C].every(isFinite) || A===0){ out.innerHTML = `<p class="err">a must be a nonzero number.</p>`; return; }
+      const D = B*B-4*A*C;
+      if (D<0){ out.innerHTML = `<p>Discriminant = ${D} — no real roots.</p>`; return; }
+      const { coeff, rad } = simplifySqrt(D);
+      if (rad===1 || rad===0){
+        const sq = coeff;
+        const r1 = (-B+sq)/(2*A), r2=(-B-sq)/(2*A);
+        out.innerHTML = `<p class="hint">Δ = ${D} — rational roots.</p><p style="font-weight:600;">x = ${r1.toFixed(4).replace(/\.?0+$/,"")} or x = ${r2.toFixed(4).replace(/\.?0+$/,"")}</p>`;
+        return;
+      }
+      const g = gcd3(B, coeff, 2*A);
+      const Bp=B/g, cp=coeff/g, Ap=2*A/g;
+      const sign = Ap<0 ? -1 : 1;
+      const surd = surdStr(cp*sign, rad);
+      const lead = -Bp*sign;
+      out.innerHTML = `
+        <p class="hint tabular">x = (−b ± √(b² − 4ac)) / 2a = (${-B} ± √${D}) / ${2*A} = (${-B} ± ${surdStr(coeff,rad)}) / ${2*A}</p>
+        <p style="font-weight:600;">x = (${lead} ± ${surd}) / ${Math.abs(Ap)}</p>
+      `;
+    }
+    [a,b,c].forEach(el=>el.addEventListener("input",update)); update();
+  }
+  function gaussSolve(A, bVec){
+    const n = A.length;
+    const M = A.map((row,i)=>[...row, bVec[i]]);
+    for (let col=0; col<n; col++){
+      let piv=col;
+      for (let r=col+1;r<n;r++) if (Math.abs(M[r][col])>Math.abs(M[piv][col])) piv=r;
+      if (Math.abs(M[piv][col])<1e-12) return null;
+      [M[col],M[piv]]=[M[piv],M[col]];
+      for (let r=0;r<n;r++){
+        if (r===col) continue;
+        const factor = M[r][col]/M[col][col];
+        for (let c2=col;c2<=n;c2++) M[r][c2]-=factor*M[col][c2];
+      }
+    }
+    return M.map((row,i)=>row[n]/row[i]);
+  }
+  function wireSimultaneous(){
+    const sizeSel=document.getElementById("simSize"), fields=document.getElementById("simFields"), out=document.getElementById("simOut");
+    const vars2=["x","y"], vars3=["x","y","z"];
+    function build(){
+      const n = parseInt(sizeSel.value,10);
+      const vars = n===2?vars2:vars3;
+      let html = "";
+      for (let r=0;r<n;r++){
+        html += `<div style="display:flex;gap:6px;align-items:center;margin-bottom:6px;flex-wrap:wrap;">`;
+        vars.forEach((v,ci) => { html += `<input type="number" data-r="${r}" data-c="${ci}" style="width:70px;" value="${r===ci?1:0}"> <span>${v}</span> ${ci<vars.length-1?"+":""}`; });
+        html += ` = <input type="number" data-r="${r}" data-c="b" style="width:80px;" value="0"></div>`;
+      }
+      fields.innerHTML = html;
+      fields.querySelectorAll("input").forEach(inp => inp.addEventListener("input", update));
+      update();
+    }
+    function update(){
+      const n = parseInt(sizeSel.value,10);
+      const vars = n===2?vars2:vars3;
+      const A = Array.from({length:n},()=>Array(n).fill(0));
+      const bVec = Array(n).fill(0);
+      fields.querySelectorAll("input").forEach(inp => {
+        const r = parseInt(inp.dataset.r,10), c = inp.dataset.c;
+        const v = parseFloat(inp.value);
+        if (c==="b") bVec[r] = isFinite(v)?v:0; else A[r][parseInt(c,10)] = isFinite(v)?v:0;
+      });
+      const sol = gaussSolve(A, bVec);
+      out.innerHTML = sol ? `<p style="font-weight:600;" class="tabular">${vars.map((v,i)=>`${v} = ${sol[i].toFixed(4)}`).join(",  ")}</p>` : `<p class="err">No unique solution (system is singular).</p>`;
+    }
+    sizeSel.addEventListener("change", build);
+    build();
+  }
+  function wireTriangle(){
+    const caseSel = document.getElementById("triCase"), fields=document.getElementById("triFields"), out=document.getElementById("triOut");
+    const d2r = Math.PI/180, r2d = 180/Math.PI;
+    function fieldsFor(kase){
+      if (kase==="SSS") return [["a","side a"],["b","side b"],["c","side c"]];
+      if (kase==="SAS") return [["a","side a"],["C","included angle C (°)"],["b","side b"]];
+      if (kase==="ASA") return [["A","angle A (°)"],["c","side c"],["B","angle B (°)"]];
+      return [["a","side a"],["b","side b"],["A","angle A (°), opposite side a"]];
+    }
+    function build(){
+      const specs = fieldsFor(caseSel.value);
+      fields.innerHTML = `<div class="grid-3">${specs.map(([k,l])=>`<div class="field"><label>${l}</label><input type="number" data-k="${k}" value="1"></div>`).join("")}</div>`;
+      fields.querySelectorAll("input").forEach(inp=>inp.addEventListener("input",update));
+      update();
+    }
+    function area(a,b,C){ return 0.5*a*b*Math.sin(C*d2r); }
+    function update(){
+      const vals = {}; fields.querySelectorAll("input").forEach(inp => vals[inp.dataset.k] = parseFloat(inp.value));
+      const kase = caseSel.value;
+      try {
+        if (kase==="SSS"){
+          const {a,b,c} = vals;
+          if ([a,b,c].some(v=>!isFinite(v)||v<=0) || a+b<=c || b+c<=a || a+c<=b) throw new Error("Not a valid triangle.");
+          const A = Math.acos((b*b+c*c-a*a)/(2*b*c))*r2d;
+          const B = Math.acos((a*a+c*c-b*b)/(2*a*c))*r2d;
+          const C = 180-A-B;
+          out.innerHTML = `<p class="tabular">A = ${A.toFixed(2)}°, B = ${B.toFixed(2)}°, C = ${C.toFixed(2)}°</p><p>Area = <span class="tabular">${area(a,b,C).toFixed(4)}</span></p>`;
+        } else if (kase==="SAS"){
+          const {a,C,b} = vals;
+          if (![a,C,b].every(isFinite) || a<=0||b<=0||C<=0||C>=180) throw new Error("Check your values.");
+          const c = Math.sqrt(a*a+b*b-2*a*b*Math.cos(C*d2r));
+          const A = Math.asin(a*Math.sin(C*d2r)/c)*r2d;
+          const B = 180-C-A;
+          out.innerHTML = `<p class="tabular">c = ${c.toFixed(4)}, A = ${A.toFixed(2)}°, B = ${B.toFixed(2)}°</p><p>Area = <span class="tabular">${area(a,b,C).toFixed(4)}</span></p>`;
+        } else if (kase==="ASA"){
+          const {A,c,B} = vals;
+          if (![A,c,B].every(isFinite) || A<=0||B<=0||c<=0||A+B>=180) throw new Error("Check your values.");
+          const C = 180-A-B;
+          const a = c*Math.sin(A*d2r)/Math.sin(C*d2r);
+          const b = c*Math.sin(B*d2r)/Math.sin(C*d2r);
+          out.innerHTML = `<p class="tabular">C = ${C.toFixed(2)}°, a = ${a.toFixed(4)}, b = ${b.toFixed(4)}</p><p>Area = <span class="tabular">${area(a,b,C).toFixed(4)}</span></p>`;
+        } else {
+          const {a,b,A} = vals;
+          if (![a,b,A].every(isFinite) || a<=0||b<=0||A<=0||A>=180) throw new Error("Check your values.");
+          const sinB = b*Math.sin(A*d2r)/a;
+          if (sinB > 1){ out.innerHTML = `<p class="err">No triangle exists with these values.</p>`; return; }
+          const B1 = Math.asin(sinB)*r2d;
+          const solutions = [B1];
+          const B2 = 180-B1;
+          if (B2 !== B1 && A+B2 < 180) solutions.push(B2);
+          out.innerHTML = `<p class="hint">${solutions.length===2?"Ambiguous case — two possible triangles:":"One triangle:"}</p>` +
+            solutions.map(B=>{
+              const C = 180-A-B;
+              const c = a*Math.sin(C*d2r)/Math.sin(A*d2r);
+              return `<p class="tabular">B = ${B.toFixed(2)}°, C = ${C.toFixed(2)}°, c = ${c.toFixed(4)} · Area = ${area(a,b,C).toFixed(4)}</p>`;
+            }).join("");
+        }
+      } catch(e){ out.innerHTML = `<p class="err">${e.message}</p>`; }
+    }
+    caseSel.addEventListener("change", build);
+    build();
+  }
+
+  /* ---- statistics ---- */
+  function renderStats(){
+    return `
+      <div class="sheet"><div class="sheet-head">Statistics — paste a data column</div><div class="sheet-body">
+        <div class="field"><label>Data (comma, space, or newline separated)</label>
+          <textarea id="statData" rows="4" style="width:100%;">12, 15, 14, 10, 18, 21, 14, 16, 9, 20</textarea>
+        </div>
+        <div id="statOut" style="margin-top:var(--s4);"></div>
+        <div class="grid-2" style="margin-top:var(--s4);">
+          <div><p class="hint" style="margin-bottom:4px;">Box plot</p><canvas id="statBox" width="420" height="90" style="width:100%;max-width:420px;border:1px solid var(--rule);"></canvas></div>
+          <div><p class="hint" style="margin-bottom:4px;">Histogram</p><canvas id="statHist" width="420" height="220" style="width:100%;max-width:420px;border:1px solid var(--rule);"></canvas></div>
+        </div>
+      </div></div>
+    `;
+  }
+  function quartiles(sorted){
+    const n = sorted.length;
+    const median = n%2 ? sorted[(n-1)/2] : (sorted[n/2-1]+sorted[n/2])/2;
+    const lower = n%2 ? sorted.slice(0,(n-1)/2) : sorted.slice(0,n/2);
+    const upper = n%2 ? sorted.slice((n+1)/2) : sorted.slice(n/2);
+    const med = arr => { const m=arr.length; return m%2 ? arr[(m-1)/2] : (arr[m/2-1]+arr[m/2])/2; };
+    return { median, q1: med(lower), q3: med(upper) };
+  }
+  function wireStats(){
+    const dataEl = document.getElementById("statData"), out = document.getElementById("statOut");
+    const boxCanvas = document.getElementById("statBox"), histCanvas = document.getElementById("statHist");
+    function update(){
+      const nums = dataEl.value.split(/[\s,]+/).map(s=>parseFloat(s)).filter(v=>isFinite(v));
+      if (nums.length < 2){ out.innerHTML = `<p class="err">Enter at least two numbers.</p>`; return; }
+      const sorted = [...nums].sort((a,b)=>a-b);
+      const n = nums.length;
+      const mean = nums.reduce((a,b)=>a+b,0)/n;
+      const modeMap = {}; nums.forEach(v=>modeMap[v]=(modeMap[v]||0)+1);
+      const maxFreq = Math.max(...Object.values(modeMap));
+      const modes = Object.keys(modeMap).filter(k=>modeMap[k]===maxFreq).map(Number);
+      const range = sorted[n-1]-sorted[0];
+      const { median, q1, q3 } = quartiles(sorted);
+      const iqr = q3-q1;
+      const sampleVar = nums.reduce((a,v)=>a+(v-mean)**2,0)/(n-1);
+      const popVar = nums.reduce((a,v)=>a+(v-mean)**2,0)/n;
+      out.innerHTML = `
+        <div class="table-wrap"><table>
+          <tr><td>n</td><td class="tabular">${n}</td></tr>
+          <tr><td>Mean</td><td class="tabular">${mean.toFixed(4)}</td></tr>
+          <tr><td>Median</td><td class="tabular">${median}</td></tr>
+          <tr><td>Mode</td><td class="tabular">${modes.length===Object.keys(modeMap).length?"none (all unique)":modes.join(", ")}</td></tr>
+          <tr><td>Range</td><td class="tabular">${range}</td></tr>
+          <tr><td>Q1 / Q3</td><td class="tabular">${q1} / ${q3}</td></tr>
+          <tr><td>IQR</td><td class="tabular">${iqr}</td></tr>
+          <tr><td>Sample std dev (n−1)</td><td class="tabular">${Math.sqrt(sampleVar).toFixed(4)}</td></tr>
+          <tr><td>Population std dev (n)</td><td class="tabular">${Math.sqrt(popVar).toFixed(4)}</td></tr>
+        </table></div>
+      `;
+      drawBox(boxCanvas, sorted, q1, median, q3);
+      drawHist(histCanvas, sorted);
+    }
+    function drawBox(canvas, sorted, q1, median, q3){
+      const ctx = canvas.getContext("2d"); const W=canvas.width, H=canvas.height;
+      ctx.clearRect(0,0,W,H);
+      const min=sorted[0], max=sorted[sorted.length-1];
+      const pad=30;
+      const scaleX = v => pad + (v-min)/(max-min || 1)*(W-2*pad);
+      ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue("--ink").trim();
+      ctx.lineWidth=1.5;
+      const midY = H/2;
+      ctx.beginPath(); ctx.moveTo(scaleX(min),midY); ctx.lineTo(scaleX(q1),midY); ctx.moveTo(scaleX(q3),midY); ctx.lineTo(scaleX(max),midY); ctx.stroke();
+      ctx.strokeRect(scaleX(q1), midY-18, scaleX(q3)-scaleX(q1), 36);
+      ctx.beginPath(); ctx.moveTo(scaleX(median),midY-18); ctx.lineTo(scaleX(median),midY+18); ctx.stroke();
+      [min,max].forEach(v=>{ ctx.beginPath(); ctx.moveTo(scaleX(v),midY-10); ctx.lineTo(scaleX(v),midY+10); ctx.stroke(); });
+      ctx.fillStyle = ctx.strokeStyle; ctx.font="10px Archivo, sans-serif"; ctx.textAlign="center";
+      [["min",min],["Q1",q1],["med",median],["Q3",q3],["max",max]].forEach(([lbl,v])=>ctx.fillText(lbl, scaleX(v), midY+32));
+    }
+    function drawHist(canvas, sorted){
+      const ctx = canvas.getContext("2d"); const W=canvas.width, H=canvas.height;
+      ctx.clearRect(0,0,W,H);
+      const min=sorted[0], max=sorted[sorted.length-1];
+      const bins = Math.max(4, Math.ceil(Math.log2(sorted.length)+1));
+      const width = (max-min)/bins || 1;
+      const counts = Array(bins).fill(0);
+      sorted.forEach(v => { let idx = Math.floor((v-min)/width); if (idx>=bins) idx=bins-1; if(idx<0) idx=0; counts[idx]++; });
+      const maxCount = Math.max(...counts);
+      const pad=24, plotH = H-2*pad, barW = (W-2*pad)/bins;
+      ctx.fillStyle = "rgb(15,110,99)";
+      counts.forEach((c,i) => { const h = maxCount? c/maxCount*plotH : 0; ctx.fillRect(pad+i*barW+2, H-pad-h, barW-4, h); });
+      ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue("--rule-strong").trim();
+      ctx.beginPath(); ctx.moveTo(pad,H-pad); ctx.lineTo(W-pad,H-pad); ctx.stroke();
+    }
+    dataEl.addEventListener("input", update);
+    update();
+  }
+
+  function renderSection(id){
+    const body = document.getElementById("body-maths");
+    if (id==="reference"){ body.innerHTML = renderReference(); }
+    else if (id==="unit-circle"){ body.innerHTML = renderUnitCircle(); wireUnitCircle(); }
+    else if (id==="graph"){ body.innerHTML = renderGraph(); wireGraph(); }
+    else if (id==="solvers"){ body.innerHTML = renderSolvers(); wireQuadratic(); wireSimultaneous(); wireTriangle(); }
+    else if (id==="stats"){ body.innerHTML = renderStats(); wireStats(); }
+  }
+
+  registerTab({
+    id: "maths", label: "Maths", short: "Ma", accent: "--lilac",
+    icon: `<svg viewBox="0 0 24 24" fill="none"><path d="M4 4h16v16H4z" stroke="currentColor" stroke-width="2"/><path d="M9 4v16M4 9h16" stroke="currentColor" stroke-width="1.4"/></svg>`,
+    searchEntries: SECTIONS.map(s => ({ label: s.label, keywords: s.label.toLowerCase(), route:`#maths/${s.id}`, group:"Maths" })),
+    init(){
+      const wrap = document.createElement("div");
+      wrap.innerHTML = renderSegmented();
+      document.getElementById("body-maths").before(wrap.firstElementChild);
+      document.getElementById("mathSeg").addEventListener("click", (e) => {
+        const btn = e.target.closest("button[data-id]");
+        if (btn) router.go(`#maths/${btn.dataset.id}`);
+      });
+      renderSection(activeSection);
+    },
+    onRoute(rest){
+      const id = (rest && rest[0]) || "reference";
+      activeSection = SECTIONS.some(s=>s.id===id) ? id : "reference";
+      document.querySelectorAll("#mathSeg button").forEach(b => b.setAttribute("aria-selected", b.dataset.id===activeSection));
+      renderSection(activeSection);
+    }
+  });
+})();
+
+/* ============================================================
+   BOOTSTRAP
+   ============================================================ */
+function boot(){
+  renderRail();
+  buildPanelShells();
+  buildSearchIndex();
+  palette.init();
+  shortcutModal.init();
+
+  let initialHash = window.location.hash;
+  if (!initialHash){
+    const last = store.get("lastTab", "#periodic");
+    initialHash = last;
+    window.location.hash = last;
+  }
+  router.fire();
+
+  window.addEventListener("beforeprint", () => {});
+  window.addEventListener("afterprint", () => {
+    document.querySelectorAll(".panel[data-printing]").forEach(p => p.removeAttribute("data-printing"));
+  });
+}
+
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+else boot();
+</script>
+</body>
+</html>
