@@ -2,7 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Data Desk">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#F3F5F4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#10262A" media="(prefers-color-scheme: dark)">
 <title>The Data Desk</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -107,8 +113,8 @@
 :root[data-theme="dark"] .cat-tile{ --cat-fill-mix: 22%; }
 
 /* ============================= BASE ============================= */
-*,*::before,*::after{ box-sizing:border-box; }
-html,body{ height:100%; }
+*,*::before,*::after{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html,body{ height:100%; overscroll-behavior-y:contain; }
 body{
   margin:0;
   font-family:var(--font-ui);
@@ -216,10 +222,6 @@ a{ color:var(--signal); }
   border:none;
   color:var(--ink);
   font-size:var(--t-sm);
-}
-@media (max-width:480px){
-  .bar-brand{ display:none; }
-  .bar-search kbd{ display:none; }
 }
 .bar-search input::placeholder{ color:var(--ink-3); }
 .bar-search kbd{
@@ -374,7 +376,7 @@ table{ width:100%; border-collapse:collapse; font-size:var(--t-sm); }
 th,td{ text-align:left; padding:var(--s2) var(--s3); border-bottom:1px solid var(--rule); }
 thead th{ font-size:var(--t-xs); color:var(--ink-2); font-weight:600; text-transform:none; border-bottom:1px solid var(--rule-strong); }
 tbody tr:nth-child(even){ background:var(--paper-sunk); }
-.table-wrap{ overflow-x:auto; }
+.table-wrap{ overflow-x:auto; -webkit-overflow-scrolling:touch; }
 
 .prose{
   font-family:var(--font-read);
@@ -443,6 +445,7 @@ tbody tr:nth-child(even){ background:var(--paper-sunk); }
 .palette-item:hover, .palette-item[data-active="true"]{ background:var(--paper-sunk); }
 .palette-item-label{ font-weight:500; font-size:var(--t-sm); }
 .palette-item-meta{ font-size:var(--t-xs); color:var(--ink-3); margin-left:auto; }
+#paletteCloseBtn{ display:none; }
 
 /* ============================= MODAL / SHORTCUT SHEET ============================= */
 .modal-overlay{
@@ -466,6 +469,7 @@ tbody tr:nth-child(even){ background:var(--paper-sunk); }
 .modal h2{ font-size:var(--t-md); font-weight:600; margin-bottom:var(--s4); }
 .kbd-row{ display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid var(--rule); font-size:var(--t-sm); }
 .kbd-row kbd{ font-family:var(--font-ui); background:var(--paper-sunk); border:1px solid var(--rule); border-radius:4px; padding:1px 6px; }
+.touch-only{ display:none !important; }
 
 /* ============================= PRINT ============================= */
 @page{ size: A4 landscape; margin: 12mm; }
@@ -553,6 +557,146 @@ tbody tr:nth-child(even){ background:var(--paper-sunk); }
   .card-pop{ animation: card-in 160ms ease-out; }
   @keyframes card-in{ from{ opacity:0; transform:scale(.98); } to{ opacity:1; transform:none; } }
 }
+
+/* ============================= PHONE / SMALL TABLET ============================= */
+@media (max-width:768px){
+  body{ touch-action:manipulation; }
+
+  /* rail becomes a bottom tab bar */
+  .app{
+    grid-template-columns:1fr;
+    grid-template-rows:auto 1fr auto;
+    grid-template-areas:
+      "bar"
+      "main"
+      "rail";
+    height:100vh;
+    height:100dvh;
+  }
+  #desk{ -webkit-overflow-scrolling:touch; overscroll-behavior-y:contain; }
+  .desk-inner{ padding:var(--s4) var(--s4) var(--s7); }
+
+  .bar{
+    gap:var(--s3);
+    padding:10px max(var(--s4), env(safe-area-inset-right)) 10px max(var(--s4), env(safe-area-inset-left));
+    padding-top:calc(10px + env(safe-area-inset-top));
+  }
+  .bar-brand{ display:none; }
+  .bar-search{ height:44px; }
+  .bar-search input{ font-size:16px; }
+  .bar-search kbd{ display:none; }
+
+  .icon-btn{ width:44px; height:44px; flex-shrink:0; }
+  .icon-btn svg{ width:20px; height:20px; }
+  .icon-btn:active{ background:var(--paper-sunk); color:var(--ink); }
+
+  .rail{
+    flex-direction:row;
+    border-right:none;
+    border-top:2px solid var(--ink);
+    padding:4px max(var(--s2), env(safe-area-inset-left)) calc(4px + env(safe-area-inset-bottom));
+    position:relative;
+    z-index:40;
+  }
+  .rail-item{
+    justify-content:center;
+    gap:3px;
+    flex:1;
+    min-width:0;
+    min-height:50px;
+    padding:6px 2px;
+    border-left:none;
+    border-top:3px solid transparent;
+  }
+  .rail-item svg{ width:22px; height:22px; flex-shrink:0; }
+  .rail-item .rail-label{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
+  .rail-item:active{ color:var(--ink); background:color-mix(in oklab, var(--paper) 50%, transparent); }
+  .rail-item[aria-current="true"]{ border-left-color:transparent; border-top-color:var(--accent, var(--signal)); }
+  .rail-spacer{ display:none; }
+
+  /* touch-sized controls; 16px inputs stop iOS Safari auto-zooming on focus */
+  .segmented button{ padding:var(--s3); min-height:40px; }
+  input[type="text"], input[type="number"], input[type="search"], select, textarea{
+    padding:var(--s3);
+    font-size:16px;
+    min-height:44px;
+  }
+  textarea{ min-height:auto; }
+  .btn{ padding:var(--s3) var(--s4); min-height:44px; }
+
+  /* command palette goes full screen */
+  .palette-overlay{ padding-top:0; }
+  .palette{
+    width:100vw;
+    height:100vh;
+    height:100dvh;
+    border:none;
+    box-shadow:none;
+    max-height:none;
+  }
+  .palette-input{ padding-top:calc(var(--s4) + env(safe-area-inset-top)); }
+  .palette-input input{ font-size:16px; }
+  #paletteCloseBtn{ display:flex; }
+  .palette-item{ padding:var(--s3) var(--s4); min-height:48px; }
+
+  /* dialogs become bottom sheets */
+  .modal-overlay{ align-items:flex-end; padding:0; }
+  .modal{
+    width:100%;
+    border:none;
+    border-top:1px solid var(--rule-strong);
+    border-radius:16px 16px 0 0;
+    padding-bottom:calc(var(--s6) + env(safe-area-inset-bottom));
+    position:relative;
+  }
+  .modal::before{
+    content:""; position:absolute; top:8px; left:50%; transform:translateX(-50%);
+    width:36px; height:4px; border-radius:2px; background:var(--rule-strong);
+  }
+  .modal h2{ margin-top:var(--s2); }
+  .kbd-only{ display:none !important; }
+  .touch-only{ display:flex !important; }
+
+  /* periodic table */
+  .pt-grid-wrap{
+    -webkit-overflow-scrolling:touch;
+    margin:0 calc(var(--s4) * -1);
+    padding-left:var(--s4);
+    padding-right:var(--s4);
+  }
+  .pt-grid{
+    grid-template-columns:repeat(18, minmax(40px, 1fr));
+    grid-auto-rows:minmax(40px, 1fr);
+    min-width:800px;
+  }
+  .element-tile:active{ transform:translateY(-1px); box-shadow:0 2px 6px rgba(22,35,46,.18); z-index:2; }
+
+  .element-detail[data-open="true"]{
+    top:auto; left:0; bottom:0; transform:none;
+    width:100%;
+    max-height:85vh;
+    border:none;
+    border-top:1px solid var(--rule-strong);
+    border-radius:16px 16px 0 0;
+  }
+  .detail-inner{
+    padding-bottom:calc(var(--s6) + env(safe-area-inset-bottom));
+    padding-top:calc(var(--s5) + 10px);
+  }
+  .detail-inner::before{
+    content:""; position:absolute; top:8px; left:50%; transform:translateX(-50%);
+    width:36px; height:4px; border-radius:2px; background:var(--rule-strong);
+  }
+  .detail-symbol{ width:72px; height:72px; }
+}
+
+/* hover effects only where there is a real pointer */
+@media (hover:none){
+  .icon-btn:hover{ background:none; color:var(--ink-2); }
+  .rail-item:hover{ color:var(--ink-2); background:none; }
+  .btn:hover{ background:var(--paper); }
+  .element-tile:hover{ transform:none; box-shadow:none; }
+}
 </style>
 </head>
 <body>
@@ -562,7 +706,7 @@ tbody tr:nth-child(even){ background:var(--paper-sunk); }
     <div class="bar-brand">The Data Desk</div>
     <div class="bar-search" id="openPaletteBtn" role="button" tabindex="0">
       <svg viewBox="0 0 24 24" fill="none" width="16" height="16"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      <input type="text" id="paletteTrigger" placeholder="Search anything — press /" readonly>
+      <input type="text" id="paletteTrigger" placeholder="Search anything" readonly>
       <kbd>/</kbd>
     </div>
     <div class="bar-actions">
@@ -587,6 +731,7 @@ tbody tr:nth-child(even){ background:var(--paper-sunk); }
     <div class="palette-input">
       <svg viewBox="0 0 24 24" fill="none" width="18" height="18"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
       <input type="text" id="paletteInput" placeholder="Jump to an element, formula, constant, tool…" autocomplete="off">
+      <button class="icon-btn" id="paletteCloseBtn" aria-label="Close search" type="button">&#10005;</button>
     </div>
     <div class="palette-results" id="paletteResults"></div>
   </div>
@@ -594,14 +739,20 @@ tbody tr:nth-child(even){ background:var(--paper-sunk); }
 
 <div class="modal-overlay" id="shortcutOverlay">
   <div class="modal" role="dialog" aria-modal="true" aria-label="Keyboard shortcuts">
-    <h2>Keyboard shortcuts</h2>
-    <div class="kbd-row"><span>Open search / command palette</span><kbd>/</kbd> or <kbd>Ctrl K</kbd></div>
-    <div class="kbd-row"><span>Switch tab</span><kbd>1</kbd>–<kbd>5</kbd></div>
-    <div class="kbd-row"><span>Toggle theme</span><kbd>T</kbd></div>
-    <div class="kbd-row"><span>Close dialog / detail card</span><kbd>Esc</kbd></div>
-    <div class="kbd-row"><span>Periodic table: move selection</span><kbd>↑ ↓ ← →</kbd></div>
-    <div class="kbd-row"><span>Periodic table: open element</span><kbd>Enter</kbd></div>
-    <div class="kbd-row"><span>Show this sheet</span><kbd>?</kbd></div>
+    <h2 class="kbd-only">Keyboard shortcuts</h2>
+    <h2 class="touch-only">Using The Data Desk</h2>
+    <div class="kbd-row kbd-only"><span>Open search / command palette</span><kbd>/</kbd> or <kbd>Ctrl K</kbd></div>
+    <div class="kbd-row kbd-only"><span>Switch tab</span><kbd>1</kbd>–<kbd>5</kbd></div>
+    <div class="kbd-row kbd-only"><span>Toggle theme</span><kbd>T</kbd></div>
+    <div class="kbd-row kbd-only"><span>Close dialog / detail card</span><kbd>Esc</kbd></div>
+    <div class="kbd-row kbd-only"><span>Periodic table: move selection</span><kbd>↑ ↓ ← →</kbd></div>
+    <div class="kbd-row kbd-only"><span>Periodic table: open element</span><kbd>Enter</kbd></div>
+    <div class="kbd-row kbd-only"><span>Show this sheet</span><kbd>?</kbd></div>
+    <div class="kbd-row touch-only"><span>Look up anything</span><span>Tap the search bar</span></div>
+    <div class="kbd-row touch-only"><span>Switch section</span><span>Tap a tab below</span></div>
+    <div class="kbd-row touch-only"><span>Element details</span><span>Tap any tile</span></div>
+    <div class="kbd-row touch-only"><span>Light / dark theme</span><span>Tap the sun/moon icon</span></div>
+    <div class="kbd-row touch-only"><span>Print the periodic table</span><span>Use "Print table" on that tab</span></div>
   </div>
 </div>
 
@@ -1430,6 +1581,8 @@ const palette = {
     this.input = document.getElementById("paletteInput");
     this.results = document.getElementById("paletteResults");
     document.getElementById("openPaletteBtn").addEventListener("click", () => this.open());
+    const closeBtn = document.getElementById("paletteCloseBtn");
+    if (closeBtn) closeBtn.addEventListener("click", () => this.close());
     this.overlay.addEventListener("click", (e) => { if (e.target === this.overlay) this.close(); });
     this.input.addEventListener("input", () => this.filter());
     this.input.addEventListener("keydown", (e) => this.onKey(e));
